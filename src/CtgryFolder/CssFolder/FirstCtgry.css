@@ -1,0 +1,35 @@
+/* .main_class {
+  background: black;
+} */
+
+.login_class {
+  width: auto;
+  height: auto;
+  float: right;
+  margin-right: 10px;
+  /* color: white; */
+  font-size: 20px;
+}
+
+.login_join_class {
+  width: auto;
+  height: auto;
+  float: right;
+  margin-right: 10px;
+  font-size: 20px;
+  /* color: white; */
+}
+
+.serch_class {
+  float: right;
+  width: auto;
+  height: auto;
+  float: right;
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.main_logo {
+  float: left;
+  margin-left: 10px;
+}
