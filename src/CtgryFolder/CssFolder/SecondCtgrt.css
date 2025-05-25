@@ -1,0 +1,43 @@
+.main_class {
+  padding-top: 10px;
+  padding-left: 30px;
+  height: auto;
+  width: auto;
+}
+
+.home_page_img {
+  width: 100px;
+  height: 50px;
+  padding: 20px;
+  float: left;
+  text-align: center;
+}
+
+.design_page_img {
+  width: 100px;
+  height: 50px;
+  padding: 20px;
+  float: left;
+  text-align: center;
+}
+.shop_page_img {
+  width: 100px;
+  height: 50px;
+  padding: 20px;
+  float: left;
+  text-align: center;
+}
+.community_page_img {
+  width: 100px;
+  height: 50px;
+  padding: 20px;
+  float: left;
+  text-align: center;
+}
+.admin_page_img {
+  width: 100px;
+  height: 50px;
+  padding: 20px;
+  float: left;
+  text-align: center;
+}

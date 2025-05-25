@@ -7,8 +7,9 @@
   height: auto;
   float: right;
   margin-right: 10px;
+  margin-top: 10px;
   /* color: white; */
-  font-size: 20px;
+  font-size: 17px;
 }
 
 .login_join_class {
@@ -16,7 +17,8 @@
   height: auto;
   float: right;
   margin-right: 10px;
-  font-size: 20px;
+  margin-top: 10px;
+  font-size: 17px;
   /* color: white; */
 }
 
@@ -24,12 +26,80 @@
   float: right;
   width: auto;
   height: auto;
-  float: right;
   margin-right: 10px;
-  font-size: 20px;
+  font-size: 17px;
+  margin-top: 10px;
 }
 
 .main_logo {
   float: left;
   margin-left: 10px;
+  margin-top: 10px;
+  background-image: "";
+}
+
+.main_company {
+  border-left: medium solid #e9ecef;
+  padding-left: 20px;
+  float: left;
+  width: auto;
+  height: auto;
+  margin-left: 20px;
+  font-size: 17px;
+  margin-top: 10px;
+}
+
+#switch {
+  float: left;
+  position: absolute;
+  /* hidden */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin-top: 20px;
+}
+
+.switch_label {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  width: 58px;
+  height: 28px;
+  background: #e9ecef;
+  border: 2px solid #e9ecef;
+  border-radius: 20px;
+  transition: 0.2s;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+.switch_label:hover {
+  background: #efefef;
+}
+.onf_btn {
+  position: absolute;
+  top: 4px;
+  left: 3px;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background: white;
+  transition: 0.2s;
+}
+
+/* checking style */
+#switch:checked + .switch_label {
+  background: gray;
+  border: 2px solid gray;
+}
+
+#switch:checked + .switch_label:hover {
+  background: #e9ecef;
+}
+
+/* move */
+#switch:checked + .switch_label .onf_btn {
+  left: 34px;
+  background: white;
+  box-shadow: 1px 2px 3px #00000020;
 }
