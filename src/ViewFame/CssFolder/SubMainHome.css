@@ -1,10 +1,8 @@
 .main_sub_class {
   background: #f8f9fa;
-  /* background: #f1f3f5; */
   padding-left: 50px;
   padding-top: 50px;
   min-height: 100vh;
-  /* height: 100%; */
   display: flex;
   flex-direction: column; /* 세로 정렬 */
   gap: 32px; /* 요소 간 여백 */
@@ -14,16 +12,44 @@
   width: auto;
   height: auto;
 }
-.home_page_image {
-  width: auto;
-  height: auto;
-  padding: 10px;
-  /* padding-right: 30px; */
-  border-radius: 13px;
-  display: flex;
+
+.home_page_card {
+  width: 100%;
+  max-width: 300px;
+  margin: 16px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  background-color: #fff;
   float: left;
 }
 
+.home_page_img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.home_page_title {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #333;
+  float: left;
+  margin-top: 10px;
+  margin-left: 25px;
+}
+
+.home_page_great,
+.home_page_price,
+.home_page_producer {
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #666;
+}
 .shop_mall_space {
   width: auto;
   height: auto;
