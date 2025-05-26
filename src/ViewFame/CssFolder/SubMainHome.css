@@ -19,8 +19,8 @@
   height: auto;
   padding: 10px;
   /* padding-right: 30px; */
-  display: flex;
   border-radius: 13px;
+  display: flex;
   float: left;
 }
 

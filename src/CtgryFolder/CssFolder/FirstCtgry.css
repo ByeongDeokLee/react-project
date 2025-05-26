@@ -1,15 +1,16 @@
-/* .main_class {
-  background: black;
-} */
+.main_first_ctgry {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  padding: 10px;
+}
 
-.login_class {
-  width: auto;
-  height: auto;
-  float: right;
-  margin-right: 10px;
+.main_logo {
+  float: left;
+  margin-left: 10px;
   margin-top: 10px;
-  /* color: white; */
-  font-size: 17px;
+  background-image: "";
 }
 
 .login_join_class {
@@ -31,11 +32,14 @@
   margin-top: 10px;
 }
 
-.main_logo {
-  float: left;
-  margin-left: 10px;
+.login_class {
+  width: auto;
+  height: auto;
+  float: right;
+  margin-right: 10px;
   margin-top: 10px;
-  background-image: "";
+  /* color: white; */
+  font-size: 17px;
 }
 
 .main_company {

@@ -1,24 +1,32 @@
 //css파일
 import "../CssFolder/SecondCtgrt.css";
 
+//이미지
+import consulting from "../../assets/img/consulting.png";
+import design from "../../assets/img/design.png";
+import discussion from "../../assets/img/discussion.png";
+import homepage from "../../assets/img/homepage.png";
+import shopping from "../../assets/img/shopping.png";
+
+const img = [
+  { src: homepage, title: "홈페이지 제작" },
+  { src: design, title: "디자인 제작" },
+  { src: shopping, title: "쇼핑몰 제작" },
+  { src: discussion, title: "커뮤티니 제작" },
+  { src: consulting, title: "어드민 제작" },
+];
+
 export default function SecondCtgrt() {
   return (
-    <div class="main_class">
-      <div class="home_page_img">
-        <p>홈페이지</p>
-      </div>
-      <div class="design_page_img">
-        <p>디자인</p>
-      </div>
-      <div class="shop_page_img">
-        <p>쇼핑몰</p>
-      </div>
-      <div class="community_page_img">
-        <p>커뮤니티</p>
-      </div>
-      <div class="admin_page_img">
-        <p>어드민</p>
-      </div>
+    <div className="main_class">
+      {img.map((img, index) => {
+        return (
+          <div key={index}>
+            <img src={img.src} alt={img.title} className="second_ctgrt_image" />
+            <h3 className="image_title">{img.title}</h3>
+          </div>
+        );
+      })}
     </div>
   );
 }

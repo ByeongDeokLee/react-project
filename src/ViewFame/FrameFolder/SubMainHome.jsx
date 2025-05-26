@@ -13,27 +13,27 @@ const HomePageImg = [dog1, dog2, dog3, dog4, dog5];
 
 export default function SubMainHome() {
   return (
-    <div class="main_sub_class">
-      <div class="home_page_space">
+    <div className="main_sub_class">
+      <div className="home_page_space">
         <h1>홈페이지을 원하시면 여기 보세요.</h1>
         {HomePageImg.map((img, index) => {
           return (
-            <div class="home_page_image" key={index}>
+            <div className="home_page_image" key={index}>
               <img
                 src={img}
                 alt={`슬라이드 ${index + 1}`}
-                class="home_page_image"
+                // class="home_page_image"
                 // style={{ width: "100%", borderRadius: "12px" }}
               />
             </div>
           );
         })}
       </div>
-      <div class="shop_mall_space">
+      <div className="shop_mall_space">
         <h1>쇼핑몰을 원하시면 여기 보세요.</h1>
       </div>
 
-      <div class="community_space">
+      <div className="community_space">
         <h1>커뮤니티를 원하시면 여기 보세요.</h1>
       </div>
     </div>

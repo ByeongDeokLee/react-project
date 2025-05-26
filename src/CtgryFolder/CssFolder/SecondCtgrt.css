@@ -1,43 +1,31 @@
 .main_class {
-  padding-top: 10px;
-  padding-left: 30px;
+  padding-top: 50px;
+  padding-left: 60px;
+  padding-right: 60px;
+  padding-bottom: 50px;
   height: auto;
   width: auto;
+  /* float: left; */
+  display: flex;
+  /* float: left; */
 }
 
-.home_page_img {
-  width: 100px;
-  height: 50px;
-  padding: 20px;
-  float: left;
-  text-align: center;
+.second_ctgrt_image {
+  /* padding-left: 60px; */
+  padding: 50px;
+  transition: all 0.3s ease;
 }
 
-.design_page_img {
-  width: 100px;
-  height: 50px;
-  padding: 20px;
-  float: left;
-  text-align: center;
+.second_ctgrt_image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
-.shop_page_img {
-  width: 100px;
-  height: 50px;
-  padding: 20px;
-  float: left;
-  text-align: center;
+.image_title {
+  margin-top: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-left: 55px;
 }
-.community_page_img {
-  width: 100px;
-  height: 50px;
-  padding: 20px;
-  float: left;
-  text-align: center;
-}
-.admin_page_img {
-  width: 100px;
-  height: 50px;
-  padding: 20px;
-  float: left;
-  text-align: center;
+.image_title:hover {
+  text-decoration-line: underline;
 }
