@@ -5,6 +5,11 @@ function serchShow() {
   console.log("\n\n 들어오나? \n\n");
 }
 
+function openLoginPopup(e) {
+  e.preventDefault(); // 기본 링크 막기
+  window.open("/login", "LoginPopup", "width=400,height=400");
+}
+
 export default function firtstCtgry() {
   return (
     <div className="main_first_ctgry">
@@ -25,10 +30,12 @@ export default function firtstCtgry() {
         <p onClick={serchShow}>검색</p>
       </div>
       <div className="login_join_class">
-        <p onClick="memberJoin">회원가입</p>
+        <a href="memberJoin">회원가입</a>
       </div>
       <div className="login_class">
-        <p>로그인</p>
+        <a href="login" onClick={openLoginPopup}>
+          로그인
+        </a>
       </div>
     </div>
   );

@@ -1,3 +1,11 @@
+a {
+  text-decoration-line: none;
+  color: black;
+}
+a:hover {
+  text-decoration-line: underline;
+  /* border: 1px solid black; */
+}
 .main_first_ctgry {
   display: flex;
   justify-content: flex-end;
@@ -20,7 +28,8 @@
   margin-right: 10px;
   margin-top: 10px;
   font-size: 17px;
-  /* color: white; */
+  text-decoration-line: none;
+  color: black;
 }
 
 .serch_class {

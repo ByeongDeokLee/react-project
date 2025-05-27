@@ -36,20 +36,46 @@
   display: block;
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 6px;
+  margin-bottom: 20px;
   color: #333;
-  float: left;
   margin-top: 10px;
   margin-left: 25px;
+  text-align: left;
+  width: 100%;
+}
+
+.great_img {
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
 }
 
 .home_page_great,
-.home_page_price,
+.home_page_price {
+  font-size: 14px;
+  margin-bottom: 5px;
+  align-items: center; /* 세로 높이 맞춤 */
+  margin-top: 8px; /* 전체 위 간격 (선택) */
+  color: #666;
+  gap: 2px;
+  display: flex;
+  text-align: left;
+  padding-left: 25px;
+}
+
 .home_page_producer {
   font-size: 14px;
   margin-bottom: 4px;
   color: #666;
+  text-align: left;
+  padding-left: 25px;
+  font-weight: bold;
+  align-items: center; /* 세로 높이 맞춤 */
+  margin-top: 8px; /* 전체 위 간격 (선택) */
+  gap: 2px;
+  display: flex;
 }
+
 .shop_mall_space {
   width: auto;
   height: auto;
