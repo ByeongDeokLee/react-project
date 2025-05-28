@@ -7,7 +7,7 @@ function serchShow() {
 
 function openLoginPopup(e) {
   e.preventDefault(); // 기본 링크 막기
-  window.open("/login", "LoginPopup", "width=400,height=400");
+  window.open("/LoginPopup", "LoginPopup", "width=800,height=800");
 }
 
 export default function firtstCtgry() {
@@ -33,7 +33,7 @@ export default function firtstCtgry() {
         <a href="memberJoin">회원가입</a>
       </div>
       <div className="login_class">
-        <a href="login" onClick={openLoginPopup}>
+        <a href="LoginPopup" onClick={openLoginPopup}>
           로그인
         </a>
       </div>

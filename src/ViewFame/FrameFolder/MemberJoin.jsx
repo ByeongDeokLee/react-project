@@ -1,4 +1,4 @@
-import "../CssFolder/MemberJoin.css";
+// import "../CssFolder/MemberJoin.css";
 
 export default function MemberJoin() {
   return (
