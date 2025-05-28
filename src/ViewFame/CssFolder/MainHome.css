@@ -61,5 +61,4 @@ input:focus {
 
 div {
   user-select: none; /* 텍스트 드래그 불가 */
-  pointer-events: none; /* 클릭, 포커스 등 모든 이벤트 막힘 */
 }

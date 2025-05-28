@@ -8,16 +8,23 @@ import { Link } from "react-router-dom";
 
 //이미지
 import kakaoLogin from "../../assets/img/kakao_login.png";
+import NaverLogin from "../../assets/img/naver_login.png";
 
 const User = {
   email: "abc@naver.com",
   pw: "System2000!!",
 };
 
+//카카오 로그인
 const clientId = "c2c0630ecffa6b96e8c78ef64478cf57";
 const redirectUrl = "http://localhost:3000";
-
 const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUrl}&response_type=code`;
+
+//네이버 로그인
+const NAVER_CLIENT_ID = "O75rHergSrGWoKHXM8ES"; // 발급받은 클라이언트 아이디
+const REDIRECT_URI = "http://localhost:3000"; // Callback URL
+const STATE = "flase";
+const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${REDIRECT_URI}`;
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -27,8 +34,12 @@ export default function Login() {
   const [pwValid, setPwValid] = useState(false);
   const [notAllow, setNotAllow] = useState(true);
 
-  const loginHandler = () => {
+  const KakaoLoginHandler = () => {
     window.location.href = KAKAO_AUTH_URL;
+  };
+
+  const NaverLoginHandler = () => {
+    window.location.href = NAVER_AUTH_URL;
   };
 
   const handleEmail = (e) => {
@@ -71,13 +82,13 @@ export default function Login() {
 
   return (
     <div className="page">
-      <div className="titleWrap">
+      <div className="title_wrap">
         <br />
         로그인
       </div>
-      <div className="contentWrap">
-        <div className="inputTitle">이메일 주소</div>
-        <div className="inputWrap">
+      <div className="content_wrap">
+        <div className="input_title">이메일 주소</div>
+        <div className="input_wrap">
           <input
             type="text"
             className="input"
@@ -93,10 +104,10 @@ export default function Login() {
           )}
         </div>
 
-        <div style={{ marginTop: "26px" }} className="inputTitle">
+        <div style={{ marginTop: "26px" }} className="input_title">
           비밀번호
         </div>
-        <div className="inputWrap">
+        <div className="input_wrap">
           <input
             type="password"
             className="input"
@@ -106,35 +117,42 @@ export default function Login() {
           />
         </div>
 
-        <div className="errorMessageWrap">
+        <div className="error_message_wrap">
           {!pwValid && pw.length > 0 && (
             <div>영문, 숫자, 특수문자 포함 8자 이상 입력해주세요.</div>
           )}
         </div>
       </div>
 
-      <div className="buttonWrap">
+      <div className="button_wrap">
         <button
           onClick={onClickConfirmButton}
           disabled={notAllow}
-          className="bottomButton"
+          className="bottom_button"
         >
           로그인
         </button>
       </div>
       <hr nonshade />
-      <div className="registerWrap">
-        <div className="registerTitle">
+      <div className="register_wrap">
+        <div className="register_title">
           계정이 없으신가요? <Link to="/register">가입하기</Link>
         </div>
-      </div>
-      <div>
-        <img
-          src={kakaoLogin}
-          alt="카카오로그인"
-          className="kakao_login_btu"
-          onClick={loginHandler}
-        />
+        <div className="social_login">
+          <img
+            src={kakaoLogin}
+            alt="카카오로그인"
+            className="kakao_login_btu"
+            onClick={KakaoLoginHandler}
+          />
+          <img
+            src={NaverLogin}
+            alt="네이버로그인"
+            className="naver_login_btu"
+            onClick={NaverLoginHandler}
+          />
+          {/* <button onClick={NaverLoginHandler}>네이버</button> */}
+        </div>
       </div>
     </div>
   );
