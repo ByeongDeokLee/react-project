@@ -110,12 +110,23 @@ hr {
 
 .kakao_login_btu {
   cursor: pointer;
-  padding: 10px;
+  padding: 15px;
+  width: 183px;
+  height: 45px;
   /* transform: rotate(90deg); */
 }
 
 .naver_login_btu {
   cursor: pointer;
+  width: 183px;
+  padding: 15px;
+  height: 45px;
+}
+.google_login_btu {
+  cursor: pointer;
+  width: 183px;
+  padding: 15px;
+  height: 45px;
 }
 
 .social_login {

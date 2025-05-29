@@ -8,6 +8,12 @@ function serchShow() {
 function openLoginPopup(e) {
   e.preventDefault(); // 기본 링크 막기
   window.open("/LoginPopup", "LoginPopup", "width=800,height=800");
+
+  window.addEventListener("message", (event) => {
+    if (event.data?.type === "LOGIN_SUCCESS") {
+      console.log("로그인 성공! 유저:", event.data.user);
+    }
+  });
 }
 
 export default function firtstCtgry() {
