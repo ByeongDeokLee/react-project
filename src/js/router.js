@@ -8,7 +8,7 @@ import MemberJoin from "../ViewFame/FrameFolder/MemberJoin";
 
 //팝업
 import LoginPopup from "../PopupFame/PopupFameFolder/LoginPopup";
-import KakaoCallback from "../PopupFame/CallBackFolder/kakao";
+import Callback from "../PopupFame/CallBackFolder/CallBack";
 
 const Router = () => {
   return (
@@ -17,7 +17,7 @@ const Router = () => {
         <Route path="/Home" element={<MainHome />} />
         <Route path="/MemberJoin" element={<MemberJoin />} />
         <Route path="/LoginPopup" element={<LoginPopup />} />
-        <Route path="/oauth/callback/kakao" element={<KakaoCallback />} />
+        <Route path="/oauth/callback" element={<Callback />} />
       </Routes>
     </BrowserRouter>
   );

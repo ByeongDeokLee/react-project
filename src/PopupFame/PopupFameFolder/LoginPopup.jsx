@@ -18,20 +18,20 @@ const User = {
 
 //카카오 로그인
 const KAKAO_CLIENT_ID = "c2c0630ecffa6b96e8c78ef64478cf57";
-const KAKAO_REDIRECT_URI = "http://localhost:3000/oauth/callback/kakao";
+const KAKAO_REDIRECT_URI = "http://localhost:3000/oauth/callback";
 // const KAKAO_REDIRECT_URI = "http://localhost:3000";
 const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`;
 
 //네이버 로그인
 const NAVER_CLIENT_ID = "O75rHergSrGWoKHXM8ES"; // 발급받은 클라이언트 아이디
-const NAVER_REDIRECT_URI = "http://localhost:3000"; // Callback URL
-const STATE = "flase";
+const NAVER_REDIRECT_URI = "http://localhost:3000/oauth/callback"; // Callback URL
+const STATE = "naver";
 const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${NAVER_REDIRECT_URI}`;
 
 //구글 로그인
 const GOOGLE_CLIENT_ID =
   "819018389584-tfqijshcap1hkpp2u0264h8qkia2bqjp.apps.googleusercontent.com";
-const GOOGLE_REDIRECT_URI = "http://localhost:3000";
+const GOOGLE_REDIRECT_URI = "http://localhost:3000/oauth/callback";
 const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/v2/auth?
 		client_id=${GOOGLE_CLIENT_ID}
 		&redirect_uri=${GOOGLE_REDIRECT_URI}

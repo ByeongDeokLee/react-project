@@ -8,10 +8,31 @@ a:hover {
 }
 .main_first_ctgry {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   gap: 16px;
   padding: 10px;
+  width: auto;
+}
+.logo_wrap {
+  width: max-content;
+  height: max-content;
+  text-align: left;
+  padding-left: 50px;
+}
+
+.login_wrap {
+  width: auto;
+  height: auto;
+  margin-left: auto;
+  padding-right: 50px;
+}
+.logout_wrap {
+  width: auto;
+  height: auto;
+  margin-left: auto;
+  padding-right: 50px;
+  display: block;
 }
 
 .main_logo {
