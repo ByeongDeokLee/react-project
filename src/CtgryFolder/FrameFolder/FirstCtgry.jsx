@@ -3,6 +3,8 @@ import "../CssFolder/FirstCtgry.css";
 
 //라이브러리
 import { useState } from "react";
+import { kakaoLogout } from "../../js/axios";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function FirtstCtgry() {
   const [LoginInfo, setLoginInfo] = useState("");
@@ -17,13 +19,32 @@ export default function FirtstCtgry() {
       if (event.data?.type === "LOGIN_SUCCESS") {
         console.log("로그인 성공! 유저:", event.data.user);
         setLoginInfo(event.data.user.nickname);
+        toast.success("로그인 되었습니다.");
         setIsLoggedIn(true);
       }
     });
   };
 
-  const openLogoutPopup = () => {
-    console.log("\n ㅎㅇ \n");
+  const openLogoutPopup = async () => {
+    const token = localStorage.getItem("kakaoAccessToken"); // 저장된 토큰 불러오기
+
+    if (!token) {
+      console.log("카카오 access token이 없습니다.");
+      return;
+    }
+
+    try {
+      const result = await kakaoLogout(token);
+      console.log("로그아웃 결과:", result);
+
+      // 프론트 상태 초기화
+      localStorage.removeItem("kakaoAccessToken");
+      setIsLoggedIn(false);
+      toast.success("로그아웃 되었습니다.");
+      // alert("로그아웃 되었습니다.");
+    } catch (e) {
+      alert("로그아웃 실패!");
+    }
   };
 
   return (
@@ -65,6 +86,7 @@ export default function FirtstCtgry() {
           </div>
         </div>
       )}
+      <ToastContainer position="top-center" autoClose={2000} />
     </div>
   );
 }
