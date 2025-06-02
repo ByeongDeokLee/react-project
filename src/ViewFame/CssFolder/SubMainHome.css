@@ -8,7 +8,7 @@
   gap: 32px; /* 요소 간 여백 */
 }
 
-.home_page_space {
+.shop_mall_space .community_space .home_page_space {
   width: auto;
   height: auto;
 }
@@ -74,15 +74,4 @@
   margin-top: 8px; /* 전체 위 간격 (선택) */
   gap: 2px;
   display: flex;
-}
-
-.shop_mall_space {
-  width: auto;
-  height: auto;
-  padding-top: 10px;
-}
-
-.community_space {
-  width: auto;
-  height: auto;
 }
