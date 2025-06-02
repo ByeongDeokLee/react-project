@@ -69,17 +69,58 @@ export default function SubMainHome() {
                 <span>{img.producer}</span>
               </div>
             </div>
-            // <img></img>
           );
         })}
       </div>
 
       <div className="shop_mall_space">
         <h1>쇼핑몰을 원하시면 여기 보세요.</h1>
+        {HomePageImg.map((img, index) => {
+          return (
+            <div className="home_page_card" key={index}>
+              <img src={img.src} alt={img.title} className="home_page_image" />
+              <span className="home_page_title">{img.title}</span>
+              <div className="home_page_great">
+                <img src={favorite} alt="좋아요" className="great_img"></img>
+                <span>{img.great.toFixed(1)}</span>
+                <span>{"(" + img.comment + ")"}</span>
+              </div>
+              <div className="home_page_price">
+                {img.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                  "원 ~"}
+              </div>
+              <div className="home_page_producer">
+                <img src={produimg} alt="produimg"></img>
+                <span>{img.producer}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="community_space">
         <h1>커뮤니티를 원하시면 여기 보세요.</h1>
+        {HomePageImg.map((img, index) => {
+          return (
+            <div className="home_page_card" key={index}>
+              <img src={img.src} alt={img.title} className="home_page_image" />
+              <span className="home_page_title">{img.title}</span>
+              <div className="home_page_great">
+                <img src={favorite} alt="좋아요" className="great_img"></img>
+                <span>{img.great.toFixed(1)}</span>
+                <span>{"(" + img.comment + ")"}</span>
+              </div>
+              <div className="home_page_price">
+                {img.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                  "원 ~"}
+              </div>
+              <div className="home_page_producer">
+                <img src={produimg} alt="produimg"></img>
+                <span>{img.producer}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
