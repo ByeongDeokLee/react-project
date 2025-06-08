@@ -1,0 +1,267 @@
+.service-selection-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.service-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.service-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.service-header p {
+  font-size: 16px;
+  color: #666;
+}
+
+.project-type-section {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.project-type-section h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.project-type-options {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.project-type-option {
+  display: flex;
+  align-items: center;
+  padding: 15px 25px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.project-type-option:hover {
+  border-color: #007bff;
+  background-color: #f8f9ff;
+}
+
+.project-type-option.selected {
+  border-color: #007bff;
+  background-color: #e7f3ff;
+}
+
+.project-type-option input[type="radio"] {
+  margin-right: 10px;
+}
+
+.project-type-option span {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.service-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.service-category {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.service-category h3 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+  border-bottom: 2px solid #f1f3f4;
+  padding-bottom: 10px;
+}
+
+.service-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 15px;
+}
+
+.service-option {
+  width: 100%;
+}
+
+.service-checkbox {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  width: 100%;
+}
+
+.service-checkbox:hover {
+  border-color: #007bff;
+  background-color: #f8f9ff;
+}
+
+.service-checkbox.checked {
+  border-color: #28a745;
+  background-color: #f0fff4;
+}
+
+.service-checkbox.required {
+  border-color: #ffc107;
+  background-color: #fffbf0;
+}
+
+.service-checkbox input[type="checkbox"] {
+  margin-right: 15px;
+  transform: scale(1.2);
+}
+
+.checkbox-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.service-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.service-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.required-badge {
+  background: #ffc107;
+  color: white;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.service-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.service-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: #007bff;
+  margin-left: 20px;
+}
+
+.price-summary {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.total-price h3 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.total-price p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.proceed-button {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.proceed-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.proceed-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .service-selection-container {
+    padding: 20px 10px;
+  }
+
+  .service-options {
+    grid-template-columns: 1fr;
+  }
+
+  .project-type-options {
+    flex-direction: column;
+  }
+
+  .price-summary {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .checkbox-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .service-price {
+    margin-left: 0;
+  }
+}
