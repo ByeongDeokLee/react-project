@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../CssFolder/Payment.css";
 
+
 export default function Payment() {
   const navigate = useNavigate();
   const [orderData, setOrderData] = useState(null);
@@ -44,24 +45,43 @@ export default function Payment() {
     setIsProcessing(true);
 
     try {
+      const { IMP } = window;
+      console.log("\n\n\n IMP \n\n\n", IMP);
+      IMP.init('A52LD');
+      IMP.request_pay({
+        pg: "html5_inicis",
+        pay_method: "card",
+        merchant_uid: `ORDER_${Date.now()}`,
+        name: orderData.projectType,
+        amount: "0",
+        buyer_name: customerInfo.name,
+        buyer_email: customerInfo.email,
+        buyer_tel: customerInfo.phone,
+        buyer_addr: customerInfo.company,
+        buyer_postcode: "123-456"
+      }, rsp => {
+        console.log("\n\n\n rsp \n\n\n", rsp);
+      });
       // 실제 결제 API 호출 시뮬레이션
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // 결제 완료 후 처리
-      const paymentResult = {
-        orderId: "ORDER_" + Date.now(),
-        ...orderData,
-        customerInfo,
-        paymentMethod,
-        paymentDate: new Date().toISOString(),
-        status: "completed",
-      };
+      // // 결제 완료 후 처리
+      // const paymentResult = {
+      //   orderId: "ORDER_" + Date.now(),
+      //   ...orderData,
+      //   customerInfo,
+      //   paymentMethod,
+      //   paymentDate: new Date().toISOString(),
+      //   status: "completed",
+      // };
 
-      localStorage.setItem("paymentResult", JSON.stringify(paymentResult));
-      localStorage.removeItem("orderData");
+      // localStorage.setItem("paymentResult", JSON.stringify(paymentResult));
+      // localStorage.removeItem("orderData");
 
-      alert("결제가 완료되었습니다! 곧 담당자가 연락드리겠습니다.");
-      navigate("/payment-success");
+      // alert("결제가 완료되었습니다! 곧 담당자가 연락드리겠습니다.");
+
+
+      // navigate("/payment-success");
     } catch (error) {
       alert("결제 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
     } finally {

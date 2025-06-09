@@ -158,9 +158,78 @@ export default function SubMainHome() {
   const navigate = useNavigate();
 
   const handleProjectClick = (project) => {
-    // 프로젝트 상세 페이지로 이동하거나 서비스 선택 페이지로 이동
     navigate("/service-selection");
   };
+
+  const Sidebar = () => (
+    <div className="sidebar">
+      <div className="sidebar-section">
+        <h3 className="sidebar-title">공지사항</h3>
+        <ul className="sidebar-menu">
+          <li>
+            <a href="/notice/1">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              서비스 이용 안내
+            </a>
+          </li>
+          <li>
+            <a href="/notice/2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              시스템 점검 안내
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div className="sidebar-section">
+        <h3 className="sidebar-title">이벤트</h3>
+        <ul className="sidebar-menu">
+          <li>
+            <a href="/event/1">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              신규 회원 할인
+            </a>
+          </li>
+          <li>
+            <a href="/event/2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              시즌 프로모션
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div className="sidebar-section">
+        <h3 className="sidebar-title">문의사항</h3>
+        <ul className="sidebar-menu">
+          <li>
+            <a href="/inquiry/faq">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              자주 묻는 질문
+            </a>
+          </li>
+          <li>
+            <a href="/inquiry/contact">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              1:1 문의하기
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
 
   const ProjectCard = ({ project }) => (
     <div className="project-card" onClick={() => handleProjectClick(project)}>
@@ -260,26 +329,29 @@ export default function SubMainHome() {
 
   return (
     <div className="sub-main-home">
-      <ProjectSection
-        title="홈페이지 제작"
-        description="전문적이고 세련된 홈페이지로 브랜드 가치를 높이세요"
-        data={projectData}
-        bgColor="#f8f9fa"
-      />
+      <div className="main-content">
+        <ProjectSection
+          title="홈페이지 제작"
+          description="전문적이고 세련된 홈페이지로 브랜드 가치를 높이세요"
+          data={projectData}
+          bgColor="#f8f9fa"
+        />
 
-      <ProjectSection
-        title="쇼핑몰 제작"
-        description="매출 증대를 위한 최적화된 온라인 쇼핑몰을 구축하세요"
-        data={shoppingData}
-        bgColor="white"
-      />
+        <ProjectSection
+          title="쇼핑몰 제작"
+          description="매출 증대를 위한 최적화된 온라인 쇼핑몰을 구축하세요"
+          data={shoppingData}
+          bgColor="white"
+        />
 
-      <ProjectSection
-        title="커뮤니티 제작"
-        description="사용자들이 소통할 수 있는 활발한 커뮤니티를 만들어보세요"
-        data={communityData}
-        bgColor="#f8f9fa"
-      />
+        <ProjectSection
+          title="커뮤니티 제작"
+          description="사용자들이 소통할 수 있는 활발한 커뮤니티를 만들어보세요"
+          data={communityData}
+          bgColor="#f8f9fa"
+        />
+      </div>
+      <Sidebar />
     </div>
   );
 }
