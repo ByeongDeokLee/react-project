@@ -155,149 +155,66 @@ const communityData = [
 ];
 
 export default function SubMainHome() {
-  const navigate = useNavigate();
-
-  const handleProjectClick = (project) => {
-    navigate("/service-selection");
-  };
-
-  const Sidebar = () => (
-    <div className="sidebar">
-      <div className="sidebar-section">
-        <h3 className="sidebar-title">공지사항</h3>
-        <ul className="sidebar-menu">
-          <li>
-            <a href="/notice/1">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              서비스 이용 안내
-            </a>
-          </li>
-          <li>
-            <a href="/notice/2">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              시스템 점검 안내
-            </a>
-          </li>
-        </ul>
+  return (
+    <div className="main_sub_class">
+      <div className="home_page_space">
+        <h1>홈페이지을 원하시면 여기 보세요.</h1>
+        {HomePageImg.map((img, index) => {
+          return (
+            <div className="home_page_card" key={index}>
+              <img src={img.src} alt={img.title} className="home_page_image" />
+              <span className="home_page_title">{img.title}</span>
+              <div className="home_page_great">
+                <img src={favorite} alt="좋아요" className="great_img"></img>
+                <span>{img.great.toFixed(1)}</span>
+                <span>{"(" + img.comment + ")"}</span>
+              </div>
+              <div className="home_page_price">
+                {img.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                  "원 ~"}
+              </div>
+              <div className="home_page_producer">
+                <img src={produimg} alt="produimg"></img>
+                <span>{img.producer}</span>
+              </div>
+            </div>
+            // <img></img>
+          );
+        })}
       </div>
 
-      <div className="sidebar-section">
-        <h3 className="sidebar-title">이벤트</h3>
-        <ul className="sidebar-menu">
-          <li>
-            <a href="/event/1">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              신규 회원 할인
-            </a>
-          </li>
-          <li>
-            <a href="/event/2">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              시즌 프로모션
-            </a>
-          </li>
-        </ul>
+      <div className="shop_mall_space">
+        <h1>쇼핑몰을 원하시면 여기 보세요.</h1>
       </div>
 
-      <div className="sidebar-section">
-        <h3 className="sidebar-title">문의사항</h3>
-        <ul className="sidebar-menu">
-          <li>
-            <a href="/inquiry/faq">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              자주 묻는 질문
-            </a>
-          </li>
-          <li>
-            <a href="/inquiry/contact">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              1:1 문의하기
-            </a>
-          </li>
-        </ul>
+      <div className="community_space">
+        <h1>커뮤니티를 원하시면 여기 보세요.</h1>
       </div>
-    </div>
+    </section>
   );
 
-  const ProjectCard = ({ project }) => (
-    <div className="project-card" onClick={() => handleProjectClick(project)}>
-      <div className="project-image-container">
-        <img
-          src={project.src || "/placeholder.svg"}
-          alt={project.title}
-          className="project-image"
-        />
-        <div className="project-overlay">
-          <button className="view-details-btn">자세히 보기</button>
-        </div>
-      </div>
+  return (
+    <div className="sub-main-home">
+      <ProjectSection
+        title="홈페이지 제작"
+        description="전문적이고 세련된 홈페이지로 브랜드 가치를 높이세요"
+        data={projectData}
+        bgColor="#f8f9fa"
+      />
 
-      <div className="project-content">
-        <h3 className="project-title">{project.title}</h3>
+      <ProjectSection
+        title="쇼핑몰 제작"
+        description="매출 증대를 위한 최적화된 온라인 쇼핑몰을 구축하세요"
+        data={shoppingData}
+        bgColor="white"
+      />
 
-        <div className="project-tags">
-          {project.tags.map((tag, index) => (
-            <span key={index} className="project-tag">
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        <div className="project-stats">
-          <div className="project-rating">
-            <img
-              src={favorite || "/placeholder.svg"}
-              alt="평점"
-              className="rating-icon"
-            />
-            <span className="rating-score">{project.great.toFixed(1)}</span>
-            <span className="rating-count">({project.comment})</span>
-          </div>
-          <div className="project-duration">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <circle
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="2"
-              />
-              <polyline
-                points="12,6 12,12 16,14"
-                stroke="currentColor"
-                strokeWidth="2"
-              />
-            </svg>
-            <span>{project.duration}</span>
-          </div>
-        </div>
-
-        <div className="project-footer">
-          <div className="project-price">
-            {project.price.toLocaleString()}원 ~
-          </div>
-          <div className="project-producer">
-            <img
-              src={produimg || "/placeholder.svg"}
-              alt="제작자"
-              className="producer-icon"
-            />
-            <span>{project.producer}</span>
-          </div>
-        </div>
-      </div>
+      <ProjectSection
+        title="커뮤니티 제작"
+        description="사용자들이 소통할 수 있는 활발한 커뮤니티를 만들어보세요"
+        data={communityData}
+        bgColor="#f8f9fa"
+      />
     </div>
   );
 
