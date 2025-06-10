@@ -47,18 +47,19 @@ export default function Payment() {
     try {
       const { IMP } = window;
       console.log("\n\n\n IMP \n\n\n", IMP);
-      IMP.init('A52LD');
+      IMP.init('imp70878854');
       IMP.request_pay({
-        pg: "html5_inicis",
-        pay_method: "card",
-        merchant_uid: `ORDER_${Date.now()}`,
-        name: orderData.projectType,
-        amount: "0",
-        buyer_name: customerInfo.name,
-        buyer_email: customerInfo.email,
-        buyer_tel: customerInfo.phone,
-        buyer_addr: customerInfo.company,
-        buyer_postcode: "123-456"
+        pg: "kcp",//PG사구분코드.{사이트코드},
+        pay_method: "card", // card
+        merchant_uid: "ORD20180131-0000012",
+        name: getProjectTypeText(orderData.projectType),
+        amount: 100,
+        buyer_email: "gildong@gmail.com",
+        buyer_name: "홍길동",
+        buyer_tel: "010-0000-0000",
+        buyer_addr: "서울특별시 강남구 신사동",
+        buyer_postcode: "01181",
+        m_redirect_url: ""
       }, rsp => {
         console.log("\n\n\n rsp \n\n\n", rsp);
       });
