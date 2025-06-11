@@ -3,7 +3,7 @@ import "../CssFolder/FirstCtgry.css";
 
 //라이브러리
 import { useState } from "react";
-import { kakaoLogout } from "../../js/axios";
+import { kakaoLogout } from "../js/axios";
 import { ToastContainer, toast } from "react-toastify";
 
 export default function FirtstCtgry() {

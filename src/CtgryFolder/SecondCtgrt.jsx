@@ -4,11 +4,11 @@
 import "../CssFolder/SecondCtgrt.css";
 
 //이미지
-import consulting from "../../assets/img/consulting.png";
-import design from "../../assets/img/design.png";
-import discussion from "../../assets/img/discussion.png";
-import homepage from "../../assets/img/homepage.png";
-import shopping from "../../assets/img/shopping.png";
+import consulting from "../assets/img/consulting.png";
+import design from "../assets/img/design.png";
+import discussion from "../assets/img/discussion.png";
+import homepage from "../assets/img/homepage.png";
+import shopping from "../assets/img/shopping.png";
 
 //라이브러리
 import { useNavigate } from "react-router-dom";

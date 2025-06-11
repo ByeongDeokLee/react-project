@@ -1,8 +1,8 @@
 "use client";
 
 //프레임
-import FirstCtgry from "../../CtgryFolder/FrameFolder/FirstCtgry";
-import SecondCtgrt from "../../CtgryFolder/FrameFolder/SecondCtgrt";
+import FirstCtgry from "../CtgryFolder/FirstCtgry";
+import SecondCtgrt from "../CtgryFolder/SecondCtgrt";
 import SubMainHome from "./SubMainHome";
 import CompanyIntro from "./CompanyIntro";
 
@@ -10,10 +10,10 @@ import CompanyIntro from "./CompanyIntro";
 import "../CssFolder/MainHome.css";
 
 //이미지 파일
-import img1 from "../../assets/img/img1.jpg";
-import img2 from "../../assets/img/img2.jpg";
-import img3 from "../../assets/img/img3.jpg";
-import img4 from "../../assets/img/img4.jpg";
+import img1 from "../assets/img/img1.jpg";
+import img2 from "../assets/img/img2.jpg";
+import img3 from "../assets/img/img3.jpg";
+import img4 from "../assets/img/img4.jpg";
 
 //라이브러리
 import { useState } from "react";

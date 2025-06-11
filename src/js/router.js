@@ -1,17 +1,18 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 //프레임
-import MainHome from "../ViewFame/FrameFolder/MainHome";
-import MemberJoin from "../ViewFame/FrameFolder/MemberJoin";
+import MainHome from "../ViewFame/MainHome";
+import MemberJoin from "../ViewFame/MemberJoin";
 
 //팝업
 import LoginPopup from "../PopupFame/PopupFameFolder/LoginPopup";
 import Callback from "../PopupFame/CallBackFolder/CallBack";
 
 //서비스 선택 및 결제 페이지
-import ServiceSelection from "../ViewFame/FrameFolder/ServiceSelection";
-import Payment from "../ViewFame/FrameFolder/Payment";
-import PaymentSuccess from "../ViewFame/FrameFolder/PaymentSuccess";
+import ServiceSelection from "../ViewFame/ServiceSelection";
+import Payment from "../ViewFame/Payment";
+import PaymentSuccess from "../ViewFame/PaymentSuccess";
+import InquiryPage from "../ViewFame/InquiryPage";
 
 const Router = () => {
   return (
@@ -24,6 +25,7 @@ const Router = () => {
         <Route path="/service-selection" element={<ServiceSelection />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/inquiry" element={<InquiryPage />} />
       </Routes>
     </BrowserRouter>
   );

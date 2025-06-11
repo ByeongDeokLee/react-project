@@ -1,5 +1,5 @@
 //css파일
-import "../CssPopupFolder/LoginPopup.css";
+import "../../CssFolder/LoginPopup.css";
 
 //라이브러리
 import React, { useEffect, useState } from "react";
