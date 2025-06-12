@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../CssFolder/InquiryPage.css";
+import axios from "axios";
 
 
 const InquiryPage = () => {
@@ -21,12 +22,56 @@ const InquiryPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+
+
+  // const sendEmail = async (to, subject, text, html) => {
+  //   try {
+  //     const transporter  = nodeMailer.createTransport({
+  //       service: 'Naver',
+  //       host: 'smtp.naver.com',
+  //       port: 993,
+  //       auth: {
+  //         user: 'dlqudejr89@naver.com',
+  //         pass: 'ko171018@A'
+  //       }
+
+  //     });
+
+  //     const mailOptions = {
+  //       from: "YOUR_NAVER_EMAIL_ADDRESS", // 네이버 이메일 주소
+  //       to: to,
+  //       subject: subject,
+  //       text: text,
+  //       html: html,
+  //     };
+
+  //     const info = await transporter.sendMail(mailOptions);
+  //     console.log("Message sent: %s", info.messageId);
+  //     // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  //   } catch (error) {
+  //     console.error("Error sending email:", error);
+  //   }
+  // };
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // TODO: API 연동
-    console.log('제출된 데이터:', formData);
-    alert('문의가 접수되었습니다.');
-    navigate('/');
+    // console.log('제출된 데이터:', formData);
+    // alert('문의가 접수되었습니다.');
+    try {
+      const response = await axios.post('http://localhost:3001/api/send-inquiry', formData);
+      if (response.data.success) {
+        alert('문의가 접수되었습니다.');
+        navigate('/');
+      } else {
+        alert('문의 접수 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error('문의 접수 실패:', error);
+      alert('문의 접수 중 오류가 발생했습니다.');
+    }
+    // navigate('/');
   };
 
   return (
