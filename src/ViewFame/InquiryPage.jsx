@@ -4,7 +4,8 @@ import "../CssFolder/InquiryPage.css";
 import axios from "axios";
 
 
-const InquiryPage = () => {
+
+export default function InquiryPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
@@ -21,38 +22,6 @@ const InquiryPage = () => {
       [name]: type === 'checkbox' ? checked : value
     }));
   };
-
-
-
-  // const sendEmail = async (to, subject, text, html) => {
-  //   try {
-  //     const transporter  = nodeMailer.createTransport({
-  //       service: 'Naver',
-  //       host: 'smtp.naver.com',
-  //       port: 993,
-  //       auth: {
-  //         user: 'dlqudejr89@naver.com',
-  //         pass: 'ko171018@A'
-  //       }
-
-  //     });
-
-  //     const mailOptions = {
-  //       from: "YOUR_NAVER_EMAIL_ADDRESS", // 네이버 이메일 주소
-  //       to: to,
-  //       subject: subject,
-  //       text: text,
-  //       html: html,
-  //     };
-
-  //     const info = await transporter.sendMail(mailOptions);
-  //     console.log("Message sent: %s", info.messageId);
-  //     // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-  //   } catch (error) {
-  //     console.error("Error sending email:", error);
-  //   }
-  // };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -165,6 +134,4 @@ const InquiryPage = () => {
       </div>
     </div>
   );
-};
-
-export default InquiryPage;
+}

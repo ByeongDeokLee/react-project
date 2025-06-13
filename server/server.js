@@ -11,7 +11,7 @@ app.use(express.json());
 const transporter = nodemailer.createTransport({
   service: 'naver',
   host: 'smtp.naver.com',
-  port: 465,
+  port: 587,
   auth: {
     user: process.env.NAVER_EMAIL, // 환경 변수에서 이메일 주소 가져오기
     pass: process.env.NAVER_PASSWORD // 환경 변수에서 비밀번호 가져오기
