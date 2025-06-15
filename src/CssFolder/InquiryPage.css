@@ -1,3 +1,5 @@
+@import "./common.css";
+
 .inquiry-page {
   min-height: 100vh;
   background-color: #f8f9fa;
@@ -168,4 +170,60 @@
 
 .inquiry-container {
   animation: fadeIn 0.3s ease-out;
+}
+
+.inquiry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inquiry-item {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.inquiry-item:hover {
+  transform: translateY(-2px);
+}
+
+.inquiry-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.inquiry-info p {
+  margin: 0 0 1rem 0;
+  color: #666;
+}
+
+.inquiry-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.date {
+  color: #888;
+}
+
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.status.completed {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status.pending {
+  background-color: #fff3e0;
+  color: #f57c00;
 }

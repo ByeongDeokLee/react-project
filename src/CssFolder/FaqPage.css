@@ -1,0 +1,90 @@
+@import "./common.css";
+
+.faq-page {
+  padding: 2rem;
+}
+
+.faq-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.faq-header p {
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.faq-list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  margin-bottom: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.faq-question {
+  padding: 1.5rem;
+  background-color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.faq-question:hover {
+  background-color: #f8f9fa;
+}
+
+.faq-question.open {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.question-text {
+  font-weight: 500;
+  color: #333;
+}
+
+.toggle-icon {
+  font-size: 1.5rem;
+  color: #666;
+}
+
+.faq-answer {
+  padding: 1.5rem;
+  background-color: white;
+  color: #666;
+  line-height: 1.6;
+}
+
+.faq-contact {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.faq-contact p {
+  margin-bottom: 1rem;
+  color: #666;
+}
+
+.faq-contact button {
+  padding: 0.75rem 2rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.faq-contact button:hover {
+  background-color: #0056b3;
+}

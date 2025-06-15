@@ -1,0 +1,62 @@
+@import "./common.css";
+
+.board-page {
+  padding: 2rem;
+}
+
+.board-list {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.board-header-row {
+  display: grid;
+  grid-template-columns: 80px 3fr 1fr 1fr 1fr 1fr;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  font-weight: bold;
+}
+
+.board-item {
+  display: grid;
+  grid-template-columns: 80px 3fr 1fr 1fr 1fr 1fr;
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.board-item:hover {
+  background-color: #f8f9fa;
+}
+
+.col-number {
+  text-align: center;
+}
+
+.col-title {
+  padding-left: 1rem;
+}
+
+.col-author,
+.col-date,
+.col-views,
+.col-likes {
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .board-header-row,
+  .board-item {
+    grid-template-columns: 60px 2fr 1fr;
+  }
+
+  .col-date,
+  .col-views,
+  .col-likes {
+    display: none;
+  }
+}

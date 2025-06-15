@@ -13,6 +13,10 @@ import ServiceSelection from "../ViewFame/ServiceSelection";
 import Payment from "../ViewFame/Payment";
 import PaymentSuccess from "../ViewFame/PaymentSuccess";
 import InquiryPage from "../ViewFame/InquiryPage";
+import BoardPage from "../ViewFame/BoardPage";
+import FaqPage from "../ViewFame/FaqPage";
+import NoticePage from "../ViewFame/NoticePage";
+import ReviewPage from "../ViewFame/ReviewPage";
 
 const Router = () => {
   return (
@@ -26,6 +30,11 @@ const Router = () => {
         <Route path="/payment" element={<Payment />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/inquiry" element={<InquiryPage />} />
+        {/* <Route path="/inquiry" element={<InquiryPage />} /> */}
+        <Route path="/board" element={<BoardPage />} />
+        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/notice" element={<NoticePage />} />
+        <Route path="/review" element={<ReviewPage />} />
       </Routes>
     </BrowserRouter>
   );

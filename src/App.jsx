@@ -1,14 +1,29 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import SubMainHome from './ViewFame/SubMainHome';
-import InquiryPage from './ViewFame/InquiryPage';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MainPage from "./ViewFame/MainPage";
+import "./App.css";
+import SubMainHome from "./ViewFame/SubMainHome";
+import InquiryPage from "./ViewFame/InquiryPage";
+import BoardPage from "./ViewFame/BoardPage";
+import FaqPage from "./ViewFame/FaqPage";
+import NoticePage from "./ViewFame/NoticePage";
+import ReviewPage from "./ViewFame/ReviewPage";
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<SubMainHome />} />
-        <Route path="/inquiry/write" element={<InquiryPage />} />
-      </Routes>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/submainhome" element={<SubMainHome />} />
+          <Route path="/inquiry/write" element={<InquiryPage />} />
+          <Route path="/inquiry" element={<InquiryPage />} />
+          <Route path="/board" element={<BoardPage />} />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/notice" element={<NoticePage />} />
+          <Route path="/review" element={<ReviewPage />} />
+        </Routes>
+      </div>
     </Router>
   );
 }
