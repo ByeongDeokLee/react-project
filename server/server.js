@@ -23,11 +23,11 @@ app.post('/api/send-inquiry', async (req, res) => {
   console.log('문의하기 API 요청 받음:', req.body);
 
   try {
-    const { title, category, content, contact } = req.body;
+    const { title, category, content } = req.body;
 
     // 필수 데이터 검증
-    if (!title || !category || !content || !contact) {
-      console.error('필수 데이터 누락:', { title, category, content, contact });
+    if (!title || !category || !content ) {
+      console.error('필수 데이터 누락:', { title, category, content });
       return res.status(400).json({
         success: false,
         message: '필수 입력 항목이 누락되었습니다.'
@@ -53,7 +53,6 @@ app.post('/api/send-inquiry', async (req, res) => {
       html: `
         <h2>문의 내용</h2>
         <p><strong>문의 유형:</strong> ${category}</p>
-        <p><strong>연락처:</strong> ${contact}</p>
         <p><strong>문의 내용:</strong></p>
         <p>${content}</p>
       `

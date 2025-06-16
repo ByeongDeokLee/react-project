@@ -202,12 +202,96 @@ const Sidebar = () => {
                 <span className="board-date">2024.03.14</span>
               </div>
             </div>
-            <button className="write-btn" onClick={() => navigate('/board/write')}>
+            <button className="write-btn" onClick={() => navigate('/board')}>
               글쓰기
             </button>
           </div>
         );
-      // Add other cases for FAQ, Notice, and Review
+      case 'faq':
+        return (
+          <div className="tab-content">
+            <h3>자주 묻는 질문</h3>
+            <div className="faq-list">
+              <div className="faq-item">
+                <div className="faq-question">
+                  <span className="faq-icon">Q.</span>
+                  <span className="faq-title">홈페이지 제작 기간은 얼마나 걸리나요?</span>
+                </div>
+                <div className="faq-answer">
+                  <span className="faq-icon">A.</span>
+                  <span className="faq-content">기본적인 홈페이지는 2-3주 정도 소요되며, 복잡한 기능이 포함된 경우 4-6주 정도 소요될 수 있습니다.</span>
+                </div>
+              </div>
+              <div className="faq-item">
+                <div className="faq-question">
+                  <span className="faq-icon">Q.</span>
+                  <span className="faq-title">제작 비용은 어떻게 산정되나요?</span>
+                </div>
+                <div className="faq-answer">
+                  <span className="faq-icon">A.</span>
+                  <span className="faq-content">요구사항과 기능의 복잡도에 따라 비용이 산정됩니다. 정확한 견적은 상담을 통해 안내해 드립니다.</span>
+                </div>
+              </div>
+            </div>
+            <button className="write-btn" onClick={() => navigate('/faq')}>
+              문의하기
+            </button>
+          </div>
+        );
+      case 'notice':
+        return (
+          <div className="tab-content">
+            <h3>공지사항</h3>
+            <div className="notice-list">
+              <div className="notice-item">
+                <span className="notice-badge">공지</span>
+                <span className="notice-title">2024년 3월 시스템 점검 안내</span>
+                <span className="notice-date">2024.03.15</span>
+              </div>
+              <div className="notice-item">
+                <span className="notice-badge">이벤트</span>
+                <span className="notice-title">신규 고객 프로모션 안내</span>
+                <span className="notice-date">2024.03.14</span>
+              </div>
+              <div className="notice-item">
+                <span className="notice-badge">업데이트</span>
+                <span className="notice-title">새로운 기능 업데이트 안내</span>
+                <span className="notice-date">2024.03.13</span>
+              </div>
+            </div>
+          </div>
+        );
+      case 'review':
+        return (
+          <div className="tab-content">
+            <h3>리뷰</h3>
+            <div className="review-list">
+              <div className="review-item">
+                <div className="review-header">
+                  <span className="review-rating">★★★★★</span>
+                  <span className="review-author">김철수</span>
+                  <span className="review-date">2024.03.15</span>
+                </div>
+                <div className="review-content">
+                  <p>홈페이지 제작이 생각보다 훨씬 빨리 완료되어 만족스럽습니다. 디자인도 마음에 들고 기능도 잘 작동합니다.</p>
+                </div>
+              </div>
+              <div className="review-item">
+                <div className="review-header">
+                  <span className="review-rating">★★★★☆</span>
+                  <span className="review-author">이영희</span>
+                  <span className="review-date">2024.03.14</span>
+                </div>
+                <div className="review-content">
+                  <p>쇼핑몰 제작이 잘 완료되었습니다. 다만 일부 기능에서 개선이 필요해 보입니다.</p>
+                </div>
+              </div>
+            </div>
+            <button className="write-btn" onClick={() => navigate('/review')}>
+              리뷰 작성하기
+            </button>
+          </div>
+        );
       default:
         return <div className="tab-content">준비 중입니다.</div>;
     }
