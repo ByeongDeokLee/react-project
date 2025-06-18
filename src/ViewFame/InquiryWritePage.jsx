@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../CssFolder/InquiryWritePage.css";
-import useApi from "../hooks/useApi";
+import useApi from "../js/useApi";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const InquiryWritePage = () => {
   const navigate = useNavigate();
-  const { loading, error, request } = useApi();
+  const { loading, request } = useApi();
   const [formData, setFormData] = useState({
     title: "",
     content: "",

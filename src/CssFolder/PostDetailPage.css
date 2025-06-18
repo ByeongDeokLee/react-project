@@ -1,0 +1,149 @@
+.post-detail-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.post-header {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.post-header h1 {
+  margin-bottom: 10px;
+}
+
+.post-info {
+  display: flex;
+  gap: 20px;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-content {
+  min-height: 200px;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.comments-section {
+  margin-top: 40px;
+}
+
+.comments-section h2 {
+  margin-bottom: 20px;
+}
+
+.comments-section form {
+  margin-bottom: 30px;
+}
+
+.comments-section textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.comments-section button {
+  padding: 8px 16px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+}
+
+.comments-section button:hover {
+  opacity: 0.9;
+}
+
+.comment {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.comment-header .author {
+  font-weight: bold;
+}
+
+.comment-header .date {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.comment-content {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.reply {
+  margin-left: 30px;
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.reply-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.reply-header .author {
+  font-weight: bold;
+}
+
+.reply-header .date {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.post-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.post-actions button:first-child {
+  background-color: #6c757d;
+  color: white;
+}
+
+.post-actions button:nth-child(2) {
+  background-color: #28a745;
+  color: white;
+}
+
+.post-actions button:last-child {
+  background-color: #dc3545;
+  color: white;
+}
+
+.post-actions button:hover {
+  opacity: 0.9;
+}

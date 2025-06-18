@@ -10,6 +10,7 @@ const useApi = () => {
     setError(null);
 
     try {
+      console.log("useAPI",config)
       const response = await axios(config);
       return response.data;
     } catch (err) {

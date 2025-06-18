@@ -26,10 +26,14 @@ const BoardPage = () => {
   return (
     <div className="board-page">
       <div className="board-header">
-        <h1>게시판</h1>
-        <button className="write-btn" onClick={() => navigate("/board/write")}>
-          글쓰기
-        </button>
+        <div className="board-title">
+          <h1>게시판</h1>
+        </div>
+        <div className="board-actions">
+          <button className="write-btn" onClick={() => navigate("/board/write")}>
+            글쓰기
+          </button>
+        </div>
       </div>
 
       <div className="board-list">

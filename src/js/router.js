@@ -18,6 +18,8 @@ import BoardPage from "../ViewFame/BoardPage";
 import FaqPage from "../ViewFame/FaqPage";
 import NoticePage from "../ViewFame/NoticePage";
 import ReviewPage from "../ViewFame/ReviewPage";
+import PostDetailPage from "../ViewFame/PostDetailPage";
+import WritePage from "../ViewFame/WritePage";
 
 const Router = () => {
   return (
@@ -36,6 +38,8 @@ const Router = () => {
         <Route path="/faq" element={<FaqPage />} />
         <Route path="/notice" element={<NoticePage />} />
         <Route path="/review" element={<ReviewPage />} />
+        <Route path="/board/write" element={<WritePage />} />
+        <Route path="/board/:id" element={<PostDetailPage />} />
       </Routes>
     </BrowserRouter>
   );

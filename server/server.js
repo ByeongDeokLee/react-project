@@ -3,6 +3,9 @@ const nodemailer = require('nodemailer');
 const cors = require('cors');
 require("dotenv").config();
 const app = express();
+//const queries = require('./src/db/queries'); // queries.js 파일 전체를 가져옴
+
+const { Client } = require('pg');
 
 app.use(cors());
 app.use(express.json());
@@ -21,6 +24,8 @@ const transporter = nodemailer.createTransport({
 // 문의하기 API 엔드포인트
 app.post('/api/send-inquiry', async (req, res) => {
   console.log('문의하기 API 요청 받음:', req.body);
+  console.log('네이버 PWD :', process.env.NAVER_PASSWORD);
+  console.log('네이버 ID :', process.env.NAVER_EMAIL);
 
   try {
     const { title, category, content } = req.body;
@@ -78,6 +83,22 @@ app.post('/api/send-inquiry', async (req, res) => {
       message: '이메일 전송에 실패했습니다.',
       error: error.message
     });
+  }
+});
+
+app.post('/api/write-post', async (req, res) => {
+  const client = new Client(config);
+
+  try {
+    await client.connect();
+    console.log('PostgreSQL 연결 성공');
+
+    const res = await client.query('SELECT NOW()');
+    console.log('현재 시간:', res.rows[0].now);
+
+    await client.end();
+  } catch (err) {
+    console.error('PostgreSQL 연결 또는 쿼리 실패:', err);
   }
 });
 
