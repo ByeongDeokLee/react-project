@@ -6,6 +6,17 @@ const app = express();
 //const queries = require('./src/db/queries'); // queries.js 파일 전체를 가져옴
 
 const { Client } = require('pg');
+const {
+    getPosts,
+    getPostById,
+    createPost,
+    updatePost,
+    deletePost,
+    getCommentsByPostId,
+    createComment,
+    createReply,
+    togglePostLike
+} = require('../db/queries');
 
 app.use(cors());
 app.use(express.json());
@@ -86,21 +97,112 @@ app.post('/api/send-inquiry', async (req, res) => {
   }
 });
 
-app.post('/api/write-post', async (req, res) => {
-  const client = new Client(config);
 
+// 게시글 목록 조회
+app.get('/api/posts', async (req, res) => {
   try {
-    await client.connect();
-    console.log('PostgreSQL 연결 성공');
-
-    const res = await client.query('SELECT NOW()');
-    console.log('현재 시간:', res.rows[0].now);
-
-    await client.end();
-  } catch (err) {
-    console.error('PostgreSQL 연결 또는 쿼리 실패:', err);
-  }
+      console.log('게시글 목록 조회 요청 들어옴');
+      const posts = await getPosts();
+    res.json(posts);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
+
+// 게시글 상세 조회
+app.get('/api/posts/:id', async (req, res) => {
+    try {
+        const post = await getPostById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ error: '게시글을 찾을 수 없습니다.' });
+        }
+        res.json(post);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 게시글 작성
+app.post('/api/posts-write', async (req, res) => {
+  try {
+    console.log('게시글 작성 요청 들어옴');
+        const { title, content, author } = req.body;
+        const post = await createPost(title, content, author);
+    res.status(201).json(post);
+    console.log('게시글 작성 요청 받음');
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 게시글 수정
+app.put('/api/posts/:id', async (req, res) => {
+    try {
+        const { title, content } = req.body;
+        const post = await updatePost(req.params.id, title, content);
+        if (!post) {
+            return res.status(404).json({ error: '게시글을 찾을 수 없습니다.' });
+        }
+        res.json(post);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 게시글 삭제
+app.delete('/api/posts/:id', async (req, res) => {
+    try {
+        await deletePost(req.params.id);
+        res.json({ message: '게시글이 삭제되었습니다.' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 댓글 목록 조회
+app.get('/api/posts/:id/comments', async (req, res) => {
+    try {
+        const comments = await getCommentsByPostId(req.params.id);
+        res.json(comments);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 댓글 작성
+app.post('/api/posts/:id/comments', async (req, res) => {
+    try {
+        const { content, author } = req.body;
+        const comment = await createComment(req.params.id, content, author);
+        res.status(201).json(comment);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 답글 작성
+app.post('/api/comments/:id/replies', async (req, res) => {
+    try {
+        const { content, author } = req.body;
+        const reply = await createReply(req.params.id, content, author);
+        res.status(201).json(reply);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 게시글 좋아요 토글
+app.post('/api/posts/:id/like', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const result = await togglePostLike(req.params.id, userId);
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

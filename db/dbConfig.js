@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
   user: 'postgres',
-  host: 'http://localhost:3001',
+  host: 'localhost',
   database: 'member',	// 기본은 postgres
   password: '6710',
   port: 5432, // PostgreSQL 기본 포트

@@ -20,8 +20,11 @@ const WritePage = () => {
       try {
         await request({
             method: 'POST',
-            url: 'http://localhost:3001/api/write-post',
-            data: post
+            url: 'http://localhost:3001/api/posts-write',
+            data: {
+                ...post,
+                author: "익명" // 또는 로그인된 사용자 이름으로 대체
+            }
           });
 
           alert('문의가 접수되었습니다.');
