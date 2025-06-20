@@ -102,7 +102,10 @@ app.post('/api/send-inquiry', async (req, res) => {
 app.get('/api/posts', async (req, res) => {
   try {
       console.log('게시글 목록 조회 요청 들어옴');
-      const posts = await getPosts();
+    const posts = await getPosts();
+    posts.map((post) => {
+      post.date = new Date(post.updated_at).toISOString().split("T")[0];
+    });
     res.json(posts);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -115,7 +118,10 @@ app.get('/api/posts/:id', async (req, res) => {
         const post = await getPostById(req.params.id);
         if (!post) {
             return res.status(404).json({ error: '게시글을 찾을 수 없습니다.' });
-        }
+      }
+      post.map((post) => {
+        post.date = new Date(post.updated_at).toISOString().split("T")[0];
+      });
         res.json(post);
     } catch (error) {
         res.status(500).json({ error: error.message });

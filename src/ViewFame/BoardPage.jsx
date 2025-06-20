@@ -1,27 +1,31 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../CssFolder/BoardPage.css";
+import useApi from "../js/useApi";
+
 
 const BoardPage = () => {
   const navigate = useNavigate();
-  const [posts] = useState([
-    {
-      id: 1,
-      title: "홈페이지 제작 후기",
-      author: "홍길동",
-      date: "2024.03.15",
-      views: 150,
-      likes: 25,
-    },
-    {
-      id: 2,
-      title: "쇼핑몰 제작 팁",
-      author: "김철수",
-      date: "2024.03.14",
-      views: 120,
-      likes: 18,
-    },
-  ]);
+  const { request } = useApi(); // useApi 훅에서 request 받아오기
+  const location = useLocation();
+  const posts = location.state?.posts || [];
+
+  console.log(posts);
+
+  const boardDetailSubmit = async (e, id) => {
+    e.preventDefault();
+
+    try {
+      const response = await request({
+        method: 'GET',
+        url: `http://localhost:3001/api/posts/${id}`,
+      });
+      navigate(`/board/${id}`, { state: { post: response } });
+    } catch (error) {
+      console.error('Error getting post:', error);
+      throw error;
+    }
+  }
 
   return (
     <div className="board-page">
@@ -50,7 +54,8 @@ const BoardPage = () => {
           <div
             key={post.id}
             className="board-item"
-            onClick={() => navigate(`/board/${post.id}`)}
+            onClick={(e) => boardDetailSubmit(e, post.id)
+        }
           >
             <span className="col-number">{post.id}</span>
             <span className="col-title">{post.title}</span>

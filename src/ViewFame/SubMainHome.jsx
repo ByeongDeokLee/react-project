@@ -13,6 +13,8 @@ import produimg from "../assets/img/produimg.png";
 //라이브러리
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import useApi from "../js/useApi";
+
 
 const projectData = [
   {
@@ -155,9 +157,14 @@ const communityData = [
   },
 ];
 
+
+
+
+
 const Sidebar = () => {
   const [activeTab, setActiveTab] = useState('inquiry');
   const navigate = useNavigate();
+  const { request } = useApi(); // useApi 훅에서 request 받아오기
 
   const tabs = [
     { id: 'inquiry', label: '문의사항', icon: '📝' },
@@ -166,6 +173,23 @@ const Sidebar = () => {
     { id: 'notice', label: '공지사항', icon: '📢' },
     { id: 'review', label: '리뷰', icon: '⭐' }
   ];
+
+  const boardPageSubmit = async (e) =>{
+    e.preventDefault();
+    try {
+      const response = await request({
+        method: 'GET',
+        url: 'http://localhost:3001/api/posts',
+      });
+
+      // console.log(response);
+      navigate('/board', { state: { posts: response } })
+
+    } catch (error) {
+      console.error('Error getting posts:', error);
+      throw error;
+    }
+  }
 
   const renderTabContent = () => {
     switch(activeTab) {
@@ -202,7 +226,7 @@ const Sidebar = () => {
                 <span className="board-date">2024.03.14</span>
               </div>
             </div>
-            <button className="write-btn" onClick={() => navigate('/board')}>
+            <button className="write-btn" onClick={(e) => boardPageSubmit(e)}>
               글쓰기
             </button>
           </div>
@@ -354,6 +378,7 @@ const ProjectCard = ({ project }) => {
     </div>
   );
 };
+
 
 export default function SubMainHome() {
   // const navigate = useNavigate();

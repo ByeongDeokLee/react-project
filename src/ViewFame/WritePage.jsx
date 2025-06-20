@@ -6,8 +6,8 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 
 const WritePage = () => {
-    const navigate = useNavigate();
-      const { loading, request } = useApi();
+  const navigate = useNavigate();
+  const { loading, request } = useApi();
   const [post, setPost] = useState({
     title: "",
     content: "",

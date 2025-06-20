@@ -4,11 +4,7 @@ const pool = require('./dbConfig');
 const getPosts = async () => {
     try {
         const result = await pool.query(`
-            SELECT p.*, COUNT(c.id) as comment_count
-            FROM posts p
-            LEFT JOIN comments c ON p.id = c.post_id
-            GROUP BY p.id
-            ORDER BY p.created_at DESC
+           SELECT * FROM POSTS
         `);
         return result.rows;
     } catch (error) {

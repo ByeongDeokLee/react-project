@@ -1,20 +1,24 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import "../CssFolder/PostDetailPage.css";
 
 const PostDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
+  const [post, setPost] = useState(location.state?.post || []);
 
-  const [post, setPost] = useState({
-    id: parseInt(id),
-    title: "홈페이지 제작 후기",
-    author: "홍길동",
-    date: "2024.03.15",
-    content: "홈페이지 제작 과정에서의 경험과 팁을 공유합니다...",
-    views: 150,
-    likes: 25,
-  });
+  console.log(post);
+
+  // const [post, setPost] = useState({
+  //   id: parseInt(id),
+  //   title: "홈페이지 제작 후기",
+  //   author: "홍길동",
+  //   date: "2024.03.15",
+  //   content: "홈페이지 제작 과정에서의 경험과 팁을 공유합니다...",
+  //   views: 150,
+  //   likes: 25,
+  // });
 
   const [comments, setComments] = useState([
     {
@@ -95,7 +99,7 @@ const PostDetailPage = () => {
             onChange={(e) => setNewComment(e.target.value)}
             placeholder={replyTo ? "답글을 입력하세요" : "댓글을 입력하세요"}
           />
-          <button type="submit">
+          <button type="submit" >
             {replyTo ? "답글 작성" : "댓글 작성"}
           </button>
           {replyTo && (
