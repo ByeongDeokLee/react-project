@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../CssFolder/InquiryPage.css";
+import styles from "../CssFolder/InquiryPage.module.css";
 
 const InquiryPage = () => {
   const navigate = useNavigate();
@@ -22,28 +22,30 @@ const InquiryPage = () => {
   ]);
 
   return (
-    <div className="inquiry-page">
-      <div className="inquiry-header">
+    <div className={styles.inquiryPage}>
+      <div className={styles.inquiryHeader}>
         <h1>문의사항</h1>
         <button
-          className="write-btn"
+          className={styles.writeBtn}
           onClick={() => navigate("/inquiry/write")}
         >
           문의하기
         </button>
       </div>
 
-      <div className="inquiry-list">
+      <div className={styles.inquiryList}>
         {inquiries.map((inquiry) => (
-          <div key={inquiry.id} className="inquiry-item">
-            <div className="inquiry-info">
+          <div key={inquiry.id} className={styles.inquiryItem}>
+            <div className={styles.inquiryInfo}>
               <h3>{inquiry.title}</h3>
               <p>{inquiry.content}</p>
-              <div className="inquiry-meta">
-                <span className="date">{inquiry.date}</span>
+              <div className={styles.inquiryMeta}>
+                <span className={styles.date}>{inquiry.date}</span>
                 <span
-                  className={`status ${
-                    inquiry.status === "답변완료" ? "completed" : "pending"
+                  className={`${styles.status} ${
+                    inquiry.status === "답변완료"
+                      ? styles.completed
+                      : styles.pending
                   }`}
                 >
                   {inquiry.status}

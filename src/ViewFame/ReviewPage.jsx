@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../CssFolder/ReviewPage.css";
+import styles from "../CssFolder/ReviewPage.module.css";
 
 const ReviewPage = () => {
   const navigate = useNavigate();
@@ -28,31 +28,31 @@ const ReviewPage = () => {
   ]);
 
   return (
-    <div className="review-page">
-      <div className="review-header">
+    <div className={styles.reviewPage}>
+      <div className={styles.reviewHeader}>
         <h1>고객 리뷰</h1>
         <button className="write-btn" onClick={() => navigate("/review/write")}>
           리뷰 작성하기
         </button>
       </div>
 
-      <div className="review-list">
+      <div className={styles.reviewList}>
         {reviews.map((review) => (
-          <div key={review.id} className="review-item">
-            <div className="review-header-info">
-              <div className="review-title-section">
+          <div key={review.id} className={styles.reviewItem}>
+            <div className={styles.reviewHeaderInfo}>
+              <div className={styles.reviewTitleSection}>
                 <h3>{review.title}</h3>
-                <span className="service-badge">{review.service}</span>
+                <span className={styles.serviceBadge}>{review.service}</span>
               </div>
-              <div className="review-rating">
+              <div className={styles.reviewRating}>
                 {"★".repeat(review.rating)}
                 {"☆".repeat(5 - review.rating)}
               </div>
             </div>
 
-            <p className="review-content">{review.content}</p>
+            <p className={styles.reviewContent}>{review.content}</p>
 
-            <div className="review-footer">
+            <div className={styles.reviewFooter}>
               <span className="review-author">{review.author}</span>
               <span className="review-date">{review.date}</span>
             </div>

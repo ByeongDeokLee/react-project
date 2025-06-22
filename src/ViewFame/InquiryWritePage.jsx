@@ -27,16 +27,16 @@ const InquiryWritePage = () => {
 
     try {
       await request({
-        method: 'POST',
-        url: 'http://localhost:3001/api/send-inquiry',
-        data: formData
+        method: "POST",
+        url: "http://localhost:4000/api/send-inquiry",
+        data: formData,
       });
 
-      alert('문의가 접수되었습니다.');
-      navigate('/');
+      alert("문의가 접수되었습니다.");
+      navigate("/");
     } catch (error) {
-      console.error('문의 접수 실패:', error);
-      alert('문의 접수 중 오류가 발생했습니다.');
+      console.error("문의 접수 실패:", error);
+      alert("문의 접수 중 오류가 발생했습니다.");
     }
   };
 
@@ -46,7 +46,9 @@ const InquiryWritePage = () => {
       <div className="inquiry-write-container">
         <div className="inquiry-write-header">
           <h1>문의사항 작성</h1>
-          <p>문의하실 내용을 자세히 작성해 주시면 빠른 답변 드리도록 하겠습니다.</p>
+          <p>
+            문의하실 내용을 자세히 작성해 주시면 빠른 답변 드리도록 하겠습니다.
+          </p>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -102,17 +104,13 @@ const InquiryWritePage = () => {
             <button
               type="button"
               className="cancel-btn"
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
               disabled={loading}
             >
               취소
             </button>
-            <button
-              type="submit"
-              className="submit-btn"
-              disabled={loading}
-            >
-              {loading ? '제출 중...' : '제출하기'}
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? "제출 중..." : "제출하기"}
             </button>
           </div>
         </form>

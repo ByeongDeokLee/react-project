@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../CssFolder/NoticePage.css";
+import styles from "../CssFolder/NoticePage.module.css";
 
 const NoticePage = () => {
   const navigate = useNavigate();
@@ -22,25 +22,27 @@ const NoticePage = () => {
   ]);
 
   return (
-    <div className="notice-page">
+    <div className={styles.noticePage}>
       <div className="notice-header">
         <h1>공지사항</h1>
       </div>
 
-      <div className="notice-list">
+      <div className={styles.noticeList}>
         {notices.map((notice) => (
           <div
             key={notice.id}
-            className={`notice-item ${notice.isImportant ? "important" : ""}`}
+            className={`${styles.noticeItem} ${
+              notice.isImportant ? styles.important : ""
+            }`}
             onClick={() => navigate(`/notice/${notice.id}`)}
           >
-            <div className="notice-info">
+            <div className={styles.noticeInfo}>
               {notice.isImportant && (
-                <span className="important-badge">중요</span>
+                <span className={styles.importantBadge}>중요</span>
               )}
               <h3>{notice.title}</h3>
               <p>{notice.content}</p>
-              <span className="notice-date">{notice.date}</span>
+              <span className={styles.noticeDate}>{notice.date}</span>
             </div>
           </div>
         ))}

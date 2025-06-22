@@ -1,8 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "../CssFolder/BoardPage.css";
+import styles from "../CssFolder/BoardPage.module.css";
 import useApi from "../js/useApi";
-
 
 const BoardPage = () => {
   const navigate = useNavigate();
@@ -17,62 +16,64 @@ const BoardPage = () => {
 
     try {
       const response = await request({
-        method: 'GET',
-        url: `http://localhost:3001/api/posts/${id}`,
+        method: "GET",
+        url: `http://localhost:4000/api/posts/${id}`,
       });
       navigate(`/board/${id}`, { state: { post: response } });
     } catch (error) {
-      console.error('Error getting post:', error);
+      console.error("Error getting post:", error);
       throw error;
     }
-  }
+  };
 
   return (
-    <div className="board-page">
-      <div className="board-header">
-        <div className="board-title">
+    <div className={styles.boardPage}>
+      <div className={styles.boardHeader}>
+        <div className={styles.boardTitle}>
           <h1>게시판</h1>
         </div>
-        <div className="board-actions">
-          <button className="write-btn" onClick={() => navigate("/board/write")}>
+        <div className={styles.boardActions}>
+          <button
+            className={styles.writeBtn}
+            onClick={() => navigate("/board/write")}
+          >
             글쓰기
           </button>
         </div>
       </div>
 
-      <div className="board-list">
-        <div className="board-header-row">
-          <span className="col-number">번호</span>
-          <span className="col-title">제목</span>
-          <span className="col-author">작성자</span>
-          <span className="col-date">작성일</span>
-          <span className="col-views">조회</span>
-          <span className="col-likes">좋아요</span>
+      <div className={styles.boardList}>
+        <div className={styles.boardHeaderRow}>
+          <span className={styles.colNumber}>번호</span>
+          <span className={styles.colTitle}>제목</span>
+          <span className={styles.colAuthor}>작성자</span>
+          <span className={styles.colDate}>작성일</span>
+          <span className={styles.colViews}>조회</span>
+          <span className={styles.colLikes}>좋아요</span>
         </div>
 
         {posts.map((post) => (
           <div
             key={post.id}
-            className="board-item"
-            onClick={(e) => boardDetailSubmit(e, post.id)
-        }
+            className={styles.boardItem}
+            onClick={(e) => boardDetailSubmit(e, post.id)}
           >
-            <span className="col-number">{post.id}</span>
-            <span className="col-title">{post.title}</span>
-            <span className="col-author">{post.author}</span>
-            <span className="col-date">{post.date}</span>
-            <span className="col-views">{post.views}</span>
-            <span className="col-likes">{post.likes}</span>
+            <span className={styles.colNumber}>{post.id}</span>
+            <span className={styles.colTitle}>{post.title}</span>
+            <span className={styles.colAuthor}>{post.author}</span>
+            <span className={styles.colDate}>{post.date}</span>
+            <span className={styles.colViews}>{post.views}</span>
+            <span className={styles.colLikes}>{post.likes}</span>
           </div>
         ))}
       </div>
 
-      <div className="pagination">
-        <button className="page-btn">이전</button>
-        <button className="page-btn active">1</button>
-        <button className="page-btn">2</button>
-        <button className="page-btn">3</button>
-        <button className="page-btn">다음</button>
+      <div className={styles.pagination}>
+        <button className={styles.pageBtn}>이전</button>
+        <button className={`${styles.pageBtn} ${styles.active}`}>1</button>
+        <button className={styles.pageBtn}>2</button>
+        <button className={styles.pageBtn}>3</button>
+        <button className={styles.pageBtn}>다음</button>
       </div>
     </div>
   );

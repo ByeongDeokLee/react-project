@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../CssFolder/FaqPage.css";
+import styles from "../CssFolder/FaqPage.module.css";
 
 const FaqPage = () => {
   const [faqs] = useState([
@@ -30,26 +30,28 @@ const FaqPage = () => {
   };
 
   return (
-    <div className="faq-page">
-      <div className="faq-header">
+    <div className={styles.faqPage}>
+      <div className={styles.faqHeader}>
         <h1>자주 묻는 질문</h1>
         <p>고객님들께서 자주 문의하시는 질문과 답변을 모았습니다.</p>
       </div>
 
-      <div className="faq-list">
+      <div className={styles.faqList}>
         {faqs.map((faq) => (
-          <div key={faq.id} className="faq-item">
+          <div key={faq.id} className={styles.faqItem}>
             <div
-              className={`faq-question ${openFaq === faq.id ? "open" : ""}`}
+              className={`${styles.faqQuestion} ${
+                openFaq === faq.id ? styles.open : ""
+              }`}
               onClick={() => toggleFaq(faq.id)}
             >
-              <span className="question-text">{faq.question}</span>
-              <span className="toggle-icon">
+              <span className={styles.questionText}>{faq.question}</span>
+              <span className={styles.toggleIcon}>
                 {openFaq === faq.id ? "−" : "+"}
               </span>
             </div>
             {openFaq === faq.id && (
-              <div className="faq-answer">
+              <div className={styles.faqAnswer}>
                 <p>{faq.answer}</p>
               </div>
             )}
@@ -57,7 +59,7 @@ const FaqPage = () => {
         ))}
       </div>
 
-      <div className="faq-contact">
+      <div className={styles.faqContact}>
         <p>원하시는 답변을 찾지 못하셨나요?</p>
         <button onClick={() => (window.location.href = "/inquiry")}>
           문의하기

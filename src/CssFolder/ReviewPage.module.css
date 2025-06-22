@@ -1,41 +1,41 @@
 @import "./common.css";
 
-.review-page {
+.reviewPage {
   padding: 2rem;
 }
 
-.review-list {
+.reviewList {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.review-item {
+.reviewItem {
   background: white;
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.review-header-info {
+.reviewHeaderInfo {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
 }
 
-.review-title-section {
+.reviewTitleSection {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-.review-title-section h3 {
+.reviewTitleSection h3 {
   margin: 0;
   color: #333;
 }
 
-.service-badge {
+.serviceBadge {
   padding: 0.25rem 0.75rem;
   background-color: #e3f2fd;
   color: #1976d2;
@@ -43,18 +43,18 @@
   font-size: 0.8rem;
 }
 
-.review-rating {
+.reviewRating {
   color: #ffc107;
   font-size: 1.2rem;
 }
 
-.review-content {
+.reviewContent {
   color: #666;
   line-height: 1.6;
   margin: 1rem 0;
 }
 
-.review-footer {
+.reviewFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -63,12 +63,12 @@
 }
 
 @media (max-width: 768px) {
-  .review-header-info {
+  .reviewHeaderInfo {
     flex-direction: column;
     gap: 1rem;
   }
 
-  .review-title-section {
+  .reviewTitleSection {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;

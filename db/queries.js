@@ -1,159 +1,200 @@
-const pool = require('./dbConfig');
+const supabase = require("./supabaseConfig");
 
 // 게시글 관련 쿼리
 const getPosts = async () => {
-    try {
-        const result = await pool.query(`
-           SELECT * FROM POSTS
-        `);
-        return result.rows;
-    } catch (error) {
-        console.error('Error getting posts:', error);
-        throw error;
-    }
+  try {
+    const { data, error } = await supabase.from("posts").select("*");
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error getting posts:", error);
+    throw error;
+  }
 };
 
 const getPostById = async (id) => {
-    try {
-        const result = await pool.query('SELECT * FROM posts WHERE id = $1', [id]);
-        return result.rows[0];
-    } catch (error) {
-        console.error('Error getting post:', error);
-        throw error;
+  try {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      console.error("🔥 Supabase 오류:", error.message);
+    } else {
+      console.log("✅ 조회된 데이터:", data);
     }
+
+    return data;
+  } catch (error) {
+    console.error("Error getting post:", error);
+    throw error;
+  }
 };
 
+async function updatePostViews(postId) {
+  try {
+    // Step 1: 현재 views 값 가져오기
+    const { data: post, error: fetchError } = await supabase
+      .from("posts")
+      .select("views")
+      .eq("id", postId)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    const currentViews = post.views;
+
+    // Step 2: views 값 1 증가시켜 업데이트
+    const { data, error: updateError } = await supabase
+      .from("posts")
+      .update({ views: currentViews + 1 })
+      .eq("id", postId);
+
+    if (updateError) throw updateError;
+
+    return data;
+  } catch (err) {
+    console.error("Error updating post views:", err);
+    throw err;
+  }
+}
+
 const createPost = async (title, content, author) => {
-    try {
-        const result = await pool.query(
-            `INSERT INTO posts (title, content, author, views, likes, created_at, updated_at)
-             VALUES ($1, $2, $3, 0, 0, NOW(), NOW()) RETURNING *`,
-            [title, content, author]
-        );
-        return result.rows[0];
-    } catch (error) {
-        console.error('Error creating post:', error);
-        throw error;
-    }
+  try {
+    const { data, error } = await supabase
+      .from("posts")
+      .insert([{ title, content, author, views: 0, likes: 0 }])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error creating post:", error);
+    throw error;
+  }
 };
 
 const updatePost = async (id, title, content) => {
-    try {
-        const result = await pool.query(
-            'UPDATE posts SET title = $1, content = $2, updated_at = NOW() WHERE id = $3 RETURNING *',
-            [title, content, id]
-        );
-        return result.rows[0];
-    } catch (error) {
-        console.error('Error updating post:', error);
-        throw error;
-    }
+  try {
+    const { data, error } = await supabase
+      .from("posts")
+      .update({ title, content, updated_at: new Date() })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error updating post:", error);
+    throw error;
+  }
 };
 
 const deletePost = async (id) => {
-    try {
-        await pool.query('DELETE FROM posts WHERE id = $1', [id]);
-        return true;
-    } catch (error) {
-        console.error('Error deleting post:', error);
-        throw error;
-    }
+  try {
+    const { error } = await supabase.from("posts").delete().eq("id", id);
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    throw error;
+  }
 };
-
-
 
 // 댓글 관련 쿼리
 const getCommentsByPostId = async (postId) => {
-    try {
-        const result = await pool.query(`
-            SELECT c.*,
-                   COUNT(r.id) as reply_count,
-                   ARRAY_AGG(
-                       CASE WHEN r.id IS NOT NULL THEN
-                           json_build_object(
-                               'id', r.id,
-                               'content', r.content,
-                               'author', r.author,
-                               'created_at', r.created_at,
-                               'likes', r.likes
-                           )
-                       END
-                   ) FILTER (WHERE r.id IS NOT NULL) as replies
-            FROM comments c
-            LEFT JOIN replies r ON c.id = r.comment_id
-            WHERE c.post_id = $1
-            GROUP BY c.id
-            ORDER BY c.created_at ASC
-        `, [postId]);
-        return result.rows;
-    } catch (error) {
-        console.error('Error getting comments:', error);
-        throw error;
-    }
+  try {
+    // Supabase에서는 복잡한 JOIN과 집계를 RPC(Remote Procedure Call)로 처리하는 것이 효율적입니다.
+    // 여기서는 간단한 버전으로 replies를 따로 조회합니다.
+    const { data, error } = await supabase
+      .from("comments")
+      .select("*, replies(*)")
+      .eq("post_id", postId)
+      .order("created_at", { ascending: true });
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error getting comments:", error);
+    throw error;
+  }
 };
 
 const createComment = async (postId, content, author) => {
-    try {
-        const result = await pool.query(
-            'INSERT INTO comments (post_id, content, author) VALUES ($1, $2, $3) RETURNING *',
-            [postId, content, author]
-        );
-        return result.rows[0];
-    } catch (error) {
-        console.error('Error creating comment:', error);
-        throw error;
-    }
+  try {
+    const { data, error } = await supabase
+      .from("comments")
+      .insert([{ post_id: postId, content, author }])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error creating comment:", error);
+    throw error;
+  }
 };
 
 const createReply = async (commentId, content, author) => {
-    try {
-        const result = await pool.query(
-            'INSERT INTO replies (comment_id, content, author) VALUES ($1, $2, $3) RETURNING *',
-            [commentId, content, author]
-        );
-        return result.rows[0];
-    } catch (error) {
-        console.error('Error creating reply:', error);
-        throw error;
-    }
+  try {
+    const { data, error } = await supabase
+      .from("replies")
+      .insert([{ comment_id: commentId, content, author }])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error creating reply:", error);
+    throw error;
+  }
 };
 
 // 좋아요 관련 쿼리
 const togglePostLike = async (postId, userId) => {
-    try {
-        const existing = await pool.query(
-            'SELECT * FROM post_likes WHERE post_id = $1 AND user_id = $2',
-            [postId, userId]
-        );
+  try {
+    // Supabase에서는 보통 이 로직을 데이터베이스 함수(RPC)로 만듭니다.
+    // 클라이언트 사이드에서 구현하는 간단한 예시입니다.
+    const { data: existing, error: selectError } = await supabase
+      .from("post_likes")
+      .select("*")
+      .eq("post_id", postId)
+      .eq("user_id", userId);
 
-        if (existing.rows.length > 0) {
-            await pool.query(
-                'DELETE FROM post_likes WHERE post_id = $1 AND user_id = $2',
-                [postId, userId]
-            );
-            return { liked: false };
-        } else {
-            await pool.query(
-                'INSERT INTO post_likes (post_id, user_id) VALUES ($1, $2)',
-                [postId, userId]
-            );
-            return { liked: true };
-        }
-    } catch (error) {
-        console.error('Error toggling post like:', error);
-        throw error;
+    if (selectError) throw selectError;
+
+    if (existing.length > 0) {
+      const { error: deleteError } = await supabase
+        .from("post_likes")
+        .delete()
+        .eq("post_id", postId)
+        .eq("user_id", userId);
+      if (deleteError) throw deleteError;
+      return { liked: false };
+    } else {
+      const { error: insertError } = await supabase
+        .from("post_likes")
+        .insert([{ post_id: postId, user_id: userId }]);
+      if (insertError) throw insertError;
+      return { liked: true };
     }
+  } catch (error) {
+    console.error("Error toggling post like:", error);
+    throw error;
+  }
 };
 
 module.exports = {
-    getPosts,
-    getPostById,
-    createPost,
-    updatePost,
-    deletePost,
-    getCommentsByPostId,
-    createComment,
-    createReply,
-    togglePostLike,
-
+  getPosts,
+  getPostById,
+  updatePostViews,
+  createPost,
+  updatePost,
+  deletePost,
+  getCommentsByPostId,
+  createComment,
+  createReply,
+  togglePostLike,
 };

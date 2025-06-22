@@ -1,6 +1,6 @@
 "use client";
 
-import "../CssFolder/SubMainHome.css";
+import styles from "../CssFolder/SubMainHome.module.css";
 
 //이미지
 import dog1 from "../assets/img/dog1.jpg";
@@ -12,9 +12,8 @@ import produimg from "../assets/img/produimg.png";
 
 //라이브러리
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useApi from "../js/useApi";
-
 
 const projectData = [
   {
@@ -157,187 +156,258 @@ const communityData = [
   },
 ];
 
-
-
-
-
 const Sidebar = () => {
-  const [activeTab, setActiveTab] = useState('inquiry');
+  const [activeTab, setActiveTab] = useState("inquiry");
+  const [boardPosts, setBoardPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { request } = useApi(); // useApi 훅에서 request 받아오기
 
   const tabs = [
-    { id: 'inquiry', label: '문의사항', icon: '📝' },
-    { id: 'board', label: '게시판', icon: '📋' },
-    { id: 'faq', label: '자주 묻는 질문', icon: '❓' },
-    { id: 'notice', label: '공지사항', icon: '📢' },
-    { id: 'review', label: '리뷰', icon: '⭐' }
+    { id: "inquiry", label: "문의사항", icon: "📝" },
+    { id: "board", label: "게시판", icon: "📋" },
+    { id: "faq", label: "자주 묻는 질문", icon: "❓" },
+    { id: "notice", label: "공지사항", icon: "📢" },
+    { id: "review", label: "리뷰", icon: "⭐" },
   ];
 
-  const boardPageSubmit = async (e) =>{
+  const fetchBoardPosts = async () => {
+    setIsLoading(true);
+    try {
+      const response = await request({
+        method: "GET",
+        url: "http://localhost:4000/api/posts",
+      });
+      const limitedPosts = response.slice(0, 2);
+      setBoardPosts(limitedPosts);
+    } catch (error) {
+      console.error("Error getting posts:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTabClick = (tabId) => {
+    setActiveTab(tabId);
+    if (tabId === "board") {
+      fetchBoardPosts();
+    }
+  };
+
+  const boardPageSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await request({
-        method: 'GET',
-        url: 'http://localhost:3001/api/posts',
+        method: "GET",
+        url: "http://localhost:4000/api/posts",
       });
-
-      // console.log(response);
-      navigate('/board', { state: { posts: response } })
-
+      navigate("/board", { state: { posts: response } });
     } catch (error) {
-      console.error('Error getting posts:', error);
+      console.error("Error getting posts:", error);
       throw error;
     }
-  }
+  };
 
   const renderTabContent = () => {
-    switch(activeTab) {
-      case 'inquiry':
+    switch (activeTab) {
+      case "inquiry":
         return (
-          <div className="tab-content">
+          <div className={styles.tabContent}>
             <h3>문의사항</h3>
-            <div className="inquiry-list">
-              <div className="inquiry-item">
-                <span className="inquiry-title">홈페이지 제작 문의</span>
-                <span className="inquiry-date">2024.03.15</span>
+            <div className={styles.inquiryList}>
+              <div
+                className={styles.inquiryItem}
+                onClick={() => navigate("/inquiry")}
+              >
+                <span className={styles.inquiryTitle}>홈페이지 제작 문의</span>
+                <span className={styles.inquiryDate}>2024.03.15</span>
               </div>
-              <div className="inquiry-item">
-                <span className="inquiry-title">쇼핑몰 제작 비용 문의</span>
-                <span className="inquiry-date">2024.03.14</span>
+              <div
+                className={styles.inquiryItem}
+                onClick={() => navigate("/inquiry")}
+              >
+                <span className={styles.inquiryTitle}>
+                  쇼핑몰 제작 비용 문의
+                </span>
+                <span className={styles.inquiryDate}>2024.03.14</span>
               </div>
             </div>
-            <button className="write-btn" onClick={() => navigate('/inquiry')}>
+            <button
+              className={styles.writeBtn}
+              onClick={() => navigate("/inquiry/write")}
+            >
               문의하기
             </button>
           </div>
         );
-      case 'board':
+      case "board":
         return (
-          <div className="tab-content">
+          <div className={styles.tabContent}>
             <h3>게시판</h3>
-            <div className="board-list">
-              <div className="board-item">
-                <span className="board-title">홈페이지 제작 후기</span>
-                <span className="board-date">2024.03.15</span>
-              </div>
-              <div className="board-item">
-                <span className="board-title">쇼핑몰 제작 팁</span>
-                <span className="board-date">2024.03.14</span>
-              </div>
+            <div className={styles.subBoardList}>
+              {isLoading ? (
+                <div className={styles.loading}>로딩 중...</div>
+              ) : boardPosts.length > 0 ? (
+                boardPosts.map((post) => (
+                  <div
+                    key={post.id}
+                    className={styles.boardItem}
+                    onClick={(e) => boardPageSubmit(e)}
+                  >
+                    <span className={styles.boardTitle}>{post.title}</span>
+                    <span className={styles.boardDate}>
+                      {new Date(post.created_at).toLocaleDateString("ko-KR")}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className={styles.noPosts}>게시글이 없습니다.</div>
+              )}
             </div>
-            <button className="write-btn" onClick={(e) => boardPageSubmit(e)}>
+            <button
+              className={styles.writeBtn}
+              onClick={(e) => boardPageSubmit(e)}
+            >
               글쓰기
             </button>
           </div>
         );
-      case 'faq':
+      case "faq":
         return (
-          <div className="tab-content">
+          <div className={styles.tabContent}>
             <h3>자주 묻는 질문</h3>
-            <div className="faq-list">
-              <div className="faq-item">
-                <div className="faq-question">
-                  <span className="faq-icon">Q.</span>
-                  <span className="faq-title">홈페이지 제작 기간은 얼마나 걸리나요?</span>
-                </div>
-                <div className="faq-answer">
-                  <span className="faq-icon">A.</span>
-                  <span className="faq-content">기본적인 홈페이지는 2-3주 정도 소요되며, 복잡한 기능이 포함된 경우 4-6주 정도 소요될 수 있습니다.</span>
-                </div>
+            <div className={styles.faqList}>
+              <div className={styles.faqItem} onClick={() => navigate("/faq")}>
+                <span className={styles.faqIcon}>Q.</span>
+                <span className={styles.faqTitle}>
+                  홈페이지 제작 기간은 얼마나 걸리나요?
+                </span>
               </div>
-              <div className="faq-item">
-                <div className="faq-question">
-                  <span className="faq-icon">Q.</span>
-                  <span className="faq-title">제작 비용은 어떻게 산정되나요?</span>
-                </div>
-                <div className="faq-answer">
-                  <span className="faq-icon">A.</span>
-                  <span className="faq-content">요구사항과 기능의 복잡도에 따라 비용이 산정됩니다. 정확한 견적은 상담을 통해 안내해 드립니다.</span>
-                </div>
+              <div className={styles.faqItem} onClick={() => navigate("/faq")}>
+                <span className={styles.faqIcon}>Q.</span>
+                <span className={styles.faqTitle}>
+                  제작 비용은 어떻게 산정되나요?
+                </span>
               </div>
             </div>
-            <button className="write-btn" onClick={() => navigate('/faq')}>
-              문의하기
+            <button
+              className={styles.writeBtn}
+              onClick={() => navigate("/faq")}
+            >
+              더보기
             </button>
           </div>
         );
-      case 'notice':
+      case "notice":
         return (
-          <div className="tab-content">
+          <div className={styles.tabContent}>
             <h3>공지사항</h3>
-            <div className="notice-list">
-              <div className="notice-item">
-                <span className="notice-badge">공지</span>
-                <span className="notice-title">2024년 3월 시스템 점검 안내</span>
-                <span className="notice-date">2024.03.15</span>
+            <div className={styles.noticeList}>
+              <div
+                className={styles.noticeItem}
+                onClick={() => navigate("/notice")}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    overflow: "hidden",
+                  }}
+                >
+                  <span className={styles.noticeBadge}>공지</span>
+                  <span className={styles.noticeTitle}>
+                    2024년 3월 시스템 점검 안내
+                  </span>
+                </div>
+                <span className={styles.noticeDate}>2024.03.15</span>
               </div>
-              <div className="notice-item">
-                <span className="notice-badge">이벤트</span>
-                <span className="notice-title">신규 고객 프로모션 안내</span>
-                <span className="notice-date">2024.03.14</span>
-              </div>
-              <div className="notice-item">
-                <span className="notice-badge">업데이트</span>
-                <span className="notice-title">새로운 기능 업데이트 안내</span>
-                <span className="notice-date">2024.03.13</span>
+              <div
+                className={styles.noticeItem}
+                onClick={() => navigate("/notice")}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    overflow: "hidden",
+                  }}
+                >
+                  <span className={styles.noticeBadge}>이벤트</span>
+                  <span className={styles.noticeTitle}>
+                    신규 고객 프로모션 안내
+                  </span>
+                </div>
+                <span className={styles.noticeDate}>2024.03.14</span>
               </div>
             </div>
+            <button
+              className={styles.writeBtn}
+              onClick={() => navigate("/notice")}
+            >
+              더보기
+            </button>
           </div>
         );
-      case 'review':
+      case "review":
         return (
-          <div className="tab-content">
+          <div className={styles.tabContent}>
             <h3>리뷰</h3>
-            <div className="review-list">
-              <div className="review-item">
-                <div className="review-header">
-                  <span className="review-rating">★★★★★</span>
-                  <span className="review-author">김철수</span>
-                  <span className="review-date">2024.03.15</span>
+            <div className={styles.reviewList}>
+              <div
+                className={styles.reviewItem}
+                onClick={() => navigate("/review")}
+              >
+                <div className={styles.reviewHeader}>
+                  <span className={styles.reviewRating}>★★★★★</span>
+                  <span className={styles.reviewAuthor}>김철수</span>
                 </div>
-                <div className="review-content">
-                  <p>홈페이지 제작이 생각보다 훨씬 빨리 완료되어 만족스럽습니다. 디자인도 마음에 들고 기능도 잘 작동합니다.</p>
+                <div className={styles.reviewContent}>
+                  홈페이지 제작이 생각보다 훨씬 빨리 완료되어 만족스럽습니다.
                 </div>
               </div>
-              <div className="review-item">
-                <div className="review-header">
-                  <span className="review-rating">★★★★☆</span>
-                  <span className="review-author">이영희</span>
-                  <span className="review-date">2024.03.14</span>
+              <div
+                className={styles.reviewItem}
+                onClick={() => navigate("/review")}
+              >
+                <div className={styles.reviewHeader}>
+                  <span className={styles.reviewRating}>★★★★☆</span>
+                  <span className={styles.reviewAuthor}>이영희</span>
                 </div>
-                <div className="review-content">
-                  <p>쇼핑몰 제작이 잘 완료되었습니다. 다만 일부 기능에서 개선이 필요해 보입니다.</p>
+                <div className={styles.reviewContent}>
+                  쇼핑몰 제작이 잘 완료되었습니다.
                 </div>
               </div>
             </div>
-            <button className="write-btn" onClick={() => navigate('/review')}>
+            <button
+              className={styles.writeBtn}
+              onClick={() => navigate("/review/write")}
+            >
               리뷰 작성하기
             </button>
           </div>
         );
       default:
-        return <div className="tab-content">준비 중입니다.</div>;
+        return <div className={styles.tabContent}>준비 중입니다.</div>;
     }
   };
 
   return (
-    <div className="sidebar">
-      <div className="sidebar-tabs">
-        {tabs.map(tab => (
+    <div className={styles.sidebar}>
+      <div className={styles.sidebarTabs}>
+        {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
+            className={`${styles.tabBtn} ${
+              activeTab === tab.id ? styles.active : ""
+            }`}
+            onClick={() => handleTabClick(tab.id)}
           >
-            <span className="tab-icon">{tab.icon}</span>
-            <span className="tab-label">{tab.label}</span>
+            <span className={styles.tabIcon}>{tab.icon}</span>
+            <span className={styles.tabLabel}>{tab.label}</span>
           </button>
         ))}
       </div>
-      <div className="sidebar-content">
-        {renderTabContent()}
-      </div>
+      <div className={styles.sidebarContent}>{renderTabContent()}</div>
     </div>
   );
 };
@@ -346,32 +416,40 @@ const ProjectCard = ({ project }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="project-card" onClick={() => navigate(`/service-selection`)}>
-          {/* <div className="project-card" onClick={() => navigate(`/project/${project.title}`)}> */}
-      <div className="project-image-container">
-        <img src={project.src} alt={project.title} className="project-image" />
-        <div className="project-overlay">
-          <div className="project-category">{project.category}</div>
-          <div className="project-duration">{project.duration}</div>
+    <div
+      className={styles.projectCard}
+      onClick={() => navigate(`/service-selection`)}
+    >
+      <div className={styles.projectImageContainer}>
+        <img
+          src={project.src}
+          alt={project.title}
+          className={styles.projectImage}
+        />
+        <div className={styles.projectOverlay}>
+          <div className={styles.projectCategory}>{project.category}</div>
+          <div className={styles.projectDuration}>{project.duration}</div>
         </div>
       </div>
-      <div className="project-info">
-        <h3 className="project-title">{project.title}</h3>
-        <div className="project-rating">
-          <img src={favorite} alt="좋아요" className="rating-icon" />
-          <span className="rating-score">{project.great.toFixed(1)}</span>
-          <span className="comment-count">({project.comment})</span>
+      <div className={styles.projectInfo}>
+        <h3 className={styles.projectTitle}>{project.title}</h3>
+        <div className={styles.projectRating}>
+          <img src={favorite} alt="좋아요" className={styles.ratingIcon} />
+          <span className={styles.ratingScore}>{project.great.toFixed(1)}</span>
+          <span className={styles.commentCount}>({project.comment})</span>
         </div>
-        <div className="project-price">
+        <div className={styles.projectPrice}>
           {project.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원 ~
         </div>
-        <div className="project-producer">
-          <img src={produimg} alt="producer" className="producer-icon" />
-          <span className="producer-name">{project.producer}</span>
+        <div className={styles.projectProducer}>
+          <img src={produimg} alt="producer" className={styles.producerIcon} />
+          <span className={styles.producerName}>{project.producer}</span>
         </div>
-        <div className="project-tags">
+        <div className={styles.projectTags}>
           {project.tags.map((tag, index) => (
-            <span key={index} className="tag">#{tag}</span>
+            <span key={index} className={styles.tag}>
+              #{tag}
+            </span>
           ))}
         </div>
       </div>
@@ -379,13 +457,10 @@ const ProjectCard = ({ project }) => {
   );
 };
 
-
 export default function SubMainHome() {
-  // const navigate = useNavigate();
-
   return (
-    <div className="sub-main-home">
-      <div className="main-content">
+    <div className={styles.subMainHome}>
+      <div className={styles.mainContent}>
         <ProjectSection
           title="홈페이지 제작"
           description="전문적이고 세련된 홈페이지로 브랜드 가치를 높이세요"
@@ -416,22 +491,25 @@ const ProjectSection = ({ title, description, data, bgColor = "white" }) => {
   const navigate = useNavigate();
 
   return (
-    <section className="project-section" style={{ backgroundColor: bgColor }}>
-      <div className="section-container">
-        <div className="section-header">
+    <section
+      className={styles.projectSection}
+      style={{ backgroundColor: bgColor }}
+    >
+      <div className={styles.sectionContainer}>
+        <div className={styles.sectionHeader}>
           <h2>{title}</h2>
           <p>{description}</p>
         </div>
 
-        <div className="projects-grid">
+        <div className={styles.projectsGrid}>
           {data.map((project, index) => (
             <ProjectCard key={index} project={project} />
           ))}
         </div>
 
-        <div className="section-footer">
+        <div className={styles.sectionFooter}>
           <button
-            className="view-more-btn"
+            className={styles.viewMoreBtn}
             onClick={() => navigate("/service-selection")}
           >
             더 많은 {title.split(" ")[0]} 보기
@@ -441,4 +519,3 @@ const ProjectSection = ({ title, description, data, bgColor = "white" }) => {
     </section>
   );
 };
-
