@@ -15,11 +15,17 @@ const BoardPage = () => {
     e.preventDefault();
 
     try {
-      const response = await request({
-        method: "GET",
-        url: `http://localhost:4000/api/posts/${id}`,
-      });
-      navigate(`/board/${id}`, { state: { post: response } });
+      const [postResponse, commentsResponse] = await Promise.all([
+        request({
+          method: "GET",
+          url: `http://localhost:4000/api/posts/${id}`,
+        }),
+        request({
+          method: "GET",
+          url: `http://localhost:4000/api/posts/${id}/comments`,
+        }),
+      ]);
+      navigate(`/board/${id}`, { state: { post: postResponse, comments: commentsResponse } });
     } catch (error) {
       console.error("Error getting post:", error);
       throw error;

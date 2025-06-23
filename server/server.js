@@ -4,6 +4,9 @@ const cors = require("cors");
 require("dotenv").config();
 const app = express();
 //const queries = require('./src/db/queries'); // queries.js 파일 전체를 가져옴
+app.use(express.json()); // JSON 요청 파싱
+app.use(express.urlencoded({ extended: true })); // 폼 데이터 파싱
+
 
 const { Client } = require("pg");
 const {
@@ -184,11 +187,30 @@ app.get("/api/posts/:id/comments", async (req, res) => {
 });
 
 // 댓글 작성
-app.post("/api/posts/:id/comments", async (req, res) => {
+app.post("/api/posts/:id/comments-write", async (req, res) => {
   try {
+    console.log("댓글 작성 요청 받음", req.body);
     const { content, author } = req.body;
-    const comment = await createComment(req.params.id, content, author);
-    res.status(201).json(comment);
+    try {
+      await createComment(req.params.id, content, author);
+    } catch (error) {
+      // 만약 unique constraint 에러(중복 PK)라면, 클라이언트에 명확히 안내
+      if (
+        error.message &&
+        error.message.includes("duplicate key value violates unique constraint")
+      ) {
+        return res.status(400).json({
+          error: "이미 존재하는 댓글 ID로 인해 댓글을 저장할 수 없습니다. 다시 시도해주세요.",
+          detail: error.message,
+        });
+      }
+      // 그 외 에러는 throw해서 상위에서 처리
+      throw error;
+    }
+
+    // 댓글 작성 후, 최신 댓글 목록을 다시 조회해서 내려줌
+    const comments = await getCommentsByPostId(req.params.id);
+    res.status(201).json(comments);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

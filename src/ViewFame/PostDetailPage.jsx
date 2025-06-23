@@ -1,43 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import "../CssFolder/PostDetailPage.css";
+import useApi from "../js/useApi";
 
 const PostDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { request } = useApi(); // useApi 훅에서 request 받아오기
   const location = useLocation();
   const [post, setPost] = useState(location.state?.post || []);
 
-  console.log(post);
-
-  // const [post, setPost] = useState({
-  //   id: parseInt(id),
-  //   title: "홈페이지 제작 후기",
-  //   author: "홍길동",
-  //   date: "2024.03.15",
-  //   content: "홈페이지 제작 과정에서의 경험과 팁을 공유합니다...",
-  //   views: 150,
-  //   likes: 25,
-  // });
-
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      author: "김철수",
-      content: "좋은 정보 감사합니다!",
-      date: "2024.03.15",
-      likes: 5,
-      replies: [
-        {
-          id: 2,
-          author: "홍길동",
-          content: "도움이 되어 기쁩니다!",
-          date: "2024.03.15",
-          likes: 2,
-        },
-      ],
-    },
-  ]);
+  const [comments, setComments] = useState(location.state?.comments || []);
 
   const [newComment, setNewComment] = useState("");
   const [replyTo, setReplyTo] = useState(null);
@@ -49,7 +22,7 @@ const PostDetailPage = () => {
     }));
   };
 
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
@@ -62,18 +35,15 @@ const PostDetailPage = () => {
       replies: [],
     };
 
-    if (replyTo) {
-      setComments((prev) =>
-        prev.map((c) =>
-          c.id === replyTo
-            ? { ...c, replies: [...c.replies, comment] }
-            : c
-        )
-      );
-      setReplyTo(null);
-    } else {
-      setComments((prev) => [...prev, comment]);
-    }
+    const response = await request({
+      method: "post",
+      url: `http://localhost:4000/api/posts/${id}/comments-write`,
+      data: comment,
+    });
+
+    // 서버에서 최신 댓글 리스트를 받아왔으므로, setComments(response)만 하면 됨.
+    setComments(response);
+    setReplyTo(null);
     setNewComment("");
   };
 
