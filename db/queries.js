@@ -186,6 +186,25 @@ const togglePostLike = async (postId, userId) => {
   }
 };
 
+const registerUser = async (userData) => {
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .insert([userData])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error creating user:", error);
+    // '23505'는 PostgreSQL의 unique_violation 에러 코드입니다.
+    if (error.code === "23505") {
+      throw new Error("이미 가입된 이메일입니다.");
+    }
+    throw error;
+  }
+};
+
 module.exports = {
   getPosts,
   getPostById,
@@ -197,4 +216,5 @@ module.exports = {
   createComment,
   createReply,
   togglePostLike,
+  registerUser,
 };

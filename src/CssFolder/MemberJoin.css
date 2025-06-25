@@ -1,0 +1,76 @@
+/* src/CssFolder/MemberJoin.css */
+
+.member-join-container {
+    max-width: 400px;
+    margin: 60px auto;
+    padding: 32px 24px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  }
+
+  .member-join-container h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #333;
+  }
+
+  .member-join-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .member-join-form input {
+    display: block;
+    margin: 10px 0;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .member-join-form button {
+    padding: 12px;
+    background: #4f8cff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .member-join-form button:hover {
+    background: #2563eb;
+  }
+
+  .member-join-message {
+    margin-top: 16px;
+    color: #d32f2f;
+    font-weight: bold;
+  }
+
+  .error-message {
+    color: #d32f2f;
+    font-size: 0.875rem;
+    margin-top: -5px;
+    margin-bottom: 5px;
+    text-align: left;
+    padding-left: 4px;
+  }
+
+  .terms-section {
+    margin: 16px 0;
+    padding: 10px;
+    border: 1px solid #eee;
+    background: #fafafa;
+    border-radius: 6px;
+  }
+
+  .terms-content {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+    font-size: 0.95em;
+    color: #555;
+  }

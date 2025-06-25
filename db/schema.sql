@@ -57,6 +57,17 @@ CREATE TABLE reply_likes (
     UNIQUE(reply_id, user_id)
 );
 
+-- 회원 테이블
+CREATE TABLE users (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  password TEXT,
+  email TEXT UNIQUE,
+  name TEXT,
+  birthdate TEXT,
+  phone TEXT,
+  random_user_value TEXT
+);
+
 -- 인덱스 생성
 CREATE INDEX idx_posts_created_at ON posts(created_at);
 CREATE INDEX idx_comments_post_id ON comments(post_id);

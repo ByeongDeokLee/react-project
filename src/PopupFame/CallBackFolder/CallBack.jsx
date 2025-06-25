@@ -4,10 +4,6 @@ import axios from "axios";
 //카카오
 const KAKAO_REST_API_KEY = "c2c0630ecffa6b96e8c78ef64478cf57";
 const KAKAO_REDIRECT_URI = "http://localhost:3000/oauth/callback";
-//네이버
-const NAVER_CLIENT_KEY = "O75rHergSrGWoKHXM8ES";
-const NAVER_REDIRECT_URI = "http://localhost:3000/oauth/callback";
-const NAVER_SECRET_KEY = "n5I_4vQB1N";
 
 export default function KakaoCallback() {
   const didRun = useRef(false);
@@ -78,41 +74,20 @@ export default function KakaoCallback() {
     }
 
     if (state === "naver") {
+      debugger
       axios
         .post(
-          "/oauth2.0/token",
-          new URLSearchParams({
-            grant_type: "authorization_code",
-            client_id: NAVER_CLIENT_KEY,
-            client_secret: NAVER_SECRET_KEY,
-            redirect_uri: NAVER_REDIRECT_URI,
-            code: code,
-            state: state,
-          }),
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          }
+          "http://localhost:4000/api/naver/login",
+          { code, state }
         )
         .then((res) => {
-          const accessToken = res.data.access_token;
-
-          return axios.get("/v1/nid/me", {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-        })
-        .then((res) => {
-          const userData = res.data;
-          console.log("\n\n\n 네이버 \n\n\n", userData);
-
+          console.log("\n\n\n 네이버 \n\n\n", res.data);
+          const userData = res.data.response;
           LoginCallBacksuccess(
             {
-              id: userData.response.id,
-              nickname: userData.response.nickname,
-              email: userData.response.email,
+              id: userData.id,
+              nickname: userData.nickname,
+              email: userData.email,
             },
             "naver"
           );

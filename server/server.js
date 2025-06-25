@@ -7,6 +7,9 @@ const app = express();
 app.use(express.json()); // JSON 요청 파싱
 app.use(express.urlencoded({ extended: true })); // 폼 데이터 파싱
 
+//네이버
+const NAVER_REDIRECT_URI = "http://localhost:3000/oauth/callback";
+
 
 const { Client } = require("pg");
 const {
@@ -20,6 +23,7 @@ const {
   createReply,
   togglePostLike,
   updatePostViews,
+  registerUser,
 } = require("../db/queries");
 
 app.use(cors());
@@ -237,6 +241,63 @@ app.post("/api/posts/:id/like", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+app.post('/api/naver/login', async (req, res) => {
+  const { code, state } = req.body;
+  try {
+    console.log("네이버 로그인 요청 받음", req.body);
+    // 1. 네이버에 토큰 요청
+    const tokenRes = await axios.post(
+      'https://nid.naver.com/oauth2.0/token',
+      null,
+      {
+        params: {
+          grant_type: 'authorization_code',
+          client_id: process.env.pNAVER_CLIENT_KEY,
+          client_secret: process.env.NAVER_SECRET_KEY,
+          redirect_uri: NAVER_REDIRECT_URI,
+          code,
+          state,
+        },
+      }
+    );
+    const accessToken = tokenRes.data.access_token;
+
+    // 2. 네이버에 사용자 정보 요청
+    const userRes = await axios.get('https://openapi.naver.com/v1/nid/me', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    res.json(userRes.data);
+  } catch (err) {
+    res.status(500).json({ error: err.response?.data || err.message });
+  }
+});
+
+// 회원가입 API
+app.post("/api/register", async (req, res) => {
+  try {
+    const { password, email, name, birthdate, phone } = req.body;
+    // 랜덤 유저값 생성
+    const random_user_value =
+      Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+    const newUser = {
+      password, // 비밀번호는 실제 서비스에서는 해싱하여 저장해야 합니다.
+      email,
+      name,
+      birthdate,
+      phone,
+      random_user_value,
+    };
+
+    const user = await registerUser(newUser);
+    res.json({ success: true, userId: user.id });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
