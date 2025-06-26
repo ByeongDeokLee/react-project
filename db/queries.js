@@ -188,13 +188,32 @@ const togglePostLike = async (postId, userId) => {
 
 const registerUser = async (userData) => {
   try {
-    const { data, error } = await supabase
-      .from("users")
-      .insert([userData])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    // const { data, error } = await supabase
+    //   .from("users")
+    //   .insert([userData])
+    //   .select()
+    //   .single();
+    // 1. 먼저 해당 조건으로 검색
+const { data: existingUser, error: selectError } = await supabase
+.from("users")
+.select("*")
+.eq("email", userData.email)
+.single();
+
+if (!existingUser) {
+// 2. 없으면 insert
+const { data: newUser, error: insertError } = await supabase
+  .from("users")
+  .insert([userData])
+  .select()
+  .single();
+
+  return newUser;
+} else {
+  return existingUser;
+}
+    // if (error) throw error;
+    // return data;
   } catch (error) {
     console.error("Error creating user:", error);
     // '23505'는 PostgreSQL의 unique_violation 에러 코드입니다.
