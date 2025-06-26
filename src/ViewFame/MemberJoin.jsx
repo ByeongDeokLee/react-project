@@ -128,7 +128,7 @@ export default function MemberJoin() {
               <br />
               (자세한 약관은{" "}
               <a
-                href="#"
+                href="/home"
                 onClick={(e) => {
                   e.preventDefault();
                   alert("약관 전문은 추후 제공됩니다.");

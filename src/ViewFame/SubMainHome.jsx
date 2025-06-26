@@ -12,7 +12,7 @@ import produimg from "../assets/img/produimg.png";
 
 //라이브러리
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useApi from "../js/useApi";
 
 const projectData = [
