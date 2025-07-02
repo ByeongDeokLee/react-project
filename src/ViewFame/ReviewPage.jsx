@@ -31,7 +31,10 @@ const ReviewPage = () => {
     <div className={styles.reviewPage}>
       <div className={styles.reviewHeader}>
         <h1>고객 리뷰</h1>
-        <button className="write-btn" onClick={() => navigate("/review/write")}>
+        <button
+          className={styles.writeBtn}
+          onClick={() => navigate("/review/write")}
+        >
           리뷰 작성하기
         </button>
       </div>
@@ -53,19 +56,18 @@ const ReviewPage = () => {
             <p className={styles.reviewContent}>{review.content}</p>
 
             <div className={styles.reviewFooter}>
-              <span className="review-author">{review.author}</span>
-              <span className="review-date">{review.date}</span>
+              <span className={styles.reviewAuthor}>{review.author}</span>
+              <span className={styles.reviewDate}>{review.date}</span>
             </div>
           </div>
         ))}
       </div>
-
-      <div className="pagination">
-        <button className="page-btn">이전</button>
-        <button className="page-btn active">1</button>
-        <button className="page-btn">2</button>
-        <button className="page-btn">3</button>
-        <button className="page-btn">다음</button>
+      <div className={styles.pagination}>
+        <button className={styles.pageBtn}>이전</button>
+        <button className={`${styles.pageBtn} ${styles.active}`}>1</button>
+        <button className={styles.pageBtn}>2</button>
+        <button className={styles.pageBtn}>3</button>
+        <button className={styles.pageBtn}>다음</button>
       </div>
     </div>
   );

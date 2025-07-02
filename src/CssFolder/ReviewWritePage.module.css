@@ -1,0 +1,141 @@
+@import "./common.css";
+
+.reviewWritePage {
+  padding: 2.5rem 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 2.5rem 2rem;
+  margin-top: 2rem;
+}
+
+.header {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 2rem;
+  color: #222;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.header p {
+  color: #888;
+  font-size: 1.05rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.7rem;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 1.5px solid #e0e7ef;
+  border-radius: 6px;
+  font-size: 1.05rem;
+  background: #f6f8fa;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  border-color: #4f8cff;
+  box-shadow: 0 0 0 2px #e3f0ff;
+  outline: none;
+  background: #fff;
+}
+
+.formGroup textarea {
+  min-height: 160px;
+  resize: vertical;
+}
+
+.rating {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 2rem;
+  color: #e0e7ef;
+  cursor: pointer;
+}
+
+.star.selected {
+  color: #ffc107;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.cancelBtn,
+.submitBtn {
+  padding: 0.85rem 2.2rem;
+  border-radius: 6px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(79,140,255,0.04);
+}
+
+.cancelBtn {
+  background: #f3f4f6;
+  color: #555;
+  border: 1.5px solid #e0e7ef;
+}
+
+.submitBtn {
+  background: linear-gradient(90deg, #4f8cff 0%, #1976d2 100%);
+  color: #fff;
+  border: none;
+}
+
+.cancelBtn:hover {
+  background: #e0e7ef;
+  color: #222;
+}
+
+.submitBtn:hover {
+  background: linear-gradient(90deg, #1976d2 0%, #4f8cff 100%);
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .reviewWritePage {
+    padding: 1rem 0.2rem;
+  }
+  .container {
+    padding: 1.2rem 0.5rem;
+  }
+  .buttons {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .cancelBtn,
+  .submitBtn {
+    width: 100%;
+  }
+}

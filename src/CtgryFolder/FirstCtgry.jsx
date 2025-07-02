@@ -58,7 +58,6 @@ export default function FirtstCtgry() {
         </div>
         <div className="main_company">
           <p>기업용</p>
-          <h1>CI/CD 테스트입니다.</h1>
         </div>
         <input type="checkbox" id="switch"></input>
         <label for="switch" className="switch_label">

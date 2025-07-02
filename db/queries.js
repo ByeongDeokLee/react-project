@@ -111,7 +111,7 @@ const getCommentsByPostId = async (postId) => {
     const { data, error } = await supabase
       .from("comments")
       .select("*, replies(*)")
-      .eq("post_id", postId)
+      .eq("post_id", Number(postId))
       .order("created_at", { ascending: true });
 
     if (error) throw error;

@@ -48,12 +48,12 @@ const NoticePage = () => {
         ))}
       </div>
 
-      <div className="pagination">
-        <button className="page-btn">이전</button>
-        <button className="page-btn active">1</button>
-        <button className="page-btn">2</button>
-        <button className="page-btn">3</button>
-        <button className="page-btn">다음</button>
+      <div className={styles.pagination}>
+        <button className={styles.pageBtn}>이전</button>
+        <button className={`${styles.pageBtn} ${styles.active}`}>1</button>
+        <button className={styles.pageBtn}>2</button>
+        <button className={styles.pageBtn}>3</button>
+        <button className={styles.pageBtn}>다음</button>
       </div>
     </div>
   );

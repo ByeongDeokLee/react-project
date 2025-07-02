@@ -1,8 +1,13 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 //프레임
 import MainHome from "../ViewFame/MainHome";
 import MemberJoin from "../ViewFame/MemberJoin";
+import FirstCtgry from "../CtgryFolder/FirstCtgry";
+import SecondCtgrt from "../CtgryFolder/SecondCtgrt";
+import CompanyIntro from "../ViewFame/CompanyIntro";
+import SubMainHome from "../ViewFame/SubMainHome";
 
 //팝업
 import LoginPopup from "../PopupFame/PopupFameFolder/LoginPopup";
@@ -20,26 +25,32 @@ import NoticePage from "../ViewFame/NoticePage";
 import ReviewPage from "../ViewFame/ReviewPage";
 import PostDetailPage from "../ViewFame/PostDetailPage";
 import WritePage from "../ViewFame/WritePage";
+import ReviewWritePage from "../ViewFame/ReviewWritePage";
 
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/Home" element={<MainHome />} />
-        <Route path="/MemberJoin" element={<MemberJoin />} />
-        <Route path="/LoginPopup" element={<LoginPopup />} />
-        <Route path="/oauth/callback" element={<Callback />} />
+        <Route path="/" element={<MainHome />} />
+        <Route path="/first" element={<FirstCtgry />} />
+        <Route path="/second" element={<SecondCtgrt />} />
+        <Route path="/company-intro" element={<CompanyIntro />} />
         <Route path="/service-selection" element={<ServiceSelection />} />
         <Route path="/payment" element={<Payment />} />
-        <Route path="/payment-success" element={<PaymentSuccess />} />
-        <Route path="/inquiry" element={<InquiryPage />} />
-        <Route path="/inquiry/write" element={<InquiryWritePage />} />
+        <Route path="/sub" element={<SubMainHome />} />
         <Route path="/board" element={<BoardPage />} />
-        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/board/:postId" element={<PostDetailPage />} />
         <Route path="/notice" element={<NoticePage />} />
         <Route path="/review" element={<ReviewPage />} />
-        <Route path="/board/write" element={<WritePage />} />
-        <Route path="/board/:id" element={<PostDetailPage />} />
+        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/inquiry" element={<InquiryPage />} />
+        <Route path="/inquiry/write" element={<InquiryWritePage />} />
+        <Route path="/write" element={<WritePage />} />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/login" element={<LoginPopup />} />
+        <Route path="/login/callback" element={<Callback />} />
+        <Route path="/join" element={<MemberJoin />} />
+        <Route path="/review/write" element={<ReviewWritePage />} />
       </Routes>
     </BrowserRouter>
   );
