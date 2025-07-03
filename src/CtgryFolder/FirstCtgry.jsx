@@ -5,11 +5,12 @@ import "../CssFolder/FirstCtgry.css";
 import { useState } from "react";
 import { kakaoLogout } from "../js/axios";
 import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function FirtstCtgry() {
   const [LoginInfo, setLoginInfo] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // const [LoginInfo, setLoginInfo] = useState("");
+  const navigate = useNavigate();
 
   const openLoginPopup = (e) => {
     e.preventDefault(); // 기본 링크 막기
@@ -23,7 +24,16 @@ export default function FirtstCtgry() {
         // } else {
         //   setLoginInfo(event.data.user.nickname);
         // }
-         (event.data.user.name[0] == undefined) ? setLoginInfo(event.data.user.nickname) : setLoginInfo(event.data.user.name);
+        event.data.user.name[0] === undefined
+          ? setLoginInfo(event.data.user.nickname)
+          : setLoginInfo(event.data.user.name);
+        localStorage.setItem(
+          "random_user_value",
+          event.data.user.random_user_value
+        );
+        localStorage.setItem("birthdate", event.data.user.birthdate);
+        localStorage.setItem("email", event.data.user.email);
+        localStorage.setItem("name", event.data.user.name);
         toast.success("로그인 되었습니다.");
         setIsLoggedIn(true);
       }
@@ -87,7 +97,12 @@ export default function FirtstCtgry() {
         <div id="LogOutID" className="logout_wrap">
           <div className="LoginInfo">{LoginInfo + "님"}</div>
           <div>
-            <button onClick={openLogoutPopup}>로그아웃</button>
+            <button onClick={openLogoutPopup} className="ctgry-btn">
+              로그아웃
+            </button>
+            <button onClick={() => navigate("/mypage")} className="ctgry-btn">
+              마이페이지
+            </button>
           </div>
         </div>
       )}

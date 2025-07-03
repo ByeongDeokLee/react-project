@@ -26,6 +26,7 @@ import ReviewPage from "../ViewFame/ReviewPage";
 import PostDetailPage from "../ViewFame/PostDetailPage";
 import WritePage from "../ViewFame/WritePage";
 import ReviewWritePage from "../ViewFame/ReviewWritePage";
+import MyPage from "../ViewFame/MyPage";
 
 const Router = () => {
   return (
@@ -51,6 +52,7 @@ const Router = () => {
         <Route path="/login/callback" element={<Callback />} />
         <Route path="/join" element={<MemberJoin />} />
         <Route path="/review/write" element={<ReviewWritePage />} />
+        <Route path="/mypage" element={<MyPage />} />
       </Routes>
     </BrowserRouter>
   );

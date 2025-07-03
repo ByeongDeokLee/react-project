@@ -137,3 +137,23 @@ a:hover {
   background: white;
   box-shadow: 1px 2px 3px #00000020;
 }
+
+/* 공통 버튼 스타일 */
+.ctgry-btn {
+  display: inline-block;
+  padding: 8px 20px;
+  margin: 0 6px;
+  font-size: 16px;
+  border: 1.5px solid #e9ecef;
+  border-radius: 20px;
+  background: #fff;
+  color: #222;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  outline: none;
+}
+.ctgry-btn:hover {
+  background: #e9ecef;
+  color: #111;
+  border: 1.5px solid #bfc4c9;
+}
