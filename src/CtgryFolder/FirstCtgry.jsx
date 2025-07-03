@@ -27,6 +27,7 @@ export default function FirtstCtgry() {
         event.data.user.name[0] === undefined
           ? setLoginInfo(event.data.user.nickname)
           : setLoginInfo(event.data.user.name);
+
         localStorage.setItem(
           "random_user_value",
           event.data.user.random_user_value
