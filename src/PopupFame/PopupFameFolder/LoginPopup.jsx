@@ -4,17 +4,18 @@ import "../../CssFolder/LoginPopup.css";
 //라이브러리
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-// import axios from "axios";
+import useApi from "../../js/useApi";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 //이미지
 import kakaoLogin from "../../assets/img/kakao_login.png";
 import NaverLogin from "../../assets/img/naver_login.png";
 import GoogleLogin from "../../assets/img/google_login.png";
 
-const User = {
-  email: "abc@naver.com",
-  pw: "System2000!!",
-};
+// const User = {
+//   email: "abc@naver.com",
+//   pw: "System2000!!",
+// };
 
 //카카오 로그인
 const KAKAO_CLIENT_ID = "c2c0630ecffa6b96e8c78ef64478cf57";
@@ -46,6 +47,7 @@ export default function Login() {
   const [emailValid, setEmailValid] = useState(false);
   const [pwValid, setPwValid] = useState(false);
   const [notAllow, setNotAllow] = useState(true);
+  const { loading, request } = useApi();
 
   const KakaoLoginHandler = () => {
     window.location.href = KAKAO_AUTH_URL;
@@ -81,101 +83,116 @@ export default function Login() {
     }
   };
 
-  const onClickConfirmButton = () => {
-    if (email === User.email && pw === User.pw) {
-      alert("로그인에 성공했습니다.");
-    } else {
-      alert("등록되지 않은 회원이거나 입력한 값이 일치하지 않습니다.");
+  const onClickConfirmButton = async () => {
+    try {
+      const user = await request({
+        method: "POST",
+        url: "http://localhost:4000/api/Login",
+        data: {
+          email: email,
+          password: pw
+        }
+      })
+      console.log(user)
+
+      if (window.opener) {
+        window.opener.postMessage({ type: "LOGIN_SUCCESS", user }, "*");
+        window.close(); // 팝업 닫기
+      }
+    } catch (error) {
+      console.error("Error getting post:", error);
+      throw error;
     }
-  };
+  }
 
-  useEffect(() => {
-    if (emailValid && pwValid) {
-      setNotAllow(false);
-      return;
-    }
-    setNotAllow(true);
-  }, [emailValid, pwValid]);
+    useEffect(() => {
+      if (emailValid && pwValid) {
+        setNotAllow(false);
+        return;
+      }
+      setNotAllow(true);
+    }, [emailValid, pwValid]);
 
-  return (
-    <div className="page">
-      <div className="title_wrap">
-        <br />
-        로그인
-      </div>
-      <div className="content_wrap">
-        <div className="input_title">이메일 주소</div>
-        <div className="input_wrap">
-          <input
-            type="text"
-            className="input"
-            placeholder="you@example.com"
-            value={email}
-            onChange={handleEmail}
-          />
-        </div>
-
-        <div className="errorMessageWrap">
-          {!emailValid && email.length > 0 && (
-            <div>올바른 이메일을 입력해주세요.</div>
-          )}
-        </div>
-
-        <div style={{ marginTop: "26px" }} className="input_title">
-          비밀번호
-        </div>
-        <div className="input_wrap">
-          <input
-            type="password"
-            className="input"
-            placeholder="영문, 숫자, 특수문자 포함 8자 이상"
-            value={pw}
-            onChange={handlePw}
-          />
-        </div>
-
-        <div className="error_message_wrap">
-          {!pwValid && pw.length > 0 && (
-            <div>영문, 숫자, 특수문자 포함 8자 이상 입력해주세요.</div>
-          )}
-        </div>
-      </div>
-
-      <div className="button_wrap">
-        <button
-          onClick={onClickConfirmButton}
-          disabled={notAllow}
-          className="bottom_button"
-        >
+    return (
+      <div className="page">
+        {loading && <LoadingSpinner />}
+        <div className="title_wrap">
+          <br />
           로그인
-        </button>
-      </div>
-      <hr nonshade />
-      <div className="register_wrap">
-        <div className="register_title">
-          계정이 없으신가요? <Link to="/register">가입하기</Link>
         </div>
-        <div className="social_login">
-          <img
-            src={kakaoLogin}
-            alt="카카오로그인"
-            className="kakao_login_btu"
-            onClick={KakaoLoginHandler}
-          />
-          <img
-            src={NaverLogin}
-            alt="네이버로그인"
-            className="naver_login_btu"
-            onClick={NaverLoginHandler}
-          />
-          <img
-            src={GoogleLogin}
-            alt="구글로그인"
-            className="google_login_btu"
-            onClick={GoogleLoginHandler}
-          />
+        <div className="content_wrap">
+          <div className="input_title">이메일 주소</div>
+          <div className="input_wrap">
+            <input
+              type="text"
+              className="input"
+              placeholder="you@example.com"
+              value={email}
+              onChange={handleEmail}
+            />
+          </div>
+
+          <div className="errorMessageWrap">
+            {!emailValid && email.length > 0 && (
+              <div>올바른 이메일을 입력해주세요.</div>
+            )}
+          </div>
+
+          <div style={{ marginTop: "26px" }} className="input_title">
+            비밀번호
+          </div>
+          <div className="input_wrap">
+            <input
+              type="password"
+              className="input"
+              placeholder="영문, 숫자, 특수문자 포함 8자 이상"
+              value={pw}
+              onChange={handlePw}
+            />
+          </div>
+
+          <div className="error_message_wrap">
+            {!pwValid && pw.length > 0 && (
+              <div>영문, 숫자, 특수문자 포함 8자 이상 입력해주세요.</div>
+            )}
+          </div>
+        </div>
+
+        <div className="button_wrap">
+          <button
+            onClick={onClickConfirmButton}
+            disabled={notAllow}
+            className="bottom_button"
+          >
+            로그인
+          </button>
+        </div>
+        <hr nonshade />
+        <div className="register_wrap">
+          <div className="register_title">
+            계정이 없으신가요? <Link to="/register">가입하기</Link>
+          </div>
+          <div className="social_login">
+            <img
+              src={kakaoLogin}
+              alt="카카오로그인"
+              className="kakao_login_btu"
+              onClick={KakaoLoginHandler}
+            />
+            <img
+              src={NaverLogin}
+              alt="네이버로그인"
+              className="naver_login_btu"
+              onClick={NaverLoginHandler}
+            />
+            <img
+              src={GoogleLogin}
+              alt="구글로그인"
+              className="google_login_btu"
+              onClick={GoogleLoginHandler}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  };

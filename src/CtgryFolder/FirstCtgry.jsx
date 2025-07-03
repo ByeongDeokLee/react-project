@@ -13,12 +13,17 @@ export default function FirtstCtgry() {
 
   const openLoginPopup = (e) => {
     e.preventDefault(); // 기본 링크 막기
-    window.open("/LoginPopup", "LoginPopup", "width=800,height=800");
+    window.open("/Login", "LoginPopup", "width=800,height=800");
 
     window.addEventListener("message", (event) => {
       if (event.data?.type === "LOGIN_SUCCESS") {
         console.log("로그인 성공! 유저:", event.data.user);
-        setLoginInfo(event.data.user.nickname);
+        // if (event.data.user.nickname == null) {
+        //   setLoginInfo(event.data.user.name);
+        // } else {
+        //   setLoginInfo(event.data.user.nickname);
+        // }
+         (event.data.user.name[0] == undefined) ? setLoginInfo(event.data.user.nickname) : setLoginInfo(event.data.user.name);
         toast.success("로그인 되었습니다.");
         setIsLoggedIn(true);
       }

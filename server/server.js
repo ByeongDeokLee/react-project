@@ -24,6 +24,8 @@ const {
   togglePostLike,
   updatePostViews,
   registerUser,
+  UserLogin,
+
 } = require("../db/queries");
 
 app.use(cors());
@@ -241,6 +243,20 @@ app.post("/api/posts/:id/like", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+//로그인 확인
+app.post("/api/Login", async (req, res) => {
+  try {
+    console.log("login Check!!==>111",req.params)
+    console.log("login Check!!==>222",req.params)
+    const { email, password } = req.body;
+    const result = await UserLogin(email,  password);
+    console.log("서버 응답값" , result)
+
+    res.json(result[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
 
 app.post('/api/naver/login', async (req, res) => {
   const { code, state } = req.body;

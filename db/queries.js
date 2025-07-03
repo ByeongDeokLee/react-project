@@ -186,6 +186,24 @@ const togglePostLike = async (postId, userId) => {
   }
 };
 
+const UserLogin = async (email, password) => {
+  try {
+    console.log("이메일", email)
+    console.log("비밀번호", password)
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .eq("password", password)
+      // .single();
+    console.log("쿼리 응답ㄱ밧",data)
+      return data;
+  } catch (error) {
+    console.error("Error toggling post like:", error);
+    throw error;
+  }
+}
+
 const registerUser = async (userData) => {
   try {
     // const { data, error } = await supabase
@@ -236,4 +254,5 @@ module.exports = {
   createReply,
   togglePostLike,
   registerUser,
+  UserLogin
 };
