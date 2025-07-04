@@ -2,7 +2,7 @@
 import "../CssFolder/FirstCtgry.css";
 
 //라이브러리
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { kakaoLogout } from "../js/axios";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,15 @@ export default function FirtstCtgry() {
   const [LoginInfo, setLoginInfo] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+
+  //렌더링 감지
+  useEffect(() => {
+      const LoginInfo = localStorage.getItem("name");
+      if (LoginInfo) {
+        setLoginInfo(LoginInfo);
+        setIsLoggedIn(true);
+      }
+  });
 
   const openLoginPopup = (e) => {
     e.preventDefault(); // 기본 링크 막기
@@ -42,25 +51,31 @@ export default function FirtstCtgry() {
   };
 
   const openLogoutPopup = async () => {
+
     const token = localStorage.getItem("kakaoAccessToken"); // 저장된 토큰 불러오기
 
     if (!token) {
-      console.log("카카오 access token이 없습니다.");
-      return;
-    }
-
-    try {
-      const result = await kakaoLogout(token);
-      console.log("로그아웃 결과:", result);
-
-      // 프론트 상태 초기화
-      localStorage.removeItem("kakaoAccessToken");
+      localStorage.clear();
+      setLoginInfo("");
       setIsLoggedIn(false);
       toast.success("로그아웃 되었습니다.");
-      // alert("로그아웃 되었습니다.");
-    } catch (e) {
-      alert("로그아웃 실패!");
+      console.log("로그아웃 되었습니다.", window.localStorage.length);
+    } else {
+      try {
+        const result = await kakaoLogout(token);
+        console.log("로그아웃 결과:", result);
+
+        // 프론트 상태 초기화
+        localStorage.removeItem("kakaoAccessToken");
+        setIsLoggedIn(false);
+        toast.success("로그아웃 되었습니다.");
+        // alert("로그아웃 되었습니다.");
+      } catch (e) {
+        alert("로그아웃 실패!");
+      }
     }
+
+
   };
 
   return (
@@ -96,15 +111,15 @@ export default function FirtstCtgry() {
 
       {isLoggedIn && (
         <div id="LogOutID" className="logout_wrap">
-          <div className="LoginInfo">{LoginInfo + "님"}</div>
-          <div>
+          <div className="Login_Info"><p>{LoginInfo + "님"}</p></div>
             <button onClick={openLogoutPopup} className="ctgry-btn">
               로그아웃
             </button>
-            <button onClick={() => navigate("/mypage")} className="ctgry-btn">
+            <button
+              onClick={() => navigate("/mypage")}
+              className="ctgry-btn">
               마이페이지
             </button>
-          </div>
         </div>
       )}
       <ToastContainer position="top-center" autoClose={2000} />

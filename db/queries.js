@@ -204,6 +204,7 @@ const UserLogin = async (email, password) => {
   }
 }
 
+//회원가입 여부 쿼리
 const registerUser = async (userData) => {
   try {
     // const { data, error } = await supabase
@@ -242,6 +243,19 @@ const { data: newUser, error: insertError } = await supabase
   }
 };
 
+//문의사항 쿼리
+const getNotice = async () => {
+  try {
+    console.log("getNotice 쿼리 실행");
+    const { data, error } = await supabase.from("notice_page").select("*");
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error getting inquiry:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   getPosts,
   getPostById,
@@ -254,5 +268,6 @@ module.exports = {
   createReply,
   togglePostLike,
   registerUser,
-  UserLogin
+  UserLogin,
+  getNotice,
 };

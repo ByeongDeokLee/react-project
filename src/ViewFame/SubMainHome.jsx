@@ -208,6 +208,21 @@ const Sidebar = () => {
     }
   };
 
+  const NoticeInfo = async (e) => {
+    console.log("NoticeInfo");
+    e.preventDefault();
+    try{
+      const response = await request({
+        method: "GET",
+        url: "http://localhost:4000/api/getNotice",
+      });
+      navigate("/notice", { state: { notice: response } });
+    }catch(error){
+      console.error("Error getting notice:", error);
+      throw error;
+    }
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "inquiry":
@@ -305,7 +320,7 @@ const Sidebar = () => {
             <div className={styles.noticeList}>
               <div
                 className={styles.noticeItem}
-                onClick={() => navigate("/notice")}
+                onClick={(e) => NoticeInfo(e)}
               >
                 <div
                   style={{
@@ -323,7 +338,7 @@ const Sidebar = () => {
               </div>
               <div
                 className={styles.noticeItem}
-                onClick={() => navigate("/notice")}
+                onClick={(e) => NoticeInfo(e)}
               >
                 <div
                   style={{
@@ -342,7 +357,7 @@ const Sidebar = () => {
             </div>
             <button
               className={styles.writeBtn}
-              onClick={() => navigate("/notice")}
+              onClick={(e) => NoticeInfo(e)}
             >
               더보기
             </button>

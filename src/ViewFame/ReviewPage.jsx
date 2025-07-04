@@ -27,13 +27,21 @@ const ReviewPage = () => {
     },
   ]);
 
+  const ReviewWrite = () => {
+    if(localStorage.getItem("name")){
+      navigate("/review/write");
+    }else{
+      alert("로그인 후 이용해주세요.");
+    }
+  };
+
   return (
     <div className={styles.reviewPage}>
       <div className={styles.reviewHeader}>
         <h1>고객 리뷰</h1>
         <button
           className={styles.writeBtn}
-          onClick={() => navigate("/review/write")}
+          onClick={() => ReviewWrite()}
         >
           리뷰 작성하기
         </button>

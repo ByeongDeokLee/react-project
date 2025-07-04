@@ -32,6 +32,14 @@ const BoardPage = () => {
     }
   };
 
+  const BoardWrite = () => {
+    if(localStorage.getItem("name")){
+      navigate("/board/write");
+    }else{
+      alert("로그인 후 이용해주세요.");
+    }
+  };
+
   return (
     <div className={styles.boardPage}>
       <div className={styles.boardHeader}>
@@ -41,7 +49,7 @@ const BoardPage = () => {
         <div className={styles.boardActions}>
           <button
             className={styles.writeBtn}
-            onClick={() => navigate("/board/write")}
+            onClick={() => BoardWrite()}
           >
             글쓰기
           </button>

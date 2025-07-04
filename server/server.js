@@ -25,7 +25,7 @@ const {
   updatePostViews,
   registerUser,
   UserLogin,
-
+  getNotice,
 } = require("../db/queries");
 
 app.use(cors());
@@ -314,6 +314,17 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+//문의사항
+app.get("/api/getNotice", async (req, res) => {
+  try {
+    console.log("getNotice 요청 받음");
+    const getNotice = await getNotice();
+    console.log("getNotice :", getNotice);
+    res.json(getNotice);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
