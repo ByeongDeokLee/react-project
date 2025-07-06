@@ -7,6 +7,7 @@ import InquiryPage from "./ViewFame/InquiryPage";
 import BoardPage from "./ViewFame/BoardPage";
 import FaqPage from "./ViewFame/FaqPage";
 import NoticePage from "./ViewFame/NoticePage";
+import NoticeDetailPage from "./ViewFame/NoticeDetailPage";
 import ReviewPage from "./ViewFame/ReviewPage";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/board" element={<BoardPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/notice" element={<NoticePage />} />
+          <Route path="/notice/:id" element={<NoticeDetailPage />} />
           <Route path="/review" element={<ReviewPage />} />
         </Routes>
       </div>

@@ -188,21 +188,21 @@ const togglePostLike = async (postId, userId) => {
 
 const UserLogin = async (email, password) => {
   try {
-    console.log("이메일", email)
-    console.log("비밀번호", password)
+    console.log("이메일", email);
+    console.log("비밀번호", password);
     const { data, error } = await supabase
       .from("users")
       .select("*")
       .eq("email", email)
-      .eq("password", password)
-      // .single();
-    console.log("쿼리 응답ㄱ밧",data)
-      return data;
+      .eq("password", password);
+    // .single();
+    console.log("쿼리 응답ㄱ밧", data);
+    return data;
   } catch (error) {
     console.error("Error toggling post like:", error);
     throw error;
   }
-}
+};
 
 //회원가입 여부 쿼리
 const registerUser = async (userData) => {
@@ -213,24 +213,24 @@ const registerUser = async (userData) => {
     //   .select()
     //   .single();
     // 1. 먼저 해당 조건으로 검색
-const { data: existingUser, error: selectError } = await supabase
-.from("users")
-.select("*")
-.eq("email", userData.email)
-.single();
+    const { data: existingUser, error: selectError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", userData.email)
+      .single();
 
-if (!existingUser) {
-// 2. 없으면 insert
-const { data: newUser, error: insertError } = await supabase
-  .from("users")
-  .insert([userData])
-  .select()
-  .single();
+    if (!existingUser) {
+      // 2. 없으면 insert
+      const { data: newUser, error: insertError } = await supabase
+        .from("users")
+        .insert([userData])
+        .select()
+        .single();
 
-  return newUser;
-} else {
-  return existingUser;
-}
+      return newUser;
+    } else {
+      return existingUser;
+    }
     // if (error) throw error;
     // return data;
   } catch (error) {
@@ -243,12 +243,59 @@ const { data: newUser, error: insertError } = await supabase
   }
 };
 
-//문의사항 쿼리
-const getNotice = async () => {
+//공지사항 쿼리
+const NoticeList = async () => {
   try {
-    console.log("getNotice 쿼리 실행");
+    console.log("NoticeList 쿼리 실행");
     const { data, error } = await supabase.from("notice_page").select("*");
     if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error getting inquiry:", error);
+    throw error;
+  }
+};
+
+const getNotice = async (id) => {
+  try {
+    console.log("getNotice 쿼리 실행");
+    const { data, error } = await supabase
+      .from("notice_page")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    console.log("쿼리 확인", data);
+    return data;
+  } catch (error) {
+    console.error("Error getting inquiry:", error);
+    throw error;
+  }
+};
+
+const updateNoticeViews = async (id) => {
+  try {
+    // Step 1: 현재 views 값 가져오기
+    const { data: notice, error: fetchError } = await supabase
+      .from("notice_page")
+      .select("views")
+      .eq("id", id)
+      .single();
+
+    console.log("여기 확인", notice);
+
+    if (fetchError) throw fetchError;
+
+    const currentViews = notice.views;
+
+    // Step 2: views 값 1 증가시켜 업데이트
+    const { data, error: updateError } = await supabase
+      .from("notice_page")
+      .update({ views: currentViews + 1 })
+      .eq("id", id);
+
+    if (updateError) throw updateError;
+
     return data;
   } catch (error) {
     console.error("Error getting inquiry:", error);
@@ -269,5 +316,7 @@ module.exports = {
   togglePostLike,
   registerUser,
   UserLogin,
+  NoticeList,
   getNotice,
+  updateNoticeViews,
 };

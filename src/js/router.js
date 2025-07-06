@@ -8,6 +8,7 @@ import FirstCtgry from "../CtgryFolder/FirstCtgry";
 import SecondCtgrt from "../CtgryFolder/SecondCtgrt";
 import CompanyIntro from "../ViewFame/CompanyIntro";
 import SubMainHome from "../ViewFame/SubMainHome";
+import NoticeDetailPage from "../ViewFame/NoticeDetailPage";
 
 //팝업
 import LoginPopup from "../PopupFame/PopupFameFolder/LoginPopup";
@@ -42,6 +43,7 @@ const Router = () => {
         <Route path="/board" element={<BoardPage />} />
         <Route path="/board/:postId" element={<PostDetailPage />} />
         <Route path="/notice" element={<NoticePage />} />
+        <Route path="/notice/:postId" element={<NoticeDetailPage />} />
         <Route path="/review" element={<ReviewPage />} />
         <Route path="/faq" element={<FaqPage />} />
         <Route path="/inquiry" element={<InquiryPage />} />

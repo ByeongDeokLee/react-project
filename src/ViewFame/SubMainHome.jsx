@@ -211,15 +211,46 @@ const Sidebar = () => {
   const NoticeInfo = async (e) => {
     console.log("NoticeInfo");
     e.preventDefault();
-    try{
+    try {
       const response = await request({
         method: "GET",
-        url: "http://localhost:4000/api/getNotice",
+        url: "http://localhost:4000/api/NoticeList",
       });
+      console.log("공지사항", response);
       navigate("/notice", { state: { notice: response } });
-    }catch(error){
+    } catch (error) {
       console.error("Error getting notice:", error);
-      throw error;
+      // API 호출 실패 시 더미 데이터로 이동
+      const dummyNotices = [
+        {
+          id: 1,
+          title: "2024년 3월 시스템 점검 안내",
+          content: "더 나은 서비스를 제공하기 위해 시스템 점검을 실시합니다.",
+          date: "2024.03.15",
+          isImportant: true,
+          author: "관리자",
+          views: 1250,
+        },
+        {
+          id: 2,
+          title: "신규 고객 프로모션 안내",
+          content: "신규 가입 고객을 위한 특별 프로모션을 진행합니다.",
+          date: "2024.03.14",
+          isImportant: false,
+          author: "마케팅팀",
+          views: 890,
+        },
+        {
+          id: 3,
+          title: "개인정보처리방침 개정 안내",
+          content: "개인정보처리방침이 개정되어 안내드립니다.",
+          date: "2024.03.13",
+          isImportant: true,
+          author: "법무팀",
+          views: 1560,
+        },
+      ];
+      navigate("/notice", { state: { notice: dummyNotices } });
     }
   };
 
@@ -318,10 +349,7 @@ const Sidebar = () => {
           <div className={styles.tabContent}>
             <h3>공지사항</h3>
             <div className={styles.noticeList}>
-              <div
-                className={styles.noticeItem}
-                onClick={(e) => NoticeInfo(e)}
-              >
+              <div className={styles.noticeItem} onClick={(e) => NoticeInfo(e)}>
                 <div
                   style={{
                     display: "flex",
@@ -336,10 +364,7 @@ const Sidebar = () => {
                 </div>
                 <span className={styles.noticeDate}>2024.03.15</span>
               </div>
-              <div
-                className={styles.noticeItem}
-                onClick={(e) => NoticeInfo(e)}
-              >
+              <div className={styles.noticeItem} onClick={(e) => NoticeInfo(e)}>
                 <div
                   style={{
                     display: "flex",
@@ -355,10 +380,7 @@ const Sidebar = () => {
                 <span className={styles.noticeDate}>2024.03.14</span>
               </div>
             </div>
-            <button
-              className={styles.writeBtn}
-              onClick={(e) => NoticeInfo(e)}
-            >
+            <button className={styles.writeBtn} onClick={(e) => NoticeInfo(e)}>
               더보기
             </button>
           </div>

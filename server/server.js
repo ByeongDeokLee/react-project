@@ -10,7 +10,6 @@ app.use(express.urlencoded({ extended: true })); // 폼 데이터 파싱
 //네이버
 const NAVER_REDIRECT_URI = "http://localhost:3000/oauth/callback";
 
-
 const { Client } = require("pg");
 const {
   getPosts,
@@ -25,7 +24,9 @@ const {
   updatePostViews,
   registerUser,
   UserLogin,
+  NoticeList,
   getNotice,
+  updateNoticeViews,
 } = require("../db/queries");
 
 app.use(cors());
@@ -40,6 +41,48 @@ const transporter = nodemailer.createTransport({
     user: process.env.NAVER_EMAIL, // 환경 변수에서 이메일 주소 가져오기
     pass: process.env.NAVER_PASSWORD, // 환경 변수에서 비밀번호 가져오기
   },
+});
+
+//공지사항
+app.get("/api/NoticeList", async (req, res) => {
+  try {
+    console.log("getNotice 요청 받음");
+    const notices = await NoticeList();
+    notices.map((notice) => {
+      notice.date = new Date(notice.data)
+        .toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+        .replace(/\.$/, "");
+    });
+    console.log("getNotice :", notices);
+    res.json(notices);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.post("/api/getNotice/:id", async (req, res) => {
+  try {
+    console.log("게시물 View 증가");
+
+    await updateNoticeViews(req.params.id);
+
+    const noticeDtl = await getNotice(req.params.id);
+    noticeDtl.date = new Date(noticeDtl.date)
+      .toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .replace(/\.$/, "");
+    console.log("공지사항 데이터 : ", noticeDtl);
+    res.json(noticeDtl);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
 // 문의하기 API 엔드포인트
@@ -206,7 +249,8 @@ app.post("/api/posts/:id/comments-write", async (req, res) => {
         error.message.includes("duplicate key value violates unique constraint")
       ) {
         return res.status(400).json({
-          error: "이미 존재하는 댓글 ID로 인해 댓글을 저장할 수 없습니다. 다시 시도해주세요.",
+          error:
+            "이미 존재하는 댓글 ID로 인해 댓글을 저장할 수 없습니다. 다시 시도해주세요.",
           detail: error.message,
         });
       }
@@ -246,29 +290,27 @@ app.post("/api/posts/:id/like", async (req, res) => {
 //로그인 확인
 app.post("/api/Login", async (req, res) => {
   try {
-    console.log("login Check!!==>111",req.params)
-    console.log("login Check!!==>222",req.params)
     const { email, password } = req.body;
-    const result = await UserLogin(email,  password);
-    console.log("서버 응답값" , result)
+    const result = await UserLogin(email, password);
+    console.log("서버 응답값", result);
 
     res.json(result[0]);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-})
+});
 
-app.post('/api/naver/login', async (req, res) => {
+app.post("/api/naver/login", async (req, res) => {
   const { code, state } = req.body;
   try {
     console.log("네이버 로그인 요청 받음", req.body);
     // 1. 네이버에 토큰 요청
     const tokenRes = await axios.post(
-      'https://nid.naver.com/oauth2.0/token',
+      "https://nid.naver.com/oauth2.0/token",
       null,
       {
         params: {
-          grant_type: 'authorization_code',
+          grant_type: "authorization_code",
           client_id: process.env.pNAVER_CLIENT_KEY,
           client_secret: process.env.NAVER_SECRET_KEY,
           redirect_uri: NAVER_REDIRECT_URI,
@@ -280,7 +322,7 @@ app.post('/api/naver/login', async (req, res) => {
     const accessToken = tokenRes.data.access_token;
 
     // 2. 네이버에 사용자 정보 요청
-    const userRes = await axios.get('https://openapi.naver.com/v1/nid/me', {
+    const userRes = await axios.get("https://openapi.naver.com/v1/nid/me", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
@@ -309,18 +351,6 @@ app.post("/api/register", async (req, res) => {
 
     const user = await registerUser(newUser);
     res.json({ success: true, userId: user.id });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-//문의사항
-app.get("/api/getNotice", async (req, res) => {
-  try {
-    console.log("getNotice 요청 받음");
-    const getNotice = await getNotice();
-    console.log("getNotice :", getNotice);
-    res.json(getNotice);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
