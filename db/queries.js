@@ -303,6 +303,19 @@ const updateNoticeViews = async (id) => {
   }
 };
 
+//리뷰
+const reviewsList = async () => {
+  try {
+    console.log("NoticeList 쿼리 실행");
+    const { data, error } = await supabase.from("reviews").select("*");
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error getting inquiry:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   getPosts,
   getPostById,
@@ -319,4 +332,5 @@ module.exports = {
   NoticeList,
   getNotice,
   updateNoticeViews,
+  reviewsList,
 };

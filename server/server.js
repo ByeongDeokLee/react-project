@@ -27,6 +27,7 @@ const {
   NoticeList,
   getNotice,
   updateNoticeViews,
+  reviewsList,
 } = require("../db/queries");
 
 app.use(cors());
@@ -42,14 +43,35 @@ const transporter = nodemailer.createTransport({
     pass: process.env.NAVER_PASSWORD, // 환경 변수에서 비밀번호 가져오기
   },
 });
+//리뷰
+app.get("/api/reviews", async (req, res) => {
+  try {
+    const reviews = await reviewsList();
+    reviews.map((reviews) => {
+      reviews.date = new Date(reviews.created_at)
+        .toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+        .replace(/\.$/, "");
+    });
+    console.log("getNotice :", notices);
+    res.json(notices);
+  } catch (error) {
+    res.status(400).json({ error: err.message });
+  }
+})
+
 
 //공지사항
 app.get("/api/NoticeList", async (req, res) => {
   try {
     console.log("getNotice 요청 받음");
     const notices = await NoticeList();
+    console.log("공지사항 :: ", notices)
     notices.map((notice) => {
-      notice.date = new Date(notice.data)
+      notice.date = new Date(notice.date)
         .toLocaleDateString("ko-KR", {
           year: "numeric",
           month: "2-digit",
