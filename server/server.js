@@ -44,9 +44,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 //리뷰
-app.get("/api/reviews", async (req, res) => {
+app.get("/api/reviewsList", async (req, res) => {
   try {
+    console.log("리뷰API 들어옴")
     const reviews = await reviewsList();
+    console.log("쿼리응답 받음", reviews)
     reviews.map((reviews) => {
       reviews.date = new Date(reviews.created_at)
         .toLocaleDateString("ko-KR", {
@@ -56,8 +58,7 @@ app.get("/api/reviews", async (req, res) => {
         })
         .replace(/\.$/, "");
     });
-    console.log("getNotice :", notices);
-    res.json(notices);
+    res.json(reviews);
   } catch (error) {
     res.status(400).json({ error: err.message });
   }

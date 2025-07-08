@@ -159,7 +159,8 @@ const communityData = [
 const Sidebar = () => {
   const [activeTab, setActiveTab] = useState("inquiry");
   const [boardPosts, setBoardPosts] = useState([]);//게시판
-  const [NoticePosts, setNoticePosts] = useState([]);//공지사항
+  const [noticePosts, setNoticePosts] = useState([]);//공지사항
+  const [reviewPosts, setReviewPosts] = useState([]);//공지사항
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { request } = useApi(); // useApi 훅에서 request 받아오기
@@ -206,12 +207,31 @@ const Sidebar = () => {
     }
   }
 
+  const fetchReviewPosts = async () => {
+    setIsLoading(true);
+    try {
+      const response = await request({
+        method: "GET",
+        url: "http://localhost:4000/api/reviewsList",
+      })
+      console.log("공지사항", response);
+      const limitedPosts = response.slice(0, 2);
+      setReviewPosts(limitedPosts);
+    } catch (error) {
+      console.error("Error getting notice:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
     if (tabId === "board") {
       fetchBoardPosts();
     } else if (tabId === "notice") {
       fetchNoticePosts();
+    } else if (tabId === "review") {
+      fetchReviewPosts();
     }
   };
 
@@ -229,7 +249,7 @@ const Sidebar = () => {
     }
   };
 
-  const NoticeInfo = async (e) => {
+  const noticePageSubmit = async (e) => {
     console.log("NoticeInfo");
     e.preventDefault();
     try {
@@ -244,6 +264,20 @@ const Sidebar = () => {
     }
   };
 
+  const reviewPageSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await request({
+        method: "GET",
+        url: "http://localhost:4000/api/reviewsList",
+      });
+      // navigate("/review/write")
+      navigate("/review", { state: { reviews: response } });
+    } catch (error) {
+      console.error("Error getting posts:", error);
+      throw error;
+    }
+  };
   const renderTabContent = () => {
     switch (activeTab) {
       case "inquiry":
@@ -341,12 +375,12 @@ const Sidebar = () => {
             <div className={styles.noticeList}>
 		   {isLoading ? (
                 <div className={styles.loading}>로딩 중...</div>
-              ) : NoticePosts.length > 0 ? (
-                NoticePosts.map((notice) => (
+              ) : noticePosts.length > 0 ? (
+                noticePosts.map((notice) => (
                   <div
                     key={notice.id}
                     className={styles.noticeItem}
-                    onClick={(e) => boardPageSubmit(e)}
+                    onClick={(e) => noticePageSubmit(e)}
                   >
                 <div
                   style={{
@@ -369,7 +403,7 @@ const Sidebar = () => {
               )}
             </div>
 
-            <button className={styles.writeBtn} onClick={(e) => NoticeInfo(e)}>
+            <button className={styles.writeBtn} onClick={(e) => noticePageSubmit(e)}>
               더보기
             </button>
           </div>
@@ -379,34 +413,40 @@ const Sidebar = () => {
           <div className={styles.tabContent}>
             <h3>리뷰</h3>
             <div className={styles.reviewList}>
-              <div
-                className={styles.reviewItem}
-                onClick={() => navigate("/review")}
-              >
-                <div className={styles.reviewHeader}>
-                  <span className={styles.reviewRating}>★★★★★</span>
-                  <span className={styles.reviewAuthor}>김철수</span>
-                </div>
-                <div className={styles.reviewContent}>
-                  홈페이지 제작이 생각보다 훨씬 빨리 완료되어 만족스럽습니다.
-                </div>
-              </div>
-              <div
-                className={styles.reviewItem}
-                onClick={() => navigate("/review")}
-              >
-                <div className={styles.reviewHeader}>
-                  <span className={styles.reviewRating}>★★★★☆</span>
-                  <span className={styles.reviewAuthor}>이영희</span>
-                </div>
-                <div className={styles.reviewContent}>
-                  쇼핑몰 제작이 잘 완료되었습니다.
-                </div>
-              </div>
+              {isLoading ? (
+                <div className={styles.loading}>로딩 중...</div>
+              ) : reviewPosts.length > 0 ? (
+                reviewPosts.map((review) => (
+                  <div
+                    key={review.id}
+                    className={styles.reviewItem}
+                    onClick={(e) => reviewPageSubmit(e)}
+                  >
+                    <div className={styles.reviewHeader}>
+                      <span className={styles.reviewRating}>
+                        {Array.from({ length: 5 }, (_, i) =>
+                          i < review.rating ? "★" : "☆"
+                        ).join("")}
+                      </span>
+                      <span className={styles.reviewAuthor}>
+                        {review.author || "익명"}
+                      </span>
+                      <span className={styles.reviewDate}>
+                        {review.date
+                          ? new Date(review.date).toLocaleDateString("ko-KR")
+                          : ""}
+                      </span>
+                    </div>
+                    <div className={styles.reviewContent}>{review.content}</div>
+                  </div>
+                ))
+              ) : (
+                <div className={styles.noPosts}>리뷰가 없습니다.</div>
+              )}
             </div>
             <button
               className={styles.writeBtn}
-              onClick={() => navigate("/review/write")}
+              onClick={(e) => reviewPageSubmit(e)}
             >
               리뷰 작성하기
             </button>

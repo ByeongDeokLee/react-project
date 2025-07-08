@@ -322,32 +322,35 @@
   flex-shrink: 0;
 }
 
+.reviewItem {
+  border-bottom: 1px solid #eee;
+  padding: 12px 0;
+}
 .reviewHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 100%;
-  margin-bottom: 0.5rem;
+  gap: 10px;
+  margin-bottom: 6px;
 }
-
 .reviewRating {
-  color: #ffc107;
+  color: #ffd600;
+  font-size: 1.1em;
+  letter-spacing: 1px;
 }
-
 .reviewAuthor {
-  font-size: 0.875rem;
-  color: #636e72;
+  font-weight: bold;
+  color: #333;
 }
-
+.reviewDate {
+  color: #aaa;
+  font-size: 0.9em;
+  margin-left: auto;
+}
 .reviewContent {
-  font-size: 0.9rem;
-  color: #636e72;
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #444;
+  font-size: 1em;
+  margin-left: 2px;
 }
-
 .loading,
 .noPosts {
   text-align: center;
