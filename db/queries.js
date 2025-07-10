@@ -316,6 +316,19 @@ const reviewsList = async () => {
   }
 }
 
+//서비스 종류
+const serviceList = async () => {
+  try {
+    console.log("serviceList 쿼리 실행");
+    const { data, error } = await supabase.from("service_items").select("*");
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error getting inquiry:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   getPosts,
   getPostById,
@@ -333,4 +346,5 @@ module.exports = {
   getNotice,
   updateNoticeViews,
   reviewsList,
+  serviceList
 };

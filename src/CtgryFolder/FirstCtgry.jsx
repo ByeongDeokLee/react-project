@@ -15,11 +15,12 @@ export default function FirtstCtgry() {
   //렌더링 감지
   useEffect(() => {
       const LoginInfo = localStorage.getItem("name");
-      if (LoginInfo) {
+      console.log("\n\n 확인 \n\n", LoginInfo != null)
+      if (LoginInfo != null) {
         setLoginInfo(LoginInfo);
         setIsLoggedIn(true);
       }
-  });
+  },[]);
 
   const openLoginPopup = (e) => {
     e.preventDefault(); // 기본 링크 막기
@@ -78,6 +79,16 @@ export default function FirtstCtgry() {
 
   };
 
+  const userChange = (e) => {
+    e.preventDefault();
+    const LoginInfo = localStorage.getItem("name");
+    console.log("\n\n 확인 \n\n", LoginInfo != null)
+    if (LoginInfo == null) {
+      alert("로그인이 필요합니다.")
+      return;
+    }
+  }
+
   return (
     <div className="main_first_ctgry">
       <div class="logo_wrap">
@@ -90,9 +101,9 @@ export default function FirtstCtgry() {
         <div className="main_company">
           <p>기업용</p>
         </div>
-        <input type="checkbox" id="switch"></input>
-        <label for="switch" className="switch_label">
-          <span className="onf_btn"></span>
+        <input type="checkbox" id="switch" onClick={(e) => { userChange(e)}}></input>
+        <label for="switch" className="switch_label" >
+          <span className="onf_btn" ></span>
         </label>
       </div>
 

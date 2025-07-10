@@ -28,6 +28,7 @@ const {
   getNotice,
   updateNoticeViews,
   reviewsList,
+  serviceList,
 } = require("../db/queries");
 
 app.use(cors());
@@ -43,6 +44,29 @@ const transporter = nodemailer.createTransport({
     pass: process.env.NAVER_PASSWORD, // 환경 변수에서 비밀번호 가져오기
   },
 });
+
+//서비스 종류 API
+app.get("/api/serviceList", async (req, res) => {
+  try {
+    console.log("서비스 API 들어옴")
+    const services = await serviceList();
+    console.log("쿼리응답 받음", services)
+    services.map((service) => {
+      service.date = new Date(service.created_at)
+        .toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+        .replace(/\.$/, "");
+    });
+    res.json(services);
+  } catch (error) {
+    res.status(400).json({ error: err.message });
+  }
+})
+
+
 //리뷰
 app.get("/api/reviewsList", async (req, res) => {
   try {
@@ -378,6 +402,8 @@ app.post("/api/register", async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+
+
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
