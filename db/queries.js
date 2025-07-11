@@ -320,9 +320,51 @@ const reviewsList = async () => {
 const serviceList = async () => {
   try {
     console.log("serviceList 쿼리 실행");
-    const { data, error } = await supabase.from("service_items").select("*");
-    if (error) throw error;
-    return data;
+    // const { data, error } = await supabase.from("service_items").select("*");
+    // if (error) throw error;
+  // Step 1. service_items 전체 조회
+    const { data: services, error: serviceError } = await supabase
+    .from('service_items')
+    .select('*');
+
+  if (serviceError) throw serviceError;
+
+
+  // Step 2. service_items.id 목록 추출
+    const serviceIds = services.map((item) => item.id);
+
+    const serviceUserIds = services.map((item) => item.user_id)
+
+    console.log("\n\n\n serviceUserIds \n\n\n", serviceUserIds)
+
+  // Step 3. 해당 id 목록에 맞는 images 조회
+  const { data: images, error: imageError } = await supabase
+    .from('service_images')
+    .select('*')
+    .in('service_id', serviceIds);
+
+    if (imageError) throw imageError;
+
+    // Step 3_1. 해당 id 목록에 맞는 user 조회
+    const { data: users, error: usersError } = await supabase
+    .from('users')
+    .select('*')
+      .in('id', serviceUserIds);
+
+  if (usersError) throw usersError;
+
+  // Step 4. 이미지 매칭해서 병합
+  const merged = services.map((item) => {
+    const matchedImages = images.filter((img) => img.service_id === item.id);
+    const matchedUsers = users.find((user) => user.id === item.user_id);
+    return {
+      ...item,
+      images: matchedImages,
+      user : matchedUsers,
+    };
+  });
+
+    return merged;
   } catch (error) {
     console.error("Error getting inquiry:", error);
     throw error;

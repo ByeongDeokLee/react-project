@@ -50,7 +50,7 @@ app.get("/api/serviceList", async (req, res) => {
   try {
     console.log("서비스 API 들어옴")
     const services = await serviceList();
-    console.log("쿼리응답 받음", services)
+    // console.log("쿼리응답 받음", services)
     services.map((service) => {
       service.date = new Date(service.created_at)
         .toLocaleDateString("ko-KR", {
@@ -61,6 +61,7 @@ app.get("/api/serviceList", async (req, res) => {
         .replace(/\.$/, "");
     });
     res.json(services);
+      // return res.json(merged);
   } catch (error) {
     res.status(400).json({ error: err.message });
   }

@@ -8,199 +8,76 @@ import produimg from "../assets/img/produimg.png";
 
 //라이브러리
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import useApi from "../js/useApi";
-import { useQuery } from '@tanstack/react-query';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
-
-const projectData = []
-const shoppingData = []
-const communityData = []
-
-
-
-
-// const projectData = [
-//   {
-//     src: dog1,
-//     title: "기업 제작용 페이지",
-//     great: 4.1,
-//     comment: 20,
-//     price: 50000,
-//     producer: "핑크덕후",
-//     category: "homepage",
-//     tags: ["반응형", "SEO최적화", "모바일"],
-//     duration: "2-3주",
-//   },
-//   {
-//     src: dog2,
-//     title: "개쩌는 홈페이지",
-//     great: 3.9,
-//     comment: 5,
-//     price: 500,
-//     producer: "길동이",
-//     category: "homepage",
-//     tags: ["커스텀디자인", "빠른제작"],
-//     duration: "1주",
-//   },
-//   {
-//     src: dog3,
-//     title: "요즘 많이 사용하는 홈페이지",
-//     great: 3.0,
-//     comment: 1,
-//     price: 5000,
-//     producer: "오리쿵덕",
-//     category: "homepage",
-//     tags: ["트렌디", "심플"],
-//     duration: "1-2주",
-//   },
-//   {
-//     src: dog4,
-//     title: "간편한 홈페이지 제작",
-//     great: 4.5,
-//     comment: 100,
-//     price: 25000,
-//     producer: "피캬츄",
-//     category: "homepage",
-//     tags: ["간편", "빠른제작", "저렴"],
-//     duration: "3-5일",
-//   },
-// ];
-
-// const shoppingData = [
-//   {
-//     src: dog1,
-//     title: "프리미엄 쇼핑몰",
-//     great: 4.8,
-//     comment: 45,
-//     price: 150000,
-//     producer: "쇼핑몰마스터",
-//     category: "shopping",
-//     tags: ["결제시스템", "재고관리", "모바일"],
-//     duration: "4-6주",
-//   },
-//   {
-//     src: dog2,
-//     title: "스마트 온라인 스토어",
-//     great: 4.3,
-//     comment: 32,
-//     price: 80000,
-//     producer: "이커머스프로",
-//     category: "shopping",
-//     tags: ["반응형", "관리자페이지"],
-//     duration: "3-4주",
-//   },
-//   {
-//     src: dog3,
-//     title: "소상공인 맞춤 쇼핑몰",
-//     great: 4.0,
-//     comment: 18,
-//     price: 45000,
-//     producer: "소상공인도우미",
-//     category: "shopping",
-//     tags: ["저렴", "간편관리"],
-//     duration: "2-3주",
-//   },
-//   {
-//     src: dog4,
-//     title: "럭셔리 브랜드 쇼핑몰",
-//     great: 4.9,
-//     comment: 67,
-//     price: 300000,
-//     producer: "럭셔리디자이너",
-//     category: "shopping",
-//     tags: ["프리미엄", "브랜딩", "커스텀"],
-//     duration: "6-8주",
-//   },
-// ];
-
-// const communityData = [
-//   {
-//     src: dog1,
-//     title: "활발한 커뮤니티 사이트",
-//     great: 4.2,
-//     comment: 28,
-//     price: 75000,
-//     producer: "커뮤니티빌더",
-//     category: "community",
-//     tags: ["게시판", "회원관리", "채팅"],
-//     duration: "3-4주",
-//   },
-//   {
-//     src: dog2,
-//     title: "전문가 포럼",
-//     great: 4.6,
-//     comment: 41,
-//     price: 120000,
-//     producer: "포럼전문가",
-//     category: "community",
-//     tags: ["전문포럼", "Q&A", "평점시스템"],
-//     duration: "4-5주",
-//   },
-//   {
-//     src: dog3,
-//     title: "소셜 네트워킹 플랫폼",
-//     great: 3.8,
-//     comment: 15,
-//     price: 200000,
-//     producer: "소셜미디어프로",
-//     category: "community",
-//     tags: ["SNS기능", "실시간채팅"],
-//     duration: "6-8주",
-//   },
-//   {
-//     src: dog4,
-//     title: "학습 커뮤니티",
-//     great: 4.4,
-//     comment: 52,
-//     price: 90000,
-//     producer: "에듀테크마스터",
-//     category: "community",
-//     tags: ["학습관리", "진도추적"],
-//     duration: "4-6주",
-//   },
-// ];
-
-const Sidebar = () => {
+export default function SubMainHome() {
+  const [projectData, setProjectData] = useState([])
+  const [shoppingData, setShoppingData] = useState([])
+  const [communityData, setCommunitData] = useState([])
   const [activeTab, setActiveTab] = useState("inquiry");
   const [boardPosts, setBoardPosts] = useState([]);//게시판
   const [noticePosts, setNoticePosts] = useState([]);//공지사항
   const [reviewPosts, setReviewPosts] = useState([]);//공지사항
   const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const { request } = useApi(); // useApi 훅에서 request 받아오기
 
-useEffect(() => {
-  // 최초 1회 실행
-  fetchAllData();
+  // fetchAllData를 SubMainHome에서 정의
+  const fetchAllData = useCallback(async () => {
+    try {
+      const servicesList = await request({method: "get", url: "http://localhost:4000/api/serviceList"})
+      console.log("API 응답 데이터", servicesList)
 
-  // 5분마다 실행
-  const interval = setInterval(() => {
-    fetchAllData();
-  }, 300000); // 5분
+      // 각 타입별로 데이터 분류 (filter 사용)
+      const projectServices = servicesList.filter(service =>
+        service.service_type === "디자인" || service.service_type === "개발"
+      );
 
-  // 언마운트시 인터벌 해제
-  return () => clearInterval(interval);
-}, []);
+      const shoppingServices = servicesList.filter(service =>
+        service.service_type === "영상"
+      );
 
-const fetchAllData = async () => {
-  try {
-    const servicesList = await request({method  : "get" , url : "http://localhost:4000/api/serviceList"})
-    console.log("API 응답 데이터", servicesList)
-    for (var i = 0; i < servicesList.length; i++){
-      if (servicesList[i].service_type == "디자인" || servicesList[i].service_type == "개발") {
+      const communityServices = servicesList.filter(service =>
+        service.service_type === "컨텐츠" || service.service_type === "번역"
+      );
 
-      } else if(servicesList[i].service_type == "디자인" ) {
+      // 상태 업데이트 (함수 호출로 수정)
+      setProjectData(projectServices);
+      setShoppingData(shoppingServices);
+      setCommunitData(communityServices);
 
-      } else if (servicesList[i].service_type == "디자인") {
-
-      }
+      console.log("projectData", projectServices)
+      console.log("shoppingData", shoppingServices)
+      console.log("communityData", communityServices)
+    } catch (error) {
+      console.error("데이터 갱신 에러:", error);
     }
-  } catch (error) {
-    console.error("데이터 갱신 에러:", error);
-  }
-}
+  },[])
+
+  // useEffect를 fetchAllData 정의 후에 배치
+  useEffect(() => {
+    console.log("\n\n useEffect진입 \n\n\n")
+    // 최초 1회 실행
+    fetchAllData();
+
+    // 5분마다 실행
+    const interval = setInterval(() => {
+      fetchAllData();
+    }, 300000); // 5분
+
+    // 언마운트시 인터벌 해제
+    return () => clearInterval(interval);
+  }, [fetchAllData]); // fetchAllData 제거
+
+const Sidebar = () => {
 
   const tabs = [
     { id: "inquiry", label: "문의사항", icon: "📝" },
@@ -515,52 +392,6 @@ const fetchAllData = async () => {
   );
 };
 
-const ProjectCard = ({ project }) => {
-  const navigate = useNavigate();
-
-  return (
-    <div
-      className={styles.projectCard}
-      onClick={() => navigate(`/service-selection`)}
-    >
-      <div className={styles.projectImageContainer}>
-        <img
-          src={project.src}
-          alt={project.title}
-          className={styles.projectImage}
-        />
-        <div className={styles.projectOverlay}>
-          <div className={styles.projectCategory}>{project.category}</div>
-          <div className={styles.projectDuration}>{project.duration}</div>
-        </div>
-      </div>
-      <div className={styles.projectInfo}>
-        <h3 className={styles.projectTitle}>{project.title}</h3>
-        <div className={styles.projectRating}>
-          <img src={favorite} alt="좋아요" className={styles.ratingIcon} />
-          <span className={styles.ratingScore}>{project.great.toFixed(1)}</span>
-          <span className={styles.commentCount}>({project.comment})</span>
-        </div>
-        <div className={styles.projectPrice}>
-          {project.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원 ~
-        </div>
-        <div className={styles.projectProducer}>
-          <img src={produimg} alt="producer" className={styles.producerIcon} />
-          <span className={styles.producerName}>{project.producer}</span>
-        </div>
-        <div className={styles.projectTags}>
-          {project.tags.map((tag, index) => (
-            <span key={index} className={styles.tag}>
-              #{tag}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default function SubMainHome() {
   return (
     <div className={styles.subMainHome}>
       <div className={styles.mainContent}>
@@ -589,6 +420,99 @@ export default function SubMainHome() {
     </div>
   );
 }
+
+const ProjectCard = ({ project }) => {
+  const navigate = useNavigate();
+
+  // project가 없으면 렌더링하지 않음
+  if (!project) {
+    return null;
+  }
+
+  // 이미지 배열이 있는지 확인
+  const images = project.images || [];
+  const hasImages = images.length > 0;
+
+  // 카드 클릭 핸들러
+  const handleCardClick = () => {
+    navigate(`/service-selection`);
+  };
+
+  // 슬라이더 관련 클릭 이벤트 방지
+  const handleSwiperClick = (e) => {
+    e.stopPropagation();
+  };
+
+  return (
+    <div
+      className={styles.projectCard}
+      onClick={handleCardClick}
+    >
+      <div className={styles.projectImageContainer}>
+        {hasImages ? (
+                    <div
+            className={styles.swiperContainer}
+            onClick={handleSwiperClick}
+          >
+            <Swiper
+              modules={[Navigation, Pagination]}
+              spaceBetween={0}
+              slidesPerView={1}
+              navigation={true}
+              pagination={{ clickable: true }}
+              className={styles.projectSwiper}
+              allowTouchMove={true}
+              grabCursor={true}
+              onSlideChange={() => {}} // 슬라이드 변경 시 추가 로직이 필요하면 여기에
+            >
+              {images.map((image, index) => (
+                <SwiperSlide key={index}>
+                  <img
+                    src={image.image_url || image.url || ""}
+                    alt={`${project.title || "프로젝트"} 이미지 ${index + 1}`}
+                    className={styles.projectImage}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        ) : (
+          <div className={styles.noImageContainer}>
+            <div className={styles.noImagePlaceholder}>
+              <span>이미지 없음</span>
+            </div>
+          </div>
+        )}
+        <div className={styles.projectOverlay}>
+          <div className={styles.projectCategory}>{project.category || "카테고리"}</div>
+          <div className={styles.projectDuration}>{project.duration || "기간"}</div>
+        </div>
+      </div>
+      <div className={styles.projectInfo}>
+        <h3 className={styles.projectTitle}>{project.title || "제목 없음"}</h3>
+        <div className={styles.projectRating}>
+          <img src={favorite} alt="좋아요" className={styles.ratingIcon} />
+          <span className={styles.ratingScore}>{(project.great || 0).toFixed(1)}</span>
+          <span className={styles.commentCount}>({project.comment || 0})</span>
+        </div>
+        <div className={styles.projectPrice}>
+          {(project.price || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원 ~
+        </div>
+        <div className={styles.projectProducer}>
+          <img src={produimg} alt="producer" className={styles.producerIcon} />
+          <span className={styles.producerName}>{project.user?.name || "제작자"}</span>
+        </div>
+        <div className={styles.projectTags}>
+          {(project.tags || []).map((tag, index) => (
+            <span key={index} className={styles.tag}>
+              #{tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ProjectSection = ({ title, description, data, bgColor = "white" }) => {
   const navigate = useNavigate();
