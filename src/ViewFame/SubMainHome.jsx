@@ -8,7 +8,7 @@ import produimg from "../assets/img/produimg.png";
 
 //라이브러리
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect,useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import useApi from "../js/useApi";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -17,13 +17,13 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 export default function SubMainHome() {
-  const [projectData, setProjectData] = useState([])
-  const [shoppingData, setShoppingData] = useState([])
-  const [communityData, setCommunitData] = useState([])
+  const [projectData, setProjectData] = useState([]);
+  const [shoppingData, setShoppingData] = useState([]);
+  const [communityData, setCommunitData] = useState([]);
   const [activeTab, setActiveTab] = useState("inquiry");
-  const [boardPosts, setBoardPosts] = useState([]);//게시판
-  const [noticePosts, setNoticePosts] = useState([]);//공지사항
-  const [reviewPosts, setReviewPosts] = useState([]);//공지사항
+  const [boardPosts, setBoardPosts] = useState([]); //게시판
+  const [noticePosts, setNoticePosts] = useState([]); //공지사항
+  const [reviewPosts, setReviewPosts] = useState([]); //공지사항
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -33,20 +33,25 @@ export default function SubMainHome() {
   // fetchAllData를 SubMainHome에서 정의
   const fetchAllData = useCallback(async () => {
     try {
-      const servicesList = await request({method: "get", url: "http://localhost:4000/api/serviceList"})
-      console.log("API 응답 데이터", servicesList)
+      const servicesList = await request({
+        method: "get",
+        url: "http://localhost:4000/api/serviceList",
+      });
+      console.log("API 응답 데이터", servicesList);
 
       // 각 타입별로 데이터 분류 (filter 사용)
-      const projectServices = servicesList.filter(service =>
-        service.service_type === "디자인" || service.service_type === "개발"
+      const projectServices = servicesList.filter(
+        (service) =>
+          service.service_type === "디자인" || service.service_type === "개발"
       );
 
-      const shoppingServices = servicesList.filter(service =>
-        service.service_type === "영상"
+      const shoppingServices = servicesList.filter(
+        (service) => service.service_type === "영상"
       );
 
-      const communityServices = servicesList.filter(service =>
-        service.service_type === "컨텐츠" || service.service_type === "번역"
+      const communityServices = servicesList.filter(
+        (service) =>
+          service.service_type === "컨텐츠" || service.service_type === "번역"
       );
 
       // 상태 업데이트 (함수 호출로 수정)
@@ -54,17 +59,17 @@ export default function SubMainHome() {
       setShoppingData(shoppingServices);
       setCommunitData(communityServices);
 
-      console.log("projectData", projectServices)
-      console.log("shoppingData", shoppingServices)
-      console.log("communityData", communityServices)
+      console.log("projectData", projectServices);
+      console.log("shoppingData", shoppingServices);
+      console.log("communityData", communityServices);
     } catch (error) {
       console.error("데이터 갱신 에러:", error);
     }
-  },[])
+  }, []);
 
   // useEffect를 fetchAllData 정의 후에 배치
   useEffect(() => {
-    console.log("\n\n useEffect진입 \n\n\n")
+    console.log("\n\n useEffect진입 \n\n\n");
     // 최초 1회 실행
     fetchAllData();
 
@@ -77,320 +82,334 @@ export default function SubMainHome() {
     return () => clearInterval(interval);
   }, [fetchAllData]); // fetchAllData 제거
 
-const Sidebar = () => {
+  const Sidebar = () => {
+    const tabs = [
+      { id: "inquiry", label: "문의사항", icon: "📝" },
+      { id: "board", label: "게시판", icon: "📋" },
+      { id: "faq", label: "자주 묻는 질문", icon: "❓" },
+      { id: "notice", label: "공지사항", icon: "📢" },
+      { id: "review", label: "리뷰", icon: "⭐" },
+    ];
 
-  const tabs = [
-    { id: "inquiry", label: "문의사항", icon: "📝" },
-    { id: "board", label: "게시판", icon: "📋" },
-    { id: "faq", label: "자주 묻는 질문", icon: "❓" },
-    { id: "notice", label: "공지사항", icon: "📢" },
-    { id: "review", label: "리뷰", icon: "⭐" },
-  ];
+    const fetchBoardPosts = async () => {
+      setIsLoading(true);
+      try {
+        const response = await request({
+          method: "GET",
+          url: "http://localhost:4000/api/posts",
+        });
+        const limitedPosts = response.slice(0, 2);
+        setBoardPosts(limitedPosts);
+      } catch (error) {
+        console.error("Error getting posts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const fetchBoardPosts = async () => {
-    setIsLoading(true);
-    try {
-      const response = await request({
-        method: "GET",
-        url: "http://localhost:4000/api/posts",
-      });
-      const limitedPosts = response.slice(0, 2);
-      setBoardPosts(limitedPosts);
-    } catch (error) {
-      console.error("Error getting posts:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const fetchNoticePosts = async () => {
+      setIsLoading(true);
+      try {
+        const response = await request({
+          method: "GET",
+          url: "http://localhost:4000/api/NoticeList",
+        });
+        console.log("공지사항", response);
+        const limitedPosts = response.slice(0, 2);
+        setNoticePosts(limitedPosts);
+        // navigate("/notice", { state: { notice: response } });
+      } catch (error) {
+        console.error("Error getting notice:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const fetchNoticePosts = async () => {
-    setIsLoading(true);
-    try {
-      const response = await request({
-        method: "GET",
-        url: "http://localhost:4000/api/NoticeList",
-      })
-      console.log("공지사항", response);
-      const limitedPosts = response.slice(0, 2);
-      setNoticePosts(limitedPosts);
-      // navigate("/notice", { state: { notice: response } });
-    } catch (error) {
-      console.error("Error getting notice:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+    const fetchReviewPosts = async () => {
+      setIsLoading(true);
+      try {
+        const response = await request({
+          method: "GET",
+          url: "http://localhost:4000/api/reviewsList",
+        });
+        console.log("공지사항", response);
+        const limitedPosts = response.slice(0, 2);
+        setReviewPosts(limitedPosts);
+      } catch (error) {
+        console.error("Error getting notice:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const fetchReviewPosts = async () => {
-    setIsLoading(true);
-    try {
-      const response = await request({
-        method: "GET",
-        url: "http://localhost:4000/api/reviewsList",
-      })
-      console.log("공지사항", response);
-      const limitedPosts = response.slice(0, 2);
-      setReviewPosts(limitedPosts);
-    } catch (error) {
-      console.error("Error getting notice:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+    const handleTabClick = (tabId) => {
+      setActiveTab(tabId);
+      if (tabId === "board") {
+        fetchBoardPosts();
+      } else if (tabId === "notice") {
+        fetchNoticePosts();
+      } else if (tabId === "review") {
+        fetchReviewPosts();
+      }
+    };
 
-  const handleTabClick = (tabId) => {
-    setActiveTab(tabId);
-    if (tabId === "board") {
-      fetchBoardPosts();
-    } else if (tabId === "notice") {
-      fetchNoticePosts();
-    } else if (tabId === "review") {
-      fetchReviewPosts();
-    }
-  };
+    const boardPageSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const response = await request({
+          method: "GET",
+          url: "http://localhost:4000/api/posts",
+        });
+        navigate("/board", { state: { posts: response } });
+      } catch (error) {
+        console.error("Error getting posts:", error);
+        throw error;
+      }
+    };
 
-  const boardPageSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await request({
-        method: "GET",
-        url: "http://localhost:4000/api/posts",
-      });
-      navigate("/board", { state: { posts: response } });
-    } catch (error) {
-      console.error("Error getting posts:", error);
-      throw error;
-    }
-  };
+    const noticePageSubmit = async (e) => {
+      console.log("NoticeInfo");
+      e.preventDefault();
+      try {
+        const response = await request({
+          method: "GET",
+          url: "http://localhost:4000/api/NoticeList",
+        });
+        console.log("공지사항", response);
+        navigate("/notice", { state: { notice: response } });
+      } catch (error) {
+        console.error("Error getting notice:", error);
+      }
+    };
 
-  const noticePageSubmit = async (e) => {
-    console.log("NoticeInfo");
-    e.preventDefault();
-    try {
-      const response = await request({
-        method: "GET",
-        url: "http://localhost:4000/api/NoticeList",
-      });
-      console.log("공지사항", response);
-      navigate("/notice", { state: { notice: response } });
-    } catch (error) {
-      console.error("Error getting notice:", error);
-    }
-  };
-
-  const reviewPageSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await request({
-        method: "GET",
-        url: "http://localhost:4000/api/reviewsList",
-      });
-      // navigate("/review/write")
-      navigate("/review", { state: { reviews: response } });
-    } catch (error) {
-      console.error("Error getting posts:", error);
-      throw error;
-    }
-  };
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "inquiry":
-        return (
-          <div className={styles.tabContent}>
-            <h3>문의사항</h3>
-            <div className={styles.inquiryList}>
-              <div
-                className={styles.inquiryItem}
-                onClick={() => navigate("/inquiry")}
-              >
-                <span className={styles.inquiryTitle}>홈페이지 제작 문의</span>
-                <span className={styles.inquiryDate}>2024.03.15</span>
-              </div>
-              <div
-                className={styles.inquiryItem}
-                onClick={() => navigate("/inquiry")}
-              >
-                <span className={styles.inquiryTitle}>
-                  쇼핑몰 제작 비용 문의
-                </span>
-                <span className={styles.inquiryDate}>2024.03.14</span>
-              </div>
-            </div>
-            <button
-              className={styles.writeBtn}
-              onClick={() => navigate("/inquiry/write")}
-            >
-              문의하기
-            </button>
-          </div>
-        );
-      case "board":
-        return (
-          <div className={styles.tabContent}>
-            <h3>게시판</h3>
-            <div className={styles.subBoardList}>
-              {isLoading ? (
-                <div className={styles.loading}>로딩 중...</div>
-              ) : boardPosts.length > 0 ? (
-                boardPosts.map((post) => (
-                  <div
-                    key={post.id}
-                    className={styles.boardItem}
-                    onClick={(e) => boardPageSubmit(e)}
-                  >
-                    <span className={styles.boardTitle}>{post.title}</span>
-                    <span className={styles.boardDate}>
-                      {new Date(post.created_at).toLocaleDateString("ko-KR")}
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <div className={styles.noPosts}>게시글이 없습니다.</div>
-              )}
-            </div>
-            <button
-              className={styles.writeBtn}
-              onClick={(e) => boardPageSubmit(e)}
-            >
-              글쓰기
-            </button>
-          </div>
-        );
-      case "faq":
-        return (
-          <div className={styles.tabContent}>
-            <h3>자주 묻는 질문</h3>
-            <div className={styles.faqList}>
-              <div className={styles.faqItem} onClick={() => navigate("/faq")}>
-                <span className={styles.faqIcon}>Q.</span>
-                <span className={styles.faqTitle}>
-                  홈페이지 제작 기간은 얼마나 걸리나요?
-                </span>
-              </div>
-              <div className={styles.faqItem} onClick={() => navigate("/faq")}>
-                <span className={styles.faqIcon}>Q.</span>
-                <span className={styles.faqTitle}>
-                  제작 비용은 어떻게 산정되나요?
-                </span>
-              </div>
-            </div>
-            <button
-              className={styles.writeBtn}
-              onClick={() => navigate("/faq")}
-            >
-              더보기
-            </button>
-          </div>
-        );
-      case "notice":
-        return (
-          <div className={styles.tabContent}>
-            <h3>공지사항</h3>
-            <div className={styles.noticeList}>
-		   {isLoading ? (
-                <div className={styles.loading}>로딩 중...</div>
-              ) : noticePosts.length > 0 ? (
-                noticePosts.map((notice) => (
-                  <div
-                    key={notice.id}
-                    className={styles.noticeItem}
-                    onClick={(e) => noticePageSubmit(e)}
-                  >
+    const reviewPageSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const response = await request({
+          method: "GET",
+          url: "http://localhost:4000/api/reviewsList",
+        });
+        // navigate("/review/write")
+        navigate("/review", { state: { reviews: response } });
+      } catch (error) {
+        console.error("Error getting posts:", error);
+        throw error;
+      }
+    };
+    const renderTabContent = () => {
+      switch (activeTab) {
+        case "inquiry":
+          return (
+            <div className={styles.tabContent}>
+              <h3>문의사항</h3>
+              <div className={styles.inquiryList}>
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    overflow: "hidden",
-                  }}
-                    >
-                      <span className={styles.noticeBadge}>{ notice.noticetype}</span>
-                      <span className={styles.noticeTitle}>{notice.title}</span>
+                  className={styles.inquiryItem}
+                  onClick={() => navigate("/inquiry")}
+                >
+                  <span className={styles.inquiryTitle}>
+                    홈페이지 제작 문의
+                  </span>
+                  <span className={styles.inquiryDate}>2024.03.15</span>
                 </div>
-
-                    <span className={styles.noticeDate}>
-                      {notice.date}
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <div className={styles.noPosts}>게시글이 없습니다.</div>
-              )}
+                <div
+                  className={styles.inquiryItem}
+                  onClick={() => navigate("/inquiry")}
+                >
+                  <span className={styles.inquiryTitle}>
+                    쇼핑몰 제작 비용 문의
+                  </span>
+                  <span className={styles.inquiryDate}>2024.03.14</span>
+                </div>
+              </div>
+              <button
+                className={styles.writeBtn}
+                onClick={() => navigate("/inquiry/write")}
+              >
+                문의하기
+              </button>
             </div>
-
-            <button className={styles.writeBtn} onClick={(e) => noticePageSubmit(e)}>
-              더보기
-            </button>
-          </div>
-        );
-      case "review":
-        return (
-          <div className={styles.tabContent}>
-            <h3>리뷰</h3>
-            <div className={styles.reviewList}>
-              {isLoading ? (
-                <div className={styles.loading}>로딩 중...</div>
-              ) : reviewPosts.length > 0 ? (
-                reviewPosts.map((review) => (
-                  <div
-                    key={review.id}
-                    className={styles.reviewItem}
-                    onClick={(e) => reviewPageSubmit(e)}
-                  >
-                    <div className={styles.reviewHeader}>
-                      <span className={styles.reviewRating}>
-                        {Array.from({ length: 5 }, (_, i) =>
-                          i < review.rating ? "★" : "☆"
-                        ).join("")}
-                      </span>
-                      <span className={styles.reviewAuthor}>
-                        {review.author || "익명"}
-                      </span>
-                      <span className={styles.reviewDate}>
-                        {review.date
-                          ? new Date(review.date).toLocaleDateString("ko-KR")
-                          : ""}
+          );
+        case "board":
+          return (
+            <div className={styles.tabContent}>
+              <h3>게시판</h3>
+              <div className={styles.subBoardList}>
+                {isLoading ? (
+                  <div className={styles.loading}>로딩 중...</div>
+                ) : boardPosts.length > 0 ? (
+                  boardPosts.map((post) => (
+                    <div
+                      key={post.id}
+                      className={styles.boardItem}
+                      onClick={(e) => boardPageSubmit(e)}
+                    >
+                      <span className={styles.boardTitle}>{post.title}</span>
+                      <span className={styles.boardDate}>
+                        {new Date(post.created_at).toLocaleDateString("ko-KR")}
                       </span>
                     </div>
-                    <div className={styles.reviewContent}>{review.content}</div>
-                  </div>
-                ))
-              ) : (
-                <div className={styles.noPosts}>리뷰가 없습니다.</div>
-              )}
+                  ))
+                ) : (
+                  <div className={styles.noPosts}>게시글이 없습니다.</div>
+                )}
+              </div>
+              <button
+                className={styles.writeBtn}
+                onClick={(e) => boardPageSubmit(e)}
+              >
+                글쓰기
+              </button>
             </div>
-            <button
-              className={styles.writeBtn}
-              onClick={(e) => reviewPageSubmit(e)}
-            >
-              리뷰 작성하기
-            </button>
-          </div>
-        );
-      default:
-        return <div className={styles.tabContent}>준비 중입니다.</div>;
-    }
-  };
+          );
+        case "faq":
+          return (
+            <div className={styles.tabContent}>
+              <h3>자주 묻는 질문</h3>
+              <div className={styles.faqList}>
+                <div
+                  className={styles.faqItem}
+                  onClick={() => navigate("/faq")}
+                >
+                  <span className={styles.faqIcon}>Q.</span>
+                  <span className={styles.faqTitle}>
+                    홈페이지 제작 기간은 얼마나 걸리나요?
+                  </span>
+                </div>
+                <div
+                  className={styles.faqItem}
+                  onClick={() => navigate("/faq")}
+                >
+                  <span className={styles.faqIcon}>Q.</span>
+                  <span className={styles.faqTitle}>
+                    제작 비용은 어떻게 산정되나요?
+                  </span>
+                </div>
+              </div>
+              <button
+                className={styles.writeBtn}
+                onClick={() => navigate("/faq")}
+              >
+                더보기
+              </button>
+            </div>
+          );
+        case "notice":
+          return (
+            <div className={styles.tabContent}>
+              <h3>공지사항</h3>
+              <div className={styles.noticeList}>
+                {isLoading ? (
+                  <div className={styles.loading}>로딩 중...</div>
+                ) : noticePosts.length > 0 ? (
+                  noticePosts.map((notice) => (
+                    <div
+                      key={notice.id}
+                      className={styles.noticeItem}
+                      onClick={(e) => noticePageSubmit(e)}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <span className={styles.noticeBadge}>
+                          {notice.noticetype}
+                        </span>
+                        <span className={styles.noticeTitle}>
+                          {notice.title}
+                        </span>
+                      </div>
 
-  return (
-    <div className={styles.sidebar}>
-      <div className={styles.sidebarTabs}>
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            className={`${styles.tabBtn} ${
-              activeTab === tab.id ? styles.active : ""
-            }`}
-            onClick={() => handleTabClick(tab.id)}
-          >
-            <span className={styles.tabIcon}>{tab.icon}</span>
-            <span className={styles.tabLabel}>{tab.label}</span>
-          </button>
-        ))}
+                      <span className={styles.noticeDate}>{notice.date}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className={styles.noPosts}>게시글이 없습니다.</div>
+                )}
+              </div>
+
+              <button
+                className={styles.writeBtn}
+                onClick={(e) => noticePageSubmit(e)}
+              >
+                더보기
+              </button>
+            </div>
+          );
+        case "review":
+          return (
+            <div className={styles.tabContent}>
+              <h3>리뷰</h3>
+              <div className={styles.reviewList}>
+                {isLoading ? (
+                  <div className={styles.loading}>로딩 중...</div>
+                ) : reviewPosts.length > 0 ? (
+                  reviewPosts.map((review) => (
+                    <div
+                      key={review.id}
+                      className={styles.reviewItem}
+                      onClick={(e) => reviewPageSubmit(e)}
+                    >
+                      <div className={styles.reviewHeader}>
+                        <span className={styles.reviewRating}>
+                          {Array.from({ length: 5 }, (_, i) =>
+                            i < review.rating ? "★" : "☆"
+                          ).join("")}
+                        </span>
+                        <span className={styles.reviewAuthor}>
+                          {review.author || "익명"}
+                        </span>
+                        <span className={styles.reviewDate}>
+                          {review.date
+                            ? new Date(review.date).toLocaleDateString("ko-KR")
+                            : ""}
+                        </span>
+                      </div>
+                      <div className={styles.reviewContent}>
+                        {review.content}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className={styles.noPosts}>리뷰가 없습니다.</div>
+                )}
+              </div>
+              <button
+                className={styles.writeBtn}
+                onClick={(e) => reviewPageSubmit(e)}
+              >
+                리뷰 작성하기
+              </button>
+            </div>
+          );
+        default:
+          return <div className={styles.tabContent}>준비 중입니다.</div>;
+      }
+    };
+
+    return (
+      <div className={styles.sidebar}>
+        <div className={styles.sidebarTabs}>
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`${styles.tabBtn} ${
+                activeTab === tab.id ? styles.active : ""
+              }`}
+              onClick={() => handleTabClick(tab.id)}
+            >
+              <span className={styles.tabIcon}>{tab.icon}</span>
+              <span className={styles.tabLabel}>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+        <div className={styles.sidebarContent}>{renderTabContent()}</div>
       </div>
-      <div className={styles.sidebarContent}>{renderTabContent()}</div>
-    </div>
-  );
-};
+    );
+  };
 
   return (
     <div className={styles.subMainHome}>
@@ -435,7 +454,7 @@ const ProjectCard = ({ project }) => {
 
   // 카드 클릭 핸들러
   const handleCardClick = () => {
-    navigate(`/service-selection`);
+    navigate(`/service-detail`, { state: { service: project } });
   };
 
   // 슬라이더 관련 클릭 이벤트 방지
@@ -444,16 +463,10 @@ const ProjectCard = ({ project }) => {
   };
 
   return (
-    <div
-      className={styles.projectCard}
-      onClick={handleCardClick}
-    >
+    <div className={styles.projectCard} onClick={handleCardClick}>
       <div className={styles.projectImageContainer}>
         {hasImages ? (
-                    <div
-            className={styles.swiperContainer}
-            onClick={handleSwiperClick}
-          >
+          <div className={styles.swiperContainer} onClick={handleSwiperClick}>
             <Swiper
               modules={[Navigation, Pagination]}
               spaceBetween={0}
@@ -484,23 +497,34 @@ const ProjectCard = ({ project }) => {
           </div>
         )}
         <div className={styles.projectOverlay}>
-          <div className={styles.projectCategory}>{project.category || "카테고리"}</div>
-          <div className={styles.projectDuration}>{project.duration || "기간"}</div>
+          <div className={styles.projectCategory}>
+            {project.category || "카테고리"}
+          </div>
+          <div className={styles.projectDuration}>
+            {project.duration || "기간"}
+          </div>
         </div>
       </div>
       <div className={styles.projectInfo}>
         <h3 className={styles.projectTitle}>{project.title || "제목 없음"}</h3>
         <div className={styles.projectRating}>
           <img src={favorite} alt="좋아요" className={styles.ratingIcon} />
-          <span className={styles.ratingScore}>{(project.great || 0).toFixed(1)}</span>
+          <span className={styles.ratingScore}>
+            {(project.great || 0).toFixed(1)}
+          </span>
           <span className={styles.commentCount}>({project.comment || 0})</span>
         </div>
         <div className={styles.projectPrice}>
-          {(project.price || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원 ~
+          {(project.price || 0)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+          원 ~
         </div>
         <div className={styles.projectProducer}>
           <img src={produimg} alt="producer" className={styles.producerIcon} />
-          <span className={styles.producerName}>{project.user?.name || "제작자"}</span>
+          <span className={styles.producerName}>
+            {project.user?.name || "제작자"}
+          </span>
         </div>
         <div className={styles.projectTags}>
           {(project.tags || []).map((tag, index) => (
@@ -516,6 +540,16 @@ const ProjectCard = ({ project }) => {
 
 const ProjectSection = ({ title, description, data, bgColor = "white" }) => {
   const navigate = useNavigate();
+
+  const handleViewMoreClick = () => {
+    if (data && data.length > 0) {
+      // 첫 번째 서비스의 상세 페이지로 이동
+      navigate("/service-detail", { state: { service: data[0] } });
+    } else {
+      // 데이터가 없으면 서비스 선택 페이지로 이동
+      navigate("/service-selection");
+    }
+  };
 
   return (
     <section
@@ -535,10 +569,7 @@ const ProjectSection = ({ title, description, data, bgColor = "white" }) => {
         </div>
 
         <div className={styles.sectionFooter}>
-          <button
-            className={styles.viewMoreBtn}
-            onClick={() => navigate("/service-selection")}
-          >
+          <button className={styles.viewMoreBtn} onClick={handleViewMoreClick}>
             더 많은 {title.split(" ")[0]} 보기
           </button>
         </div>
