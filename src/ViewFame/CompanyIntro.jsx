@@ -4,8 +4,6 @@ import "../CssFolder/CompanyIntro.css";
 import useApi from "../js/useApi";
 import { useState, useEffect } from "react";
 
-
-
 export default function CompanyIntro() {
   const { request } = useApi(); // useApi 훅에서 request 받아오기
 
@@ -55,44 +53,26 @@ export default function CompanyIntro() {
   ];
 
   const [team, setTeam] = useState([]);
+  const fetchUsers = async () => {
+    try {
+      const response = await request({
+        method: "get",
+        url: "http://localhost:4000/api/memberList",
+      });
+
+      console.log("\n\n 응답갓ㅂ \n\n", response);
+
+      setTeam(response);
+    } catch (err) {
+      console.error("회원 목록 가져오기 실패:", err);
+      setTeam([]); // 실패 시에도 배열로
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await request({method : 'get', url :"http://localhost:4000/api/memberList"}); // 예: GET /api/users
-        const data = await response.json();
-        setTeam(data);
-      } catch (err) {
-        console.error("회원 목록 가져오기 실패:", err);
-      }
-    };
-
-    fetchUsers(); // 컴포넌트 마운트 시 1회 호출
-  }, [])
-
-  // const team = [
-  //   {
-  //     name: "김웹개발",
-  //     role: "대표 개발자",
-  //     experience: "10년+ 경력",
-  //     specialty: "풀스택 개발",
-  //     image: "/placeholder.svg?height=120&width=120",
-  //   },
-  //   {
-  //     name: "박디자인",
-  //     role: "UI/UX 디자이너",
-  //     experience: "8년+ 경력",
-  //     specialty: "사용자 경험 설계",
-  //     image: "/placeholder.svg?height=120&width=120",
-  //   },
-  //   {
-  //     name: "이기획자",
-  //     role: "프로젝트 매니저",
-  //     experience: "7년+ 경력",
-  //     specialty: "프로젝트 관리",
-  //     image: "/placeholder.svg?height=120&width=120",
-  //   },
-  // ];
+    fetchUsers();
+    console.log("상태변환값", team);
+  }, []);
 
   return (
     <section className="company-intro">
@@ -149,17 +129,19 @@ export default function CompanyIntro() {
           </div>
 
           <div className="team-grid">
-            {team.map((member, index) => (
+            {(Array.isArray(team) ? team : []).map((member, index) => (
               <div key={index} className="team-card">
                 <div className="team-image">
                   <img
                     src={member.image || "/placeholder.svg"}
-                    alt={member.name}
+                    alt={member.name || member.username || `팀원${index + 1}`}
                   />
                 </div>
                 <div className="team-info">
-                  <h4>{member.name}</h4>
-                  <p className="team-role">{member.role}</p>
+                  <h4>
+                    {member.name || member.username || `팀원${index + 1}`}
+                  </h4>
+                  <p className="team-role">{member.role || member.position}</p>
                   <p className="team-experience">{member.experience}</p>
                   <p className="team-specialty">{member.specialty}</p>
                 </div>
