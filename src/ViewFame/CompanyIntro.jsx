@@ -1,8 +1,14 @@
 "use client";
 
 import "../CssFolder/CompanyIntro.css";
+import useApi from "../js/useApi";
+import { useState, useEffect } from "react";
+
+
 
 export default function CompanyIntro() {
+  const { request } = useApi(); // useApi 훅에서 request 받아오기
+
   const stats = [
     { number: "500+", label: "완성된 프로젝트" },
     { number: "98%", label: "고객 만족도" },
@@ -48,29 +54,45 @@ export default function CompanyIntro() {
     },
   ];
 
-  const team = [
-    {
-      name: "김웹개발",
-      role: "대표 개발자",
-      experience: "10년+ 경력",
-      specialty: "풀스택 개발",
-      image: "/placeholder.svg?height=120&width=120",
-    },
-    {
-      name: "박디자인",
-      role: "UI/UX 디자이너",
-      experience: "8년+ 경력",
-      specialty: "사용자 경험 설계",
-      image: "/placeholder.svg?height=120&width=120",
-    },
-    {
-      name: "이기획자",
-      role: "프로젝트 매니저",
-      experience: "7년+ 경력",
-      specialty: "프로젝트 관리",
-      image: "/placeholder.svg?height=120&width=120",
-    },
-  ];
+  const [team, setTeam] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await request({method : 'get', url :"http://localhost:4000/api/memberList"}); // 예: GET /api/users
+        const data = await response.json();
+        setTeam(data);
+      } catch (err) {
+        console.error("회원 목록 가져오기 실패:", err);
+      }
+    };
+
+    fetchUsers(); // 컴포넌트 마운트 시 1회 호출
+  }, [])
+
+  // const team = [
+  //   {
+  //     name: "김웹개발",
+  //     role: "대표 개발자",
+  //     experience: "10년+ 경력",
+  //     specialty: "풀스택 개발",
+  //     image: "/placeholder.svg?height=120&width=120",
+  //   },
+  //   {
+  //     name: "박디자인",
+  //     role: "UI/UX 디자이너",
+  //     experience: "8년+ 경력",
+  //     specialty: "사용자 경험 설계",
+  //     image: "/placeholder.svg?height=120&width=120",
+  //   },
+  //   {
+  //     name: "이기획자",
+  //     role: "프로젝트 매니저",
+  //     experience: "7년+ 경력",
+  //     specialty: "프로젝트 관리",
+  //     image: "/placeholder.svg?height=120&width=120",
+  //   },
+  // ];
 
   return (
     <section className="company-intro">

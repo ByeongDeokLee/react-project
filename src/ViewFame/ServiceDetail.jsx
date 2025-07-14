@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -18,6 +18,43 @@ export default function ServiceDetail() {
   const navigate = useNavigate();
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const swiperRef = useRef(null);
+
+  // 결제 옵션 데이터
+  const paymentOptions = [
+    {
+      id: "basic",
+      name: "일반형",
+      desc: "페이지 3개 이하, 기간 한달, 이상 유지보수 한달",
+      price: 150000,
+    },
+    {
+      id: "business",
+      name: "비지니스",
+      desc: "페이지 5개 이하 및 UI 수정요청 가능, 기간 두달, 이상 유지보수 3달",
+      price: 500000,
+    },
+    {
+      id: "premium",
+      name: "프리미엄형",
+      desc: "페이지 10개 이하 개발 중 UI 수정 가능, 개발기간 3개월 이상, 유지보수 1년",
+      price: 1000000,
+    },
+  ];
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  // 옵션 체크박스 핸들러
+  const handleOptionChange = (id) => {
+    setSelectedOptions((prev) =>
+      prev.includes(id) ? prev.filter((opt) => opt !== id) : [...prev, id]
+    );
+  };
+
+  // 옵션 추가 가격 계산
+  const selectedOptionsData = paymentOptions.filter((opt) => selectedOptions.includes(opt.id));
+  const optionsTotal = selectedOptionsData.reduce((sum, opt) => sum + opt.price, 0);
+  const totalPrice = (service?.price || 0) + optionsTotal;
 
   useEffect(() => {
     if (location.state?.service) {
@@ -50,6 +87,19 @@ export default function ServiceDetail() {
   const images = service.images || [];
   const hasImages = images.length > 0;
 
+  // Swiper 슬라이드 변경 시 대표 이미지 인덱스 동기화
+  const handleSlideChange = (swiper) => {
+    setSelectedImageIndex(swiper.activeIndex);
+  };
+
+  // 썸네일 클릭 시 Swiper 슬라이드 이동
+  const handleThumbnailClick = (idx) => {
+    setSelectedImageIndex(idx);
+    if (swiperRef.current && swiperRef.current.swiper) {
+      swiperRef.current.swiper.slideTo(idx);
+    }
+  };
+
   return (
     <div className={styles.serviceDetail}>
       <div className={styles.container}>
@@ -68,28 +118,58 @@ export default function ServiceDetail() {
           {/* 이미지 섹션 */}
           <div className={styles.imageSection}>
             {hasImages ? (
-              <div className={styles.swiperContainer}>
-                <Swiper
-                  modules={[Navigation, Pagination]}
-                  spaceBetween={0}
-                  slidesPerView={1}
-                  navigation={true}
-                  pagination={{ clickable: true }}
-                  className={styles.serviceSwiper}
-                  allowTouchMove={true}
-                  grabCursor={true}
-                >
-                  {images.map((image, index) => (
-                    <SwiperSlide key={index}>
-                      <img
-                        src={image.image_url || image.url || ""}
-                        alt={`${service.title || "서비스"} 이미지 ${index + 1}`}
-                        className={styles.serviceImage}
-                      />
-                    </SwiperSlide>
+              <>
+                {/* 대표 이미지 */}
+                <div className={styles.mainImageWrapper}>
+                  <img
+                    src={images[selectedImageIndex].image_url || images[selectedImageIndex].url || ""}
+                    alt={`${service.title || "서비스"} 대표 이미지`}
+                    className={styles.mainImage}
+                  />
+                </div>
+                {/* 썸네일 리스트 */}
+                <div className={styles.thumbnailList}>
+                  {images.map((image, idx) => (
+                    <img
+                      key={idx}
+                      src={image.image_url || image.url || ""}
+                      alt={`썸네일 ${idx + 1}`}
+                      className={
+                        idx === selectedImageIndex
+                          ? `${styles.thumbnail} ${styles.selectedThumbnail}`
+                          : styles.thumbnail
+                      }
+                      onClick={() => handleThumbnailClick(idx)}
+                    />
                   ))}
-                </Swiper>
-              </div>
+                </div>
+                {/* Swiper (숨김 처리, 접근성/스와이프용) */}
+                <div style={{ display: "none" }}>
+                  <Swiper
+                    modules={[Navigation, Pagination]}
+                    spaceBetween={0}
+                    slidesPerView={1}
+                    navigation={true}
+                    pagination={{ clickable: true }}
+                    className={styles.serviceSwiper}
+                    allowTouchMove={true}
+                    grabCursor={true}
+                    onSlideChange={handleSlideChange}
+                    ref={swiperRef}
+                    initialSlide={selectedImageIndex}
+                  >
+                    {images.map((image, index) => (
+                      <SwiperSlide key={index}>
+                        <img
+                          src={image.image_url || image.url || ""}
+                          alt={`${service.title || "서비스"} 이미지 ${index + 1}`}
+                          className={styles.serviceImage}
+                        />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
+              </>
             ) : (
               <div className={styles.noImageContainer}>
                 <div className={styles.noImagePlaceholder}>
@@ -184,13 +264,34 @@ export default function ServiceDetail() {
               </div>
             </div>
 
-            {/* 결제 버튼 */}
+            {/* 결제 옵션 선택 (정보 섹션 내부로 이동) */}
+            <div className={styles.paymentExtraOptions}>
+              <h2 className={styles.optionsTitle}>추가 결제 옵션</h2>
+              <div className={styles.optionList}>
+                {paymentOptions.map((opt) => (
+                  <label key={opt.id} className={`${styles.optionBox}${selectedOptions.includes(opt.id) ? ' ' + styles.selectedOptionBox : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={selectedOptions.includes(opt.id)}
+                      onChange={() => handleOptionChange(opt.id)}
+                    />
+                    <div className={styles.optionInfo}>
+                      <span className={styles.optionName}>{opt.name}</span>
+                      <span className={styles.optionDesc}>{opt.desc}</span>
+                    </div>
+                    <span className={styles.optionPrice}>+{opt.price.toLocaleString()}원</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* 결제 버튼 (정보 섹션 내부) */}
             <div className={styles.paymentSection}>
               <button
                 className={styles.paymentButton}
                 onClick={handlePaymentClick}
               >
-                결제하기
+                {totalPrice.toLocaleString()}원 결제하기
               </button>
             </div>
           </div>

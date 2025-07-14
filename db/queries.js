@@ -1,6 +1,6 @@
 const supabase = require("./supabaseConfig");
 
-// 게시글 관련 쿼리
+// 게시글 조회
 const getPosts = async () => {
   try {
     const { data, error } = await supabase.from("posts").select("*");
@@ -12,6 +12,7 @@ const getPosts = async () => {
   }
 };
 
+//게시글 상세 조회
 const getPostById = async (id) => {
   try {
     const { data, error } = await supabase
@@ -33,6 +34,7 @@ const getPostById = async (id) => {
   }
 };
 
+//게시글 상세
 async function updatePostViews(postId) {
   try {
     // Step 1: 현재 views 값 가져오기
@@ -61,6 +63,7 @@ async function updatePostViews(postId) {
   }
 }
 
+//게시글 생성
 const createPost = async (title, content, author) => {
   try {
     const { data, error } = await supabase
@@ -76,6 +79,7 @@ const createPost = async (title, content, author) => {
   }
 };
 
+//게시글 수정
 const updatePost = async (id, title, content) => {
   try {
     const { data, error } = await supabase
@@ -92,6 +96,7 @@ const updatePost = async (id, title, content) => {
   }
 };
 
+//게시글 삭제
 const deletePost = async (id) => {
   try {
     const { error } = await supabase.from("posts").delete().eq("id", id);
@@ -273,6 +278,7 @@ const getNotice = async (id) => {
   }
 };
 
+//공지사항 게시물
 const updateNoticeViews = async (id) => {
   try {
     // Step 1: 현재 views 값 가져오기
@@ -371,6 +377,22 @@ const serviceList = async () => {
   }
 }
 
+//회원 조회
+const memberList = async () => {
+  try {
+    console.log("회원 정보 쿼리 실행");
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+
+    console.log("쿼리 확인", data);
+    return data;
+  } catch (error) {
+    console.error("Error getting inquiry:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   getPosts,
   getPostById,
@@ -388,5 +410,6 @@ module.exports = {
   getNotice,
   updateNoticeViews,
   reviewsList,
-  serviceList
+  serviceList,
+  memberList
 };

@@ -47,44 +47,54 @@
 }
 
 .imageSection {
-  position: sticky;
-  top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 600px; /* 정보 섹션과 동일하게 맞추기, 필요시 조정 */
+  min-height: 500px;
 }
 
-.swiperContainer {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.serviceSwiper {
-  width: 100%;
+.mainImageWrapper {
+  width: 400px;
   height: 400px;
-}
-
-.serviceImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.noImageContainer {
-  width: 100%;
-  height: 400px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.noImagePlaceholder {
-  width: 100%;
-  height: 100%;
-  background-color: #e9ecef;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6c757d;
-  font-size: 18px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+.mainImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.thumbnailList {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border 0.2s, transform 0.2s;
+}
+
+.selectedThumbnail {
+  border: 2px solid #007bff;
+  transform: scale(1.08);
 }
 
 .infoSection {
@@ -92,6 +102,11 @@
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  /* height: 600px; 이미지 섹션과 동일하게 맞춤 */
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .basicInfo {
@@ -311,6 +326,64 @@
   background-color: #0056b3;
 }
 
+.paymentExtraOptions {
+  margin: 32px 0 16px 0;
+}
+.optionsTitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: #222;
+}
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.optionBox {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border: 2px solid #e3e3e3;
+  border-radius: 10px;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: border 0.2s, box-shadow 0.2s;
+  gap: 18px;
+}
+.optionBox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #007bff;
+  margin-right: 10px;
+}
+.selectedOptionBox {
+  border: 2px solid #007bff;
+  box-shadow: 0 2px 12px rgba(0,123,255,0.08);
+  background: #e3f2fd;
+}
+.optionInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.optionName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1976d2;
+}
+.optionDesc {
+  font-size: 14px;
+  color: #555;
+}
+.optionPrice {
+  font-size: 16px;
+  font-weight: 700;
+  color: #007bff;
+  margin-left: 16px;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .mainContent {
@@ -319,31 +392,22 @@
   }
 
   .imageSection {
-    position: static;
+    height: auto;
+    min-height: unset;
   }
 
-  .serviceSwiper,
-  .noImageContainer {
+  .mainImageWrapper {
+    width: 100%;
     height: 300px;
   }
 
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .serviceHeader {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .serviceRating {
-    margin-left: 0;
+  .mainImage {
+    height: 100%;
   }
 
   .infoSection {
+    height: auto;
+    min-height: unset;
     padding: 20px;
   }
 
@@ -351,6 +415,27 @@
     width: 100%;
     padding: 14px 20px;
     font-size: 16px;
+  }
+  .thumbnail {
+    width: 40px;
+    height: 40px;
+  }
+  .paymentExtraOptions {
+    margin: 24px 0 12px 0;
+  }
+  .optionBox {
+    padding: 12px 10px;
+    gap: 10px;
+  }
+  .optionPrice {
+    margin-left: 8px;
+    font-size: 15px;
+  }
+  .optionName {
+    font-size: 15px;
+  }
+  .optionDesc {
+    font-size: 13px;
   }
 }
 
@@ -367,8 +452,21 @@
     font-size: 20px;
   }
 
-  .serviceSwiper,
-  .noImageContainer {
-    height: 250px;
+  .mainImageWrapper {
+    height: 200px;
+  }
+  .thumbnail {
+    width: 30px;
+    height: 30px;
+  }
+  .optionBox {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px 6px;
+  }
+  .optionPrice {
+    margin-left: 0;
+    font-size: 14px;
   }
 }

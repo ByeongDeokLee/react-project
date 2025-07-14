@@ -29,6 +29,7 @@ const {
   updateNoticeViews,
   reviewsList,
   serviceList,
+  memberList,
 } = require("../db/queries");
 
 app.use(cors());
@@ -112,6 +113,7 @@ app.get("/api/NoticeList", async (req, res) => {
   }
 });
 
+//공지사항 상세페이지
 app.post("/api/getNotice/:id", async (req, res) => {
   try {
     console.log("게시물 View 증가");
@@ -133,7 +135,7 @@ app.post("/api/getNotice/:id", async (req, res) => {
   }
 });
 
-// 문의하기 API 엔드포인트
+// 문의하기 API
 app.post("/api/send-inquiry", async (req, res) => {
   console.log("문의하기 API 요청 받음:", req.body);
   console.log("네이버 PWD :", process.env.NAVER_PASSWORD);
@@ -348,6 +350,7 @@ app.post("/api/Login", async (req, res) => {
   }
 });
 
+//네이버 로그인
 app.post("/api/naver/login", async (req, res) => {
   const { code, state } = req.body;
   try {
@@ -403,6 +406,17 @@ app.post("/api/register", async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+
+app.get("/api/memberList", async (req, res) => {
+  try {
+    console.log("memberList 조회")
+    const response = await memberList();
+    console.log("memberList 응답값", response)
+    res.json({ response});
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+})
 
 
 

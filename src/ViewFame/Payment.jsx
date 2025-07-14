@@ -18,6 +18,36 @@ export default function Payment() {
   });
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // 결제 옵션 데이터
+  const paymentOptions = [
+    {
+      id: "basic",
+      name: "일반형",
+      desc: "페이지 3개 이하, 기간 한달, 이상 유지보수 한달",
+      price: 150000,
+    },
+    {
+      id: "business",
+      name: "비지니스",
+      desc: "페이지 5개 이하 및 UI 수정요청 가능, 기간 두달, 이상 유지보수 3달",
+      price: 500000,
+    },
+    {
+      id: "premium",
+      name: "프리미엄형",
+      desc: "페이지 10개 이하 개발 중 UI 수정 가능, 개발기간 3개월 이상, 유지보수 1년",
+      price: 1000000,
+    },
+  ];
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  // 옵션 체크박스 핸들러
+  const handleOptionChange = (id) => {
+    setSelectedOptions((prev) =>
+      prev.includes(id) ? prev.filter((opt) => opt !== id) : [...prev, id]
+    );
+  };
+
   useEffect(() => {
     // 서비스 상세 페이지에서 전달받은 데이터 확인
     if (location.state?.service) {
@@ -123,6 +153,11 @@ export default function Payment() {
     return types[type] || type;
   };
 
+  // 옵션 추가 가격 계산
+  const selectedOptionsData = paymentOptions.filter((opt) => selectedOptions.includes(opt.id));
+  const optionsTotal = selectedOptionsData.reduce((sum, opt) => sum + opt.price, 0);
+  const totalPrice = (orderData?.totalPrice || 0) + optionsTotal;
+
   return (
     <div className="payment-container">
       <div className="payment-header">
@@ -152,9 +187,23 @@ export default function Payment() {
             ))}
           </div>
 
+          {/* 선택된 옵션 표시 */}
+          {selectedOptionsData.length > 0 && (
+            <div className="selected-options">
+              <h3>추가 옵션</h3>
+              {selectedOptionsData.map((opt) => (
+                <div key={opt.id} className="option-item">
+                  <span className="option-name">{opt.name}</span>
+                  <span className="option-desc">{opt.desc}</span>
+                  <span className="option-price">+{opt.price.toLocaleString()}원</span>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="total-amount">
             <strong>
-              총 결제 금액: {orderData.totalPrice.toLocaleString()}원
+              총 결제 금액: {totalPrice.toLocaleString()}원
             </strong>
           </div>
         </div>
@@ -272,6 +321,27 @@ export default function Payment() {
           </div>
         </div>
 
+        {/* 결제 옵션 선택 */}
+        <div className="payment-extra-options">
+          <h2>추가 결제 옵션</h2>
+          <div className="option-list">
+            {paymentOptions.map((opt) => (
+              <label key={opt.id} className={`option-box${selectedOptions.includes(opt.id) ? " selected" : ""}`}>
+                <input
+                  type="checkbox"
+                  checked={selectedOptions.includes(opt.id)}
+                  onChange={() => handleOptionChange(opt.id)}
+                />
+                <div className="option-info">
+                  <span className="option-title">{opt.name}</span>
+                  <span className="option-desc">{opt.desc}</span>
+                </div>
+                <span className="option-price">+{opt.price.toLocaleString()}원</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
         {/* 결제 버튼 */}
         <div className="payment-actions">
           <button
@@ -288,7 +358,7 @@ export default function Payment() {
           >
             {isProcessing
               ? "결제 처리 중..."
-              : `${orderData.totalPrice.toLocaleString()}원 결제하기`}
+              : `${totalPrice.toLocaleString()}원 결제하기`}
           </button>
         </div>
       </div>
