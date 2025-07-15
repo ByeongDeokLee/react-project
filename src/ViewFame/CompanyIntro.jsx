@@ -53,26 +53,35 @@ export default function CompanyIntro() {
   ];
 
   const [team, setTeam] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const fetchUsers = async () => {
+    setIsLoading(true);
     try {
-      const response = await request({
+      const memberList = await request({
         method: "get",
         url: "http://localhost:4000/api/memberList",
       });
 
-      console.log("\n\n 응답갓ㅂ \n\n", response);
 
-      setTeam(response);
+      setTeam(memberList);
+
+      console.log("상태변환값", team);
     } catch (err) {
       console.error("회원 목록 가져오기 실패:", err);
       setTeam([]); // 실패 시에도 배열로
+    }finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchUsers();
-    console.log("상태변환값", team);
   }, []);
+
+  useEffect(() => {
+    console.log("team 상태가 변경됨:", team);
+  }, [team]);
 
   return (
     <section className="company-intro">
@@ -121,36 +130,37 @@ export default function CompanyIntro() {
       </div>
 
       {/* Team Section */}
-      <div className="company-team">
-        <div className="team-container">
-          <div className="section-header">
-            <h3>전문가 팀</h3>
-            <p>각 분야의 전문가들이 함께 최고의 결과물을 만들어갑니다</p>
-          </div>
+      {isLoading ? (  <div className="loading" >로딩 중...</div>) :
+        <div className="company-team">
+          <div className="team-container">
+            <div className="section-header">
+              <h3>전문가 팀</h3>
+              <p>각 분야의 전문가들이 함께 최고의 결과물을 만들어갑니다</p>
+            </div>
 
-          <div className="team-grid">
-            {(Array.isArray(team) ? team : []).map((member, index) => (
-              <div key={index} className="team-card">
-                <div className="team-image">
-                  <img
-                    src={member.image || "/placeholder.svg"}
-                    alt={member.name || member.username || `팀원${index + 1}`}
-                  />
+            <div className="team-grid">
+              {(Array.isArray(team) ? team : []).map((member, index) => (
+                <div key={index} className="team-card">
+                  <div className="team-image">
+                    <img
+                      src={member.image || "/placeholder.svg"}
+                      alt={member.name || member.username || `팀원${index + 1}`}
+                    />
+                  </div>
+                  <div className="team-info">
+                    <h4>
+                      {member.name || member.username || `팀원${index + 1}`}
+                    </h4>
+                    <p className="team-role">{member.role || member.position}</p>
+                    <p className="team-experience">{member.experience}</p>
+                    <p className="team-specialty">{member.specialty}</p>
+                  </div>
                 </div>
-                <div className="team-info">
-                  <h4>
-                    {member.name || member.username || `팀원${index + 1}`}
-                  </h4>
-                  <p className="team-role">{member.role || member.position}</p>
-                  <p className="team-experience">{member.experience}</p>
-                  <p className="team-specialty">{member.specialty}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-
+        }
       {/* Process Section */}
       <div className="company-process">
         <div className="process-container">
