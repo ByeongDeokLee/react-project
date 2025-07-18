@@ -62,15 +62,13 @@ export default function CompanyIntro() {
         method: "get",
         url: "http://localhost:4000/api/memberList",
       });
-
-
-      setTeam(memberList);
-
-      console.log("상태변환값", team);
+      // 콘솔로 API 응답 구조, 배열 여부, 길이 확인
+      console.log("API 응답:", memberList, "isArray:", Array.isArray(memberList), "length:", memberList?.length);
+      setTeam(memberList.response); // <-- 배열만 저장
     } catch (err) {
       console.error("회원 목록 가져오기 실패:", err);
       setTeam([]); // 실패 시에도 배열로
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -80,8 +78,12 @@ export default function CompanyIntro() {
   }, []);
 
   useEffect(() => {
-    console.log("team 상태가 변경됨:", team);
+    console.log("team 상태 변경됨:", team, "isArray:", Array.isArray(team), "length:", team?.length);
   }, [team]);
+
+  // useEffect(() => {
+  //   console.log("team 상태가 변경됨:", team);
+  // }, [team]);
 
   return (
     <section className="company-intro">
@@ -130,37 +132,45 @@ export default function CompanyIntro() {
       </div>
 
       {/* Team Section */}
-      {isLoading ? (  <div className="loading" >로딩 중...</div>) :
+      {console.log("렌더링 시점 team:", team, "isArray:", Array.isArray(team), "length:", team?.length)}
+      {isLoading ? (
+        <div className="loading">로딩 중...</div>
+      ) : (
         <div className="company-team">
           <div className="team-container">
             <div className="section-header">
               <h3>전문가 팀</h3>
               <p>각 분야의 전문가들이 함께 최고의 결과물을 만들어갑니다</p>
             </div>
-
             <div className="team-grid">
-              {(Array.isArray(team) ? team : []).map((member, index) => (
-                <div key={index} className="team-card">
-                  <div className="team-image">
-                    <img
-                      src={member.image || "/placeholder.svg"}
-                      alt={member.name || member.username || `팀원${index + 1}`}
-                    />
+              {Array.isArray(team) && team.length > 0 ? (
+                team.map((member, index) => (
+                  <div key={index} className="team-card">
+                    <div className="team-image">
+                      <img
+                        src={member.image || "/placeholder.svg"}
+                        alt={member.name || member.username || `팀원${index + 1}`}
+                      />
+                    </div>
+                    <div className="team-info">
+                      <h4>
+                        {member.name || member.username || `팀원${index + 1}`}
+                      </h4>
+                      <p className="team-role">{member.role || member.position}</p>
+                      <p className="team-experience">{member.experience}</p>
+                      <p className="team-specialty">{member.specialty}</p>
+                    </div>
                   </div>
-                  <div className="team-info">
-                    <h4>
-                      {member.name || member.username || `팀원${index + 1}`}
-                    </h4>
-                    <p className="team-role">{member.role || member.position}</p>
-                    <p className="team-experience">{member.experience}</p>
-                    <p className="team-specialty">{member.specialty}</p>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <div className="noPosts">전문가들이 없습니다.</div>
+              )}
             </div>
           </div>
         </div>
-        }
+      )}
+
+
       {/* Process Section */}
       <div className="company-process">
         <div className="process-container">
