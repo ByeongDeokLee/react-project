@@ -81,6 +81,10 @@ export default function CompanyIntro() {
     console.log("team 상태 변경됨:", team, "isArray:", Array.isArray(team), "length:", team?.length);
   }, [team]);
 
+  const handleTeamClick = async(e) => {
+    e.preventDefault();
+  }
+
   // useEffect(() => {
   //   console.log("team 상태가 변경됨:", team);
   // }, [team]);
@@ -132,7 +136,7 @@ export default function CompanyIntro() {
       </div>
 
       {/* Team Section */}
-      {console.log("렌더링 시점 team:", team, "isArray:", Array.isArray(team), "length:", team?.length)}
+      {/* {console.log("렌더링 시점 team:", team, "isArray:", Array.isArray(team), "length:", team?.length)} */}
       {isLoading ? (
         <div className="loading">로딩 중...</div>
       ) : (
@@ -144,8 +148,8 @@ export default function CompanyIntro() {
             </div>
             <div className="team-grid">
               {Array.isArray(team) && team.length > 0 ? (
-                team.map((member, index) => (
-                  <div key={index} className="team-card">
+                team.slice(0, 3).map((member, index) => (
+                  <div key={index} className="team-card" onClick={(e) => handleTeamClick()}>
                     <div className="team-image">
                       <img
                         src={member.image || "/placeholder.svg"}
