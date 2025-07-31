@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import "../CssFolder/TeamMemberDetail.css";
 
 const TeamMemberDetail = () => {
   const location = useLocation();
-  const { member } = location.state || {};
+  const [ member, setMember ] = useState(location.state?.member || []);
+  console.log(member)
 
   if (!member) {
     return <div className="loading">사용자 정보를 불러올 수 없습니다.</div>;

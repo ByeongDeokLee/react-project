@@ -393,6 +393,30 @@ const memberList = async () => {
   }
 }
 
+//유저 정보
+const getMemberInfo = async (id) => {
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+      // return data;
+    if (error) {
+      console.error("🔥 Supabase 오류:", error.message);
+    } else {
+      console.log("✅ 조회된 데이터:", data);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error getting post:", error);
+    throw error;
+  }
+}
+
+
 module.exports = {
   getPosts,
   getPostById,
@@ -411,5 +435,6 @@ module.exports = {
   updateNoticeViews,
   reviewsList,
   serviceList,
-  memberList
+  memberList,
+  getMemberInfo,
 };

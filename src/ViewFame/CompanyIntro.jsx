@@ -3,9 +3,11 @@
 import "../CssFolder/CompanyIntro.css";
 import useApi from "../js/useApi";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CompanyIntro() {
   const { request } = useApi(); // useApi 훅에서 request 받아오기
+  const navigate = useNavigate();
 
   const stats = [
     { number: "500+", label: "완성된 프로젝트" },
@@ -81,12 +83,25 @@ export default function CompanyIntro() {
     console.log("team 상태 변경됨:", team, "isArray:", Array.isArray(team), "length:", team?.length);
   }, [team]);
 
-  const handleTeamClick = async(e) => {
+  const handleTeamClick = async(e, member) => {
     e.preventDefault();
+    console.log(member.id)
+
+    try {
+      const response = await request({
+        method: "GET",
+        url: `http://localhost:4000/api/memberList/${member.id}`,
+      });
+
+      navigate(`/team-member/${member.id}`, { state: { member: response } });
+    } catch (error) {
+      console.error("Error getting posts:", error);
+      throw error;
+    }
+
   }
 
   // useEffect(() => {
-  //   console.log("team 상태가 변경됨:", team);
   // }, [team]);
 
   return (
@@ -149,7 +164,7 @@ export default function CompanyIntro() {
             <div className="team-grid">
               {Array.isArray(team) && team.length > 0 ? (
                 team.slice(0, 3).map((member, index) => (
-                  <div key={index} className="team-card" onClick={(e) => handleTeamClick()}>
+                  <div key={index} className="team-card" onClick={(e) => handleTeamClick(e, member)}>
                     <div className="team-image">
                       <img
                         src={member.image || "/placeholder.svg"}

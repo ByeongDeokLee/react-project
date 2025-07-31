@@ -30,6 +30,7 @@ const {
   reviewsList,
   serviceList,
   memberList,
+  getMemberInfo,
 } = require("../db/queries");
 
 app.use(cors());
@@ -413,6 +414,24 @@ app.get("/api/memberList", async (req, res) => {
     const response = await memberList();
     console.log("memberList 응답값", response)
     res.json({ response});
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+})
+
+app.get("/api/memberList/:id", async (req, res) => {
+  try {
+    console.log("memberList 조회", req.params.id)
+    const response = await getMemberInfo(req.params.id);
+    if (response.career % 12 == 0) {
+      response.experience =  Math.floor(response.career / 12) + "년"
+    } else {
+      response.experience =  Math.floor(response.career / 12) + "년" + (response.career % 12) + "개월"
+    }
+    console.log("memberList 응답값", response)
+
+    // post.date = new Date(post.updated_at).toISOString().split("T")[0];
+    res.json(response);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
