@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import "../CssFolder/TeamMemberDetail.css";
 
+import male from "../assets/img/male.png";
+import female from "../assets/img/female.png";
+
 const TeamMemberDetail = () => {
   const location = useLocation();
   const [ member, setMember ] = useState(location.state?.member || []);
@@ -16,7 +19,7 @@ const TeamMemberDetail = () => {
       <div className="team-member-detail-card">
         <div className="team-member-detail-header">
           <img
-            src={member.image || "/placeholder.svg"}
+            src={member.image || (member.sex === "male" ? male : female)}
             alt={member.name || member.username}
             className="team-member-detail-image"
           />

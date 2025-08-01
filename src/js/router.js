@@ -54,7 +54,7 @@ const Router = () => {
         <Route path="/payment/success" element={<PaymentSuccess />} />
         <Route path="/login" element={<LoginPopup />} />
         <Route path="/login/callback" element={<Callback />} />
-        <Route path="/join" element={<MemberJoin />} />
+        <Route path="/memberJoin" element={<MemberJoin />} />
         <Route path="/review/write" element={<ReviewWritePage />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/service-detail" element={<ServiceDetail />} />

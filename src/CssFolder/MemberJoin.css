@@ -1,76 +1,547 @@
 /* src/CssFolder/MemberJoin.css */
 
 .member-join-container {
-    max-width: 400px;
-    margin: 60px auto;
-    padding: 32px 24px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 32px 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+.member-join-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.member-join-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.member-join-form input {
+  display: block;
+  margin: 10px 0;
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.member-join-form button {
+
+  background: #666666;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.member-join-form button:hover {
+  background: #555;
+}
+
+.member-join-message {
+  margin-top: 16px;
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 0.875rem;
+  margin-top: -5px;
+  margin-bottom: 5px;
+  text-align: left;
+  padding-left: 4px;
+}
+
+.terms-section {
+  margin: 16px 0;
+  padding: 10px;
+  border: 1px solid #eee;
+  background: #fafafa;
+  border-radius: 6px;
+}
+
+.terms-content {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 0.95em;
+  color: #555;
+}
+
+/* 비밀번호 입력 필드 */
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.password-input-container input {
+  flex: 1;
+  padding-right: 40px;
+  margin: 0;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle-btn:hover {
+  background: rgba(79, 140, 255, 0.1);
+}
+
+.password-toggle-btn:active {
+  background: rgba(79, 140, 255, 0.2);
+}
+
+/* 이미지 업로드 섹션 */
+.image-upload-section {
+  margin-bottom: 20px;
+}
+
+.image-upload-label {
+  cursor: pointer;
+  display: block;
+}
+
+.image-preview-container {
+  width: 120px;
+  height: 120px;
+  border: 2px dashed #ddd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+.image-preview-container:hover {
+  border-color: #4f8cff;
+  background: #f0f4ff;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.upload-hint {
+  font-size: 0.8em;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* 경력 입력 섹션 */
+.career-section {
+  margin-bottom: 16px;
+}
+
+.career-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.career-header label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95em;
+}
+
+.add-career-btn {
+  background: #4f8cff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-career-btn:hover {
+  background: #2563eb;
+}
+
+.career-list {
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 12px;
+  background: #fafafa;
+  min-height: 60px;
+}
+
+.no-career {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  padding: 20px 0;
+}
+
+.career-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.career-item:last-child {
+  margin-bottom: 0;
+}
+
+.career-info {
+  flex: 1;
+}
+
+.career-company {
+  font-weight: 600;
+  color: #333;
+  font-size: 1em;
+  margin-bottom: 4px;
+}
+
+.career-position {
+  color: #666;
+  font-size: 0.9em;
+  margin-bottom: 4px;
+}
+
+.career-period {
+  color: #888;
+  font-size: 0.85em;
+  margin-bottom: 4px;
+}
+
+.career-description {
+  color: #666;
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+
+.remove-career-btn {
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-left: 8px;
+}
+
+.remove-career-btn:hover {
+  background: #ff3742;
+}
+
+/* 경력 모달 */
+.career-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.career-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.career-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.career-modal-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.2em;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.close-modal-btn:hover {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.career-modal-content {
+  padding: 24px;
+}
+
+.career-input-group {
+  margin-bottom: 16px;
+}
+
+.career-input-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9em;
+}
+
+.career-input-group input,
+.career-input-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.career-input-group input:focus,
+.career-input-group textarea:focus {
+  outline: none;
+  border-color: #4f8cff;
+  box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.1);
+}
+
+.career-date-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.career-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #eee;
+}
+
+.cancel-btn {
+  background: #f8f9fa;
+  color: #666;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.add-btn {
+  background: #4f8cff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-btn:hover {
+  background: #2563eb;
+}
+
+/* 자기소개서 섹션 */
+.introduction-section {
+  margin-bottom: 16px;
+}
+
+.introduction-section label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95em;
+}
+
+.introduction-section textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.introduction-section textarea:focus {
+  outline: none;
+  border-color: #4f8cff;
+  box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.1);
+}
+
+/* 전문 분야 선택 섹션 */
+.specialties-section {
+  margin-bottom: 16px;
+}
+
+.specialties-section label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95em;
+}
+
+.specialties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.specialty-checkbox {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9em;
+  background: #fff;
+}
+
+.specialty-checkbox:hover {
+  background: #f8f9fa;
+  border-color: #4f8cff;
+}
+
+.specialty-checkbox input[type="checkbox"] {
+  margin-right: 8px;
+  margin: 0 8px 0 0;
+  width: auto;
+}
+
+.specialty-checkbox input[type="checkbox"]:checked + span {
+  color: #4f8cff;
+  font-weight: 600;
+}
+
+.specialty-checkbox:has(input[type="checkbox"]:checked) {
+  background: #f0f4ff;
+  border-color: #4f8cff;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 600px) {
+  .member-join-container {
+    max-width: 100%;
+    margin: 20px;
+    padding: 20px 16px;
   }
 
-  .member-join-container h2 {
-    text-align: center;
-    margin-bottom: 24px;
-    color: #333;
+  .career-modal {
+    width: 95%;
+    margin: 20px;
   }
 
-  .member-join-form {
-    display: flex;
+  .career-date-group {
+    grid-template-columns: 1fr;
+  }
+
+  .specialties-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 6px;
+  }
+
+  .specialty-checkbox {
+    padding: 6px 8px;
+    font-size: 0.85em;
+  }
+
+  .image-preview-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .career-item {
     flex-direction: column;
-    gap: 16px;
   }
 
-  .member-join-form input {
-    display: block;
-    margin: 10px 0;
-    padding: 8px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .member-join-form button {
-    padding: 12px;
-    background: #4f8cff;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .member-join-form button:hover {
-    background: #2563eb;
-  }
-
-  .member-join-message {
-    margin-top: 16px;
-    color: #d32f2f;
-    font-weight: bold;
-  }
-
-  .error-message {
-    color: #d32f2f;
-    font-size: 0.875rem;
-    margin-top: -5px;
-    margin-bottom: 5px;
-    text-align: left;
-    padding-left: 4px;
-  }
-
-  .terms-section {
-    margin: 16px 0;
-    padding: 10px;
-    border: 1px solid #eee;
-    background: #fafafa;
-    border-radius: 6px;
-  }
-
-  .terms-content {
-    display: flex;
-    align-items: center;
+  .remove-career-btn {
+    margin-left: 0;
     margin-top: 8px;
-    font-size: 0.95em;
-    color: #555;
+    align-self: flex-end;
   }
+
+  .password-toggle-btn {
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
+  }
+}

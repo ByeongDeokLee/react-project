@@ -212,35 +212,30 @@ const UserLogin = async (email, password) => {
 //회원가입 여부 쿼리
 const registerUser = async (userData) => {
   try {
-    // const { data, error } = await supabase
-    //   .from("users")
-    //   .insert([userData])
-    //   .select()
-    //   .single();
-    // 1. 먼저 해당 조건으로 검색
     const { data: existingUser, error: selectError } = await supabase
       .from("users")
       .select("*")
       .eq("email", userData.email)
-      .single();
+      .eq("name", userData.name)
+      .eq("phone", userData.phone)
+      .maybeSingle();
+
+    if (selectError) throw selectError;
 
     if (!existingUser) {
-      // 2. 없으면 insert
       const { data: newUser, error: insertError } = await supabase
         .from("users")
         .insert([userData])
         .select()
         .single();
 
+      if (insertError) throw insertError;
       return newUser;
     } else {
       return existingUser;
     }
-    // if (error) throw error;
-    // return data;
   } catch (error) {
     console.error("Error creating user:", error);
-    // '23505'는 PostgreSQL의 unique_violation 에러 코드입니다.
     if (error.code === "23505") {
       throw new Error("이미 가입된 이메일입니다.");
     }

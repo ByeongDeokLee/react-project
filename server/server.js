@@ -1,6 +1,7 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
+const multer = require('multer');
 require("dotenv").config();
 const app = express();
 //const queries = require('./src/db/queries'); // queries.js 파일 전체를 가져옴
@@ -36,6 +37,15 @@ const {
 app.use(cors());
 app.use(express.json());
 
+const fs = require('fs');
+const path = require('path');
+
+const uploadPath = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath);
+}
+
+
 // 이메일 전송을 위한 transporter 설정
 const transporter = nodemailer.createTransport({
   service: "naver",
@@ -46,6 +56,20 @@ const transporter = nodemailer.createTransport({
     pass: process.env.NAVER_PASSWORD, // 환경 변수에서 비밀번호 가져오기
   },
 });
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // 폴더 미리 만들어야 함
+  },
+  filename: (req, file, cb) => {
+    // 고유 파일명 저장
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + '-' + Buffer.from(file.originalname, 'latin1').toString('utf8'));
+  },
+});
+
+const upload = multer({ storage: storage });
 
 //서비스 종류 API
 app.get("/api/serviceList", async (req, res) => {
@@ -385,28 +409,40 @@ app.post("/api/naver/login", async (req, res) => {
 });
 
 // 회원가입 API
-app.post("/api/register", async (req, res) => {
+app.post("/api/register", upload.single("profileImage"), async (req, res) => {
   try {
-    const { password, email, name, birthdate, phone } = req.body;
-    // 랜덤 유저값 생성
-    const random_user_value =
-      Math.random().toString(36).slice(2) + Date.now().toString(36);
+    console.log("회원가입 요청 받음", req.body)
+    console.log("회원가입 요청 받음", req.file)
+    // const { password, email, name, birthdate, phone } = req.body;
 
-    const newUser = {
-      password, // 비밀번호는 실제 서비스에서는 해싱하여 저장해야 합니다.
-      email,
-      name,
-      birthdate,
-      phone,
-      random_user_value,
-    };
+    // // ⚠️ 필수값 유효성 검사 (보안 및 안정성)
+    // if (!email || !password || !name || !birthdate || !phone) {
+    //   return res.status(400).json({ error: "모든 필수 정보를 입력해주세요." });
+    // }
 
-    const user = await registerUser(newUser);
-    res.json({ success: true, userId: user.id });
+    // // ✅ 랜덤 유저값 생성
+    // const random_user_value =
+    //   Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+    // const newUser = {
+    //   password, // 실제 서비스에서는 bcrypt 등으로 해싱 필요
+    //   email,
+    //   name,
+    //   birthdate,
+    //   phone,
+    //   random_user_value,
+    // };
+
+    // // ✅ 회원가입 처리
+    // const user = await registerUser(newUser);
+
+    // return res.json({ success: true, userId: user.id });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error("회원가입 처리 중 에러:", err.message);
+    return res.status(500).json({ error: err.message });
   }
 });
+
 
 app.get("/api/memberList", async (req, res) => {
   try {
@@ -436,7 +472,6 @@ app.get("/api/memberList/:id", async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 })
-
 
 
 const PORT = process.env.PORT || 4000;
