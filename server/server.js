@@ -411,32 +411,39 @@ app.post("/api/naver/login", async (req, res) => {
 // 회원가입 API
 app.post("/api/register", upload.single("profileImage"), async (req, res) => {
   try {
-    console.log("회원가입 요청 받음", req.body)
-    console.log("회원가입 요청 받음", req.file)
-    // const { password, email, name, birthdate, phone } = req.body;
+    const parsedData = JSON.parse(req.body.data);
+const { password, email, name, birthdate, phone,introduction,specialties } = parsedData;
 
-    // // ⚠️ 필수값 유효성 검사 (보안 및 안정성)
-    // if (!email || !password || !name || !birthdate || !phone) {
-    //   return res.status(400).json({ error: "모든 필수 정보를 입력해주세요." });
-    // }
 
-    // // ✅ 랜덤 유저값 생성
-    // const random_user_value =
-    //   Math.random().toString(36).slice(2) + Date.now().toString(36);
+    console.log("응답데이터  :" , email, password, name, birthdate, phone)
+    if (!email || !password || !name || !birthdate || !phone) {
+      return res.status(400).json({ error: "모든 필수 정보를 입력해주세요." });
+    }
 
-    // const newUser = {
-    //   password, // 실제 서비스에서는 bcrypt 등으로 해싱 필요
-    //   email,
-    //   name,
-    //   birthdate,
-    //   phone,
-    //   random_user_value,
-    // };
+    // ⚠️ 이미지 경로 처리
+    let profile_image = null;
+    if (req.file) {
+      profile_image = `/uploads/${req.file.filename}`;
+    }
 
-    // // ✅ 회원가입 처리
-    // const user = await registerUser(newUser);
+    const random_user_value =
+      Math.random().toString(36).slice(2) + Date.now().toString(36);
 
-    // return res.json({ success: true, userId: user.id });
+    const newUser = {
+      password,
+      email,
+      name,
+      birthdate,
+      phone,
+      random_user_value,
+      profile_image, // ✅ 추가
+    };
+
+    console.log("newUser", newUser)
+
+    const user = await registerUser(newUser);
+
+    return res.json({ success: true, userId: user.id });
   } catch (err) {
     console.error("회원가입 처리 중 에러:", err.message);
     return res.status(500).json({ error: err.message });

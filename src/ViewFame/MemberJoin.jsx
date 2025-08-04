@@ -20,6 +20,8 @@ export default function MemberJoin() {
   const { loading, request } = useApi();
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [agree, setAgree] = useState(false);
+  const [male, setMale] = useState(false);
+  const [female, setFemale] = useState(false);
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
   const [profileImage, setProfileImage] = useState(null);
@@ -166,6 +168,14 @@ export default function MemberJoin() {
   const handleAgree = (e) => {
     setAgree(e.target.checked);
   };
+  const handleSex = (sex, e) => {
+    console.log("여기 들어옴", sex)
+    if (sex === "male") {
+      setMale(e.target.checked)
+    } else {
+      setFemale(e.target.checked)
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -177,6 +187,8 @@ export default function MemberJoin() {
         setMessage("입력 내용을 다시 확인해주세요.");
         return;
     }
+
+
     try {
       // JSON 객체로 데이터 구성
       const payload = {
@@ -187,7 +199,9 @@ export default function MemberJoin() {
         phone: form.phone.replace(/-/g, ""), // 하이픈 제거
         // career: careerEntries, // 경력 데이터를 배열로 전송
         introduction: form.introduction,
-        specialties: form.specialties
+        specialties: form.specialties,
+        usertype: "사용자",
+        sex : "남자"
       };
 
       console.log("전송할 데이터:", payload);
@@ -459,7 +473,25 @@ export default function MemberJoin() {
           </div>
           {errors.specialties && <div className="error-message">{errors.specialties}</div>}
         </div>
+        {/* 성별 선택 */}
+        <div className="terms-section">
+          <label>
+            <input type="checkbox" checked={male} onChange(e)={handleSex("male", e)} />
+            <span>남성</span>
+            <input type="checkbox" checked={female} onChange={handleSex("female")} />
+            <span>여성</span>
+          </label>
+          {/* <select name="sex" onChange={handleSex}>
+          <option value="">성별 선택</option>
+          <option value="male">남성</option>
+          <option value="female">여성</option>
+        </select> */}
 
+
+        </div>
+
+
+{/* 약관 동의 */}
         <div className="terms-section">
           <label>
             <input type="checkbox" checked={agree} onChange={handleAgree} />
@@ -488,6 +520,7 @@ export default function MemberJoin() {
             </span>
           </div>
         </div>
+
         <button type="submit">회원가입</button>
       </form>
       <div className="member-join-message">{message}</div>
