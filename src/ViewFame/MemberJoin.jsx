@@ -14,18 +14,21 @@ export default function MemberJoin() {
     birthdate: "",
     phone: "",
     // career: "",
+    sex : "",
     introduction: "",
     specialties: [],
   });
   const { loading, request } = useApi();
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [agree, setAgree] = useState(false);
-  const [male, setMale] = useState(false);
-  const [female, setFemale] = useState(false);
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  // const [male, setMale] = useState(false);
+  // const [female, setFemale] = useState(false);
+  // const [sex, setSex] = useState({})
+  const sexForm = [{name : "남성", sex : "male"}, {name : "여성", sex:"female"}]
   // const [showCareerModal, setShowCareerModal] = useState(false);
   // const [careerEntries, setCareerEntries] = useState([]);
   // const [newCareerEntry, setNewCareerEntry] = useState({
@@ -39,7 +42,7 @@ export default function MemberJoin() {
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
   // 정규식
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // 최소 8자, 영문, 숫자
+  const passwordRegex =  /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+])(?!.*[^a-zA-z0-9$`~!@$!%*#^?&\\(\\)\-_=+]).{8,20}$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   // 전문 분야 옵션
@@ -62,7 +65,7 @@ export default function MemberJoin() {
       newErrors.email = "올바른 이메일 형식이 아닙니다.";
     }
     if (!passwordRegex.test(form.password)) {
-      newErrors.password = "비밀번호는 8자 이상, 영문과 숫자를 포함해야 합니다.";
+      newErrors.password = "비밀번호는 8자 이상, 영문과 숫자, 특수문자를 포함해야 합니다.";
     }
     if (form.password !== passwordConfirm) {
       newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
@@ -168,13 +171,13 @@ export default function MemberJoin() {
   const handleAgree = (e) => {
     setAgree(e.target.checked);
   };
+
   const handleSex = (sex, e) => {
-    console.log("여기 들어옴", sex)
-    if (sex === "male") {
-      setMale(e.target.checked)
-    } else {
-      setFemale(e.target.checked)
-    }
+    const { name } = e.target;
+    console.log("성별선택 : name" , name)
+    console.log("성별선택 : value " ,sex)
+    setForm({ ...form, [name]: sex });
+    console.log(form)
   };
 
   const handleSubmit = async (e) => {
@@ -473,25 +476,23 @@ export default function MemberJoin() {
           </div>
           {errors.specialties && <div className="error-message">{errors.specialties}</div>}
         </div>
+
         {/* 성별 선택 */}
-        <div className="terms-section">
-          <label>
-            <input type="checkbox" checked={male} onChange(e)={handleSex("male", e)} />
-            <span>남성</span>
-            <input type="checkbox" checked={female} onChange={handleSex("female")} />
-            <span>여성</span>
-          </label>
-          {/* <select name="sex" onChange={handleSex}>
-          <option value="">성별 선택</option>
-          <option value="male">남성</option>
-          <option value="female">여성</option>
-        </select> */}
-
-
+        <div className="specialties-section">
+        <label>성별 선택</label>
+          {sexForm.map(data => (
+            <label key={data} className="specialty-checkbox">
+               <input name="sex" type="checkbox" checked={form.sex === data.sex} onChange={(e) => handleSex(data.sex, e)} />
+               {/* <input name="sex" type="checkbox" checked={data.type} onChange={(e) => handleSex(data.sex, e)} /> */}
+               <span>{ data.name}</span>
+             </label>
+          )
+        )}
         </div>
 
 
-{/* 약관 동의 */}
+
+      {/* 약관 동의 */}
         <div className="terms-section">
           <label>
             <input type="checkbox" checked={agree} onChange={handleAgree} />
