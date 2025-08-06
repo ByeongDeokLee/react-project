@@ -14,13 +14,13 @@ export default function FirtstCtgry() {
 
   //렌더링 감지
   useEffect(() => {
-      const LoginInfo = localStorage.getItem("name");
-      console.log("\n\n 확인 \n\n", LoginInfo != null)
-      if (LoginInfo != null) {
-        setLoginInfo(LoginInfo);
-        setIsLoggedIn(true);
-      }
-  },[]);
+    const LoginInfo = localStorage.getItem("name");
+    console.log("\n\n 확인 \n\n", LoginInfo != null);
+    if (LoginInfo != null) {
+      setLoginInfo(LoginInfo);
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const openLoginPopup = (e) => {
     e.preventDefault(); // 기본 링크 막기
@@ -34,7 +34,7 @@ export default function FirtstCtgry() {
         // } else {
         //   setLoginInfo(event.data.user.nickname);
         // }
-        event.data.user.name[0] === undefined
+        event.data?.user?.name === undefined
           ? setLoginInfo(event.data.user.nickname)
           : setLoginInfo(event.data.user.name);
 
@@ -52,7 +52,6 @@ export default function FirtstCtgry() {
   };
 
   const openLogoutPopup = async () => {
-
     const token = localStorage.getItem("kakaoAccessToken"); // 저장된 토큰 불러오기
 
     if (!token) {
@@ -75,19 +74,21 @@ export default function FirtstCtgry() {
         alert("로그아웃 실패!");
       }
     }
-
-
   };
 
   const userChange = (e) => {
     e.preventDefault();
     const LoginInfo = localStorage.getItem("name");
-    console.log("\n\n 확인 \n\n", LoginInfo != null)
+    console.log("\n\n 확인 \n\n", LoginInfo != null);
     if (LoginInfo == null) {
-      alert("로그인이 필요합니다.")
+      alert("로그인이 필요합니다.");
       return;
     }
-  }
+  };
+
+  const handleMyPage = () => {
+    navigate("/mypage");
+  };
 
   return (
     <div className="main_first_ctgry">
@@ -101,9 +102,15 @@ export default function FirtstCtgry() {
         <div className="main_company">
           <p>기업용</p>
         </div>
-        <input type="checkbox" id="switch" onClick={(e) => { userChange(e)}}></input>
-        <label for="switch" className="switch_label" >
-          <span className="onf_btn" ></span>
+        <input
+          type="checkbox"
+          id="switch"
+          onClick={(e) => {
+            userChange(e);
+          }}
+        ></input>
+        <label for="switch" className="switch_label">
+          <span className="onf_btn"></span>
         </label>
       </div>
 
@@ -122,15 +129,15 @@ export default function FirtstCtgry() {
 
       {isLoggedIn && (
         <div id="LogOutID" className="logout_wrap">
-          <div className="Login_Info"><p>{LoginInfo + "님"}</p></div>
-            <button onClick={openLogoutPopup} className="ctgry-btn">
-              로그아웃
-            </button>
-            <button
-              onClick={() => navigate("/mypage")}
-              className="ctgry-btn">
-              마이페이지
-            </button>
+          <div className="Login_Info">
+            <p>{LoginInfo + "님"}</p>
+          </div>
+          <button onClick={openLogoutPopup} className="ctgry-btn">
+            로그아웃
+          </button>
+          <button onClick={() => handleMyPage()} className="ctgry-btn">
+            마이페이지
+          </button>
         </div>
       )}
       <ToastContainer position="top-center" autoClose={2000} />

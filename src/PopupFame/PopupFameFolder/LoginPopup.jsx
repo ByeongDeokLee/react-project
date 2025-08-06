@@ -94,11 +94,16 @@ export default function Login() {
         }
       })
       console.log(user)
-
-      if (window.opener) {
+      if (user.success) {
+            if (window.opener) {
         window.opener.postMessage({ type: "LOGIN_SUCCESS", user }, "*");
         window.close(); // 팝업 닫기
       }
+      } else {
+        alert(user.message)
+      }
+
+
     } catch (error) {
       console.error("Error getting post:", error);
       throw error;

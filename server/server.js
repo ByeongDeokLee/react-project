@@ -1,10 +1,9 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
-const multer = require('multer');
+const multer = require("multer");
 require("dotenv").config();
 const app = express();
-//const queries = require('./src/db/queries'); // queries.js 파일 전체를 가져옴
 app.use(express.json()); // JSON 요청 파싱
 app.use(express.urlencoded({ extended: true })); // 폼 데이터 파싱
 
@@ -37,14 +36,13 @@ const {
 app.use(cors());
 app.use(express.json());
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const uploadPath = path.join(__dirname, 'uploads');
+const uploadPath = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath);
 }
-
 
 // 이메일 전송을 위한 transporter 설정
 const transporter = nodemailer.createTransport({
@@ -57,7 +55,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/"); // 폴더 미리 만들어야 함
@@ -65,7 +62,12 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     // 고유 파일명 저장
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + '-' + Buffer.from(file.originalname, 'latin1').toString('utf8'));
+    cb(
+      null,
+      uniqueSuffix +
+        "-" +
+        Buffer.from(file.originalname, "latin1").toString("utf8")
+    );
   },
 });
 
@@ -74,7 +76,7 @@ const upload = multer({ storage: storage });
 //서비스 종류 API
 app.get("/api/serviceList", async (req, res) => {
   try {
-    console.log("서비스 API 들어옴")
+    console.log("서비스 API 들어옴");
     const services = await serviceList();
     // console.log("쿼리응답 받음", services)
     services.map((service) => {
@@ -87,19 +89,18 @@ app.get("/api/serviceList", async (req, res) => {
         .replace(/\.$/, "");
     });
     res.json(services);
-      // return res.json(merged);
+    // return res.json(merged);
   } catch (error) {
     res.status(400).json({ error: err.message });
   }
-})
-
+});
 
 //리뷰
 app.get("/api/reviewsList", async (req, res) => {
   try {
-    console.log("리뷰API 들어옴")
+    console.log("리뷰API 들어옴");
     const reviews = await reviewsList();
-    console.log("쿼리응답 받음", reviews)
+    console.log("쿼리응답 받음", reviews);
     reviews.map((reviews) => {
       reviews.date = new Date(reviews.created_at)
         .toLocaleDateString("ko-KR", {
@@ -113,15 +114,14 @@ app.get("/api/reviewsList", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: err.message });
   }
-})
-
+});
 
 //공지사항
 app.get("/api/NoticeList", async (req, res) => {
   try {
     console.log("getNotice 요청 받음");
     const notices = await NoticeList();
-    console.log("공지사항 :: ", notices)
+    console.log("공지사항 :: ", notices);
     notices.map((notice) => {
       notice.date = new Date(notice.date)
         .toLocaleDateString("ko-KR", {
@@ -369,7 +369,10 @@ app.post("/api/Login", async (req, res) => {
     const result = await UserLogin(email, password);
     console.log("서버 응답값", result);
 
-    res.json(result[0]);
+    if (!result.success) {
+      return res.status(401).json(result); // 401 Unauthorized
+    }
+    res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -412,10 +415,17 @@ app.post("/api/naver/login", async (req, res) => {
 app.post("/api/register", upload.single("profileImage"), async (req, res) => {
   try {
     const parsedData = JSON.parse(req.body.data);
-const { password, email, name, birthdate, phone,introduction,specialties } = parsedData;
+    const {
+      password,
+      email,
+      name,
+      birthdate,
+      phone,
+      introduction,
+      specialties,
+    } = parsedData;
 
-
-    console.log("응답데이터  :" , email, password, name, birthdate, phone)
+    console.log("응답데이터  :", email, password, name, birthdate, phone);
     if (!email || !password || !name || !birthdate || !phone) {
       return res.status(400).json({ error: "모든 필수 정보를 입력해주세요." });
     }
@@ -439,7 +449,7 @@ const { password, email, name, birthdate, phone,introduction,specialties } = par
       profile_image, // ✅ 추가
     };
 
-    console.log("newUser", newUser)
+    console.log("newUser", newUser);
 
     const user = await registerUser(newUser);
 
@@ -450,36 +460,38 @@ const { password, email, name, birthdate, phone,introduction,specialties } = par
   }
 });
 
-
 app.get("/api/memberList", async (req, res) => {
   try {
-    console.log("memberList 조회")
+    console.log("memberList 조회");
     const response = await memberList();
-    console.log("memberList 응답값", response)
-    res.json({ response});
+    console.log("memberList 응답값", response);
+    res.json({ response });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-})
+});
 
 app.get("/api/memberList/:id", async (req, res) => {
   try {
-    console.log("memberList 조회", req.params.id)
+    console.log("memberList 조회", req.params.id);
     const response = await getMemberInfo(req.params.id);
     if (response.career % 12 == 0) {
-      response.experience =  Math.floor(response.career / 12) + "년"
+      response.experience = Math.floor(response.career / 12) + "년";
     } else {
-      response.experience =  Math.floor(response.career / 12) + "년" + (response.career % 12) + "개월"
+      response.experience =
+        Math.floor(response.career / 12) +
+        "년" +
+        (response.career % 12) +
+        "개월";
     }
-    console.log("memberList 응답값", response)
+    console.log("memberList 응답값", response);
 
     // post.date = new Date(post.updated_at).toISOString().split("T")[0];
     res.json(response);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-})
-
+});
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

@@ -2,6 +2,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../CssFolder/MyPage.css";
 
+import male from "../assets/img/male.png";
+import female from "../assets/img/female.png";
+
 const MyPage = ({ user }) => {
   const navigate = useNavigate();
 
@@ -10,6 +13,13 @@ const MyPage = ({ user }) => {
       <div className="mypage-title">마이페이지</div>
       <div className="mypage-info">
         <div className="mypage-label">사용자 정보</div>
+        <div className="team-member-detail-header">
+          {/* <img
+            src={member.image || (member.sex === "male" ? male : female)}
+            alt={member.name || member.username}
+            className="team-member-detail-image"
+          /> */}
+        </div>
         <div>
           {user ? (user.nickname || user.name) + "님" : "로그인 정보 없음"}
         </div>

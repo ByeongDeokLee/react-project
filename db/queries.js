@@ -195,19 +195,33 @@ const UserLogin = async (email, password) => {
   try {
     console.log("이메일", email);
     console.log("비밀번호", password);
+
     const { data, error } = await supabase
       .from("users")
       .select("*")
       .eq("email", email)
-      .eq("password", password);
-    // .single();
-    console.log("쿼리 응답ㄱ밧", data);
-    return data;
+      .eq("password", password)
+      .maybeSingle(); // 없으면 null 반환
+
+    if (error) {
+      console.error("Supabase 쿼리 에러:", error);
+      throw error;
+    }
+
+    if (!data) {
+      // ❌ 이메일/비밀번호 불일치
+      return { success: false, message: "이메일 또는 비밀번호가 올바르지 않습니다." };
+    }
+
+    // ✅ 로그인 성공
+    return { success: true, user: data };
+
   } catch (error) {
-    console.error("Error toggling post like:", error);
+    console.error("로그인 중 오류:", error);
     throw error;
   }
 };
+
 
 //회원가입 여부 쿼리
 const registerUser = async (userData) => {
