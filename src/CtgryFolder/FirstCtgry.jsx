@@ -29,22 +29,20 @@ export default function FirtstCtgry() {
     window.addEventListener("message", (event) => {
       if (event.data?.type === "LOGIN_SUCCESS") {
         console.log("로그인 성공! 유저:", event.data.user);
-        // if (event.data.user.nickname == null) {
-        //   setLoginInfo(event.data.user.name);
-        // } else {
-        //   setLoginInfo(event.data.user.nickname);
-        // }
+
+        // 이름/닉네임 표시
         event.data?.user?.name === undefined
           ? setLoginInfo(event.data.user.nickname)
           : setLoginInfo(event.data.user.name);
 
-        localStorage.setItem(
-          "random_user_value",
-          event.data.user.random_user_value
-        );
-        localStorage.setItem("birthdate", event.data.user.birthdate);
-        localStorage.setItem("email", event.data.user.email);
-        localStorage.setItem("name", event.data.user.name);
+        // 받은 user 객체를 통째로 로컬스토리지에 저장
+        // (user의 각 key를 로컬스토리지에 저장)
+        if (event.data.user && typeof event.data.user === "object") {
+          Object.entries(event.data.user).forEach(([key, value]) => {
+            localStorage.setItem(key, value);
+          });
+        }
+
         toast.success("로그인 되었습니다.");
         setIsLoggedIn(true);
       }
@@ -87,7 +85,13 @@ export default function FirtstCtgry() {
   };
 
   const handleMyPage = () => {
-    navigate("/mypage");
+    // 로컬스토리지의 모든 데이터를 user 객체로 만들어 마이페이지로 넘김
+    const user = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      user[key] = localStorage.getItem(key);
+    }
+    navigate("/mypage", { state: { user } });
   };
 
   return (
