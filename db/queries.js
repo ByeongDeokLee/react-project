@@ -210,18 +210,19 @@ const UserLogin = async (email, password) => {
 
     if (!data) {
       // ❌ 이메일/비밀번호 불일치
-      return { success: false, message: "이메일 또는 비밀번호가 올바르지 않습니다." };
+      return {
+        success: false,
+        message: "이메일 또는 비밀번호가 올바르지 않습니다.",
+      };
     }
 
     // ✅ 로그인 성공
     return { success: true, user: data };
-
   } catch (error) {
     console.error("로그인 중 오류:", error);
     throw error;
   }
 };
-
 
 //회원가입 여부 쿼리
 const registerUser = async (userData) => {
@@ -329,7 +330,7 @@ const reviewsList = async () => {
     console.error("Error getting inquiry:", error);
     throw error;
   }
-}
+};
 
 //서비스 종류
 const serviceList = async () => {
@@ -337,62 +338,59 @@ const serviceList = async () => {
     console.log("serviceList 쿼리 실행");
     // const { data, error } = await supabase.from("service_items").select("*");
     // if (error) throw error;
-  // Step 1. service_items 전체 조회
+    // Step 1. service_items 전체 조회
     const { data: services, error: serviceError } = await supabase
-    .from('service_items')
-    .select('*');
+      .from("service_items")
+      .select("*");
 
-  if (serviceError) throw serviceError;
+    if (serviceError) throw serviceError;
 
-
-  // Step 2. service_items.id 목록 추출
+    // Step 2. service_items.id 목록 추출
     const serviceIds = services.map((item) => item.id);
 
-    const serviceUserIds = services.map((item) => item.user_id)
+    const serviceUserIds = services.map((item) => item.user_id);
 
-    console.log("\n\n\n serviceUserIds \n\n\n", serviceUserIds)
+    console.log("\n\n\n serviceUserIds \n\n\n", serviceUserIds);
 
-  // Step 3. 해당 id 목록에 맞는 images 조회
-  const { data: images, error: imageError } = await supabase
-    .from('service_images')
-    .select('*')
-    .in('service_id', serviceIds);
+    // Step 3. 해당 id 목록에 맞는 images 조회
+    const { data: images, error: imageError } = await supabase
+      .from("service_images")
+      .select("*")
+      .in("service_id", serviceIds);
 
     if (imageError) throw imageError;
 
     // Step 3_1. 해당 id 목록에 맞는 user 조회
     const { data: users, error: usersError } = await supabase
-    .from('users')
-    .select('*')
-      .in('id', serviceUserIds);
+      .from("users")
+      .select("*")
+      .in("id", serviceUserIds);
 
-  if (usersError) throw usersError;
+    if (usersError) throw usersError;
 
-  // Step 4. 이미지 매칭해서 병합
-  const merged = services.map((item) => {
-    const matchedImages = images.filter((img) => img.service_id === item.id);
-    const matchedUsers = users.find((user) => user.id === item.user_id);
-    return {
-      ...item,
-      images: matchedImages,
-      user : matchedUsers,
-    };
-  });
+    // Step 4. 이미지 매칭해서 병합
+    const merged = services.map((item) => {
+      const matchedImages = images.filter((img) => img.service_id === item.id);
+      const matchedUsers = users.find((user) => user.id === item.user_id);
+      return {
+        ...item,
+        images: matchedImages,
+        user: matchedUsers,
+      };
+    });
 
     return merged;
   } catch (error) {
     console.error("Error getting inquiry:", error);
     throw error;
   }
-}
+};
 
 //회원 조회
 const memberList = async () => {
   try {
     console.log("회원 정보 쿼리 실행");
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
+    const { data, error } = await supabase.from("users").select("*");
 
     console.log("쿼리 확인", data);
     return data;
@@ -400,7 +398,7 @@ const memberList = async () => {
     console.error("Error getting inquiry:", error);
     throw error;
   }
-}
+};
 
 //유저 정보
 const getMemberInfo = async (id) => {
@@ -411,7 +409,7 @@ const getMemberInfo = async (id) => {
       .eq("id", id)
       .single();
 
-      // return data;
+    // return data;
     if (error) {
       console.error("🔥 Supabase 오류:", error.message);
     } else {
@@ -423,8 +421,75 @@ const getMemberInfo = async (id) => {
     console.error("Error getting post:", error);
     throw error;
   }
-}
+};
 
+// 사용자 경력 저장
+const saveUserCareers = async (userId, careers) => {
+  try {
+    console.log("사용자 경력 저장 쿼리 실행");
+    if (!Array.isArray(careers)) throw new Error("careers must be an array");
+    // 먼저 기존 경력 삭제 후, 새로 일괄 삽입
+    const { error: delError } = await supabase
+      .from("user_careers")
+      .delete()
+      .eq("user_id", userId);
+    if (delError) throw delError;
+
+    if (careers.length === 0) return [];
+
+    const payload = careers.map((c) => ({
+      user_id: userId,
+      company: c.company,
+      position: c.position,
+      start_date: c.startDate,
+      end_date: c.endDate || null,
+      description: c.description || null,
+    }));
+
+    const { data, error } = await supabase
+      .from("user_careers")
+      .insert(payload)
+      .select("*");
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error saving user careers:", error);
+    throw error;
+  }
+};
+
+// 사용자 경력 조회
+const getUserCareers = async (userId) => {
+  try {
+    console.log("사용자 경력 조회 쿼리 실행");
+    const { data, error } = await supabase
+      .from("user_careers")
+      .select("*")
+      .eq("user_id", userId)
+      .order("start_date", { ascending: true });
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error getting user careers:", error);
+    throw error;
+  }
+};
+
+// 사용자 경력 단건 삭제
+const deleteUserCareer = async (userId, careerId) => {
+  try {
+    const { error } = await supabase
+      .from("user_careers")
+      .delete()
+      .eq("user_id", userId)
+      .eq("id", careerId);
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error("Error deleting user career:", error);
+    throw error;
+  }
+};
 
 module.exports = {
   getPosts,
@@ -446,4 +511,7 @@ module.exports = {
   serviceList,
   memberList,
   getMemberInfo,
+  saveUserCareers,
+  getUserCareers,
+  deleteUserCareer,
 };

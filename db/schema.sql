@@ -68,6 +68,18 @@ CREATE TABLE users (
   random_user_value TEXT
 );
 
+-- 사용자 경력 테이블
+CREATE TABLE user_careers (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  company TEXT NOT NULL,
+  position TEXT NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 인덱스 생성
 CREATE INDEX idx_posts_created_at ON posts(created_at);
 CREATE INDEX idx_comments_post_id ON comments(post_id);

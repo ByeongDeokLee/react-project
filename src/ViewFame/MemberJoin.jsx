@@ -14,7 +14,7 @@ export default function MemberJoin() {
     birthdate: "",
     phone: "",
     // career: "",
-    sex : "",
+    sex: "",
     introduction: "",
     specialties: [],
   });
@@ -28,7 +28,10 @@ export default function MemberJoin() {
   // const [male, setMale] = useState(false);
   // const [female, setFemale] = useState(false);
   // const [sex, setSex] = useState({})
-  const sexForm = [{name : "남성", sex : "male"}, {name : "여성", sex:"female"}]
+  const sexForm = [
+    { name: "남성", sex: "male" },
+    { name: "여성", sex: "female" },
+  ];
   // const [showCareerModal, setShowCareerModal] = useState(false);
   // const [careerEntries, setCareerEntries] = useState([]);
   // const [newCareerEntry, setNewCareerEntry] = useState({
@@ -42,7 +45,8 @@ export default function MemberJoin() {
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
   // 정규식
-  const passwordRegex =  /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+])(?!.*[^a-zA-z0-9$`~!@$!%*#^?&\\(\\)\-_=+]).{8,20}$/;
+  const passwordRegex =
+    /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+])(?!.*[^a-zA-z0-9$`~!@$!%*#^?&\\(\\)\-_=+]).{8,20}$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   // 전문 분야 옵션
@@ -56,7 +60,7 @@ export default function MemberJoin() {
     "마케팅",
     "영업",
     "고객 서비스",
-    "기타"
+    "기타",
   ];
 
   const validate = () => {
@@ -65,7 +69,8 @@ export default function MemberJoin() {
       newErrors.email = "올바른 이메일 형식이 아닙니다.";
     }
     if (!passwordRegex.test(form.password)) {
-      newErrors.password = "비밀번호는 8자 이상, 영문과 숫자, 특수문자를 포함해야 합니다.";
+      newErrors.password =
+        "비밀번호는 8자 이상, 영문과 숫자, 특수문자를 포함해야 합니다.";
     }
     if (form.password !== passwordConfirm) {
       newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
@@ -77,7 +82,8 @@ export default function MemberJoin() {
     }
     // if (careerEntries.length === 0) newErrors.career = "경력을 입력해주세요.";
     if (!form.introduction) newErrors.introduction = "자기소개를 입력해주세요.";
-    if (form.specialties.length === 0) newErrors.specialties = "전문 분야를 선택해주세요.";
+    if (form.specialties.length === 0)
+      newErrors.specialties = "전문 분야를 선택해주세요.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -97,11 +103,12 @@ export default function MemberJoin() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB 제한
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB 제한
         toast.error("파일 크기는 5MB 이하여야 합니다.");
         return;
       }
-      if (!file.type.startsWith('image/')) {
+      if (!file.type.startsWith("image/")) {
         toast.error("이미지 파일만 업로드 가능합니다.");
         return;
       }
@@ -115,11 +122,11 @@ export default function MemberJoin() {
   };
 
   const handleSpecialtyChange = (specialty) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       specialties: prev.specialties.includes(specialty)
-        ? prev.specialties.filter(s => s !== specialty)
-        : [...prev.specialties, specialty]
+        ? prev.specialties.filter((s) => s !== specialty)
+        : [...prev.specialties, specialty],
     }));
   };
 
@@ -174,10 +181,10 @@ export default function MemberJoin() {
 
   const handleSex = (sex, e) => {
     const { name } = e.target;
-    console.log("성별선택 : name" , name)
-    console.log("성별선택 : value " ,sex)
+    console.log("성별선택 : name", name);
+    console.log("성별선택 : value ", sex);
     setForm({ ...form, [name]: sex });
-    console.log(form)
+    console.log(form);
   };
 
   const handleSubmit = async (e) => {
@@ -187,10 +194,9 @@ export default function MemberJoin() {
       return;
     }
     if (!validate()) {
-        setMessage("입력 내용을 다시 확인해주세요.");
-        return;
+      setMessage("입력 내용을 다시 확인해주세요.");
+      return;
     }
-
 
     try {
       // JSON 객체로 데이터 구성
@@ -204,7 +210,7 @@ export default function MemberJoin() {
         introduction: form.introduction,
         specialties: form.specialties,
         usertype: "사용자",
-        sex : "남자"
+        sex: "남자",
       };
 
       console.log("전송할 데이터:", payload);
@@ -212,16 +218,15 @@ export default function MemberJoin() {
       // // 이미지 파일이 있는 경우 FormData 사용, 없으면 JSON 사용
       if (profileImage) {
         const formData = new FormData();
-        formData.append('data', JSON.stringify(payload));
-        formData.append('profileImage', profileImage);
-
+        formData.append("data", JSON.stringify(payload));
+        formData.append("profileImage", profileImage);
 
         await request({
           method: "POST",
           url: "http://localhost:4000/api/register",
           data: formData,
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         });
       } else {
@@ -231,7 +236,7 @@ export default function MemberJoin() {
           url: "http://localhost:4000/api/register",
           data: payload,
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
       }
@@ -253,7 +258,11 @@ export default function MemberJoin() {
           <label className="image-upload-label">
             <div className="image-preview-container">
               {imagePreview ? (
-                <img src={imagePreview} alt="프로필 미리보기" className="image-preview" />
+                <img
+                  src={imagePreview}
+                  alt="프로필 미리보기"
+                  className="image-preview"
+                />
               ) : (
                 <div className="image-placeholder">
                   <span>프로필 이미지</span>
@@ -265,7 +274,7 @@ export default function MemberJoin() {
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
             />
           </label>
         </div>
@@ -289,7 +298,9 @@ export default function MemberJoin() {
             {showPassword ? "숨김" : "확인"}
           </button>
         </div>
-        {errors.password && <div className="error-message">{errors.password}</div>}
+        {errors.password && (
+          <div className="error-message">{errors.password}</div>
+        )}
 
         {/* 비밀번호 확인 입력 필드 */}
         <div className="password-input-container">
@@ -307,145 +318,30 @@ export default function MemberJoin() {
             {showPasswordConfirm ? "숨김" : "확인"}
           </button>
         </div>
-        {errors.passwordConfirm && <div className="error-message">{errors.passwordConfirm}</div>}
+        {errors.passwordConfirm && (
+          <div className="error-message">{errors.passwordConfirm}</div>
+        )}
 
         <input name="name" placeholder="이름" onChange={handleChange} />
         {errors.name && <div className="error-message">{errors.name}</div>}
 
-        <input name="birthdate" type="date" placeholder="생년월일" onChange={handleChange} />
-        {errors.birthdate && <div className="error-message">{errors.birthdate}</div>}
+        <input
+          name="birthdate"
+          type="date"
+          placeholder="생년월일"
+          onChange={handleChange}
+        />
+        {errors.birthdate && (
+          <div className="error-message">{errors.birthdate}</div>
+        )}
 
-        <input name="phone" placeholder="휴대폰" value={form.phone} onChange={handleChange} />
+        <input
+          name="phone"
+          placeholder="휴대폰"
+          value={form.phone}
+          onChange={handleChange}
+        />
         {errors.phone && <div className="error-message">{errors.phone}</div>}
-
-        {/* 경력 입력 */}
-        {/* <div className="career-section">
-          <div className="career-header">
-            <label>경력</label>
-            <button
-              type="button"
-              className="add-career-btn"
-              onClick={() => setShowCareerModal(true)}
-            >
-              + 경력 추가
-            </button>
-          </div>
-
-          <div className="career-list">
-            {careerEntries.length === 0 ? (
-              <div className="no-career">등록된 경력이 없습니다.</div>
-            ) : (
-              careerEntries.map((entry) => (
-                <div key={entry.id} className="career-item">
-                  <div className="career-info">
-                    <div className="career-company">{entry.company}</div>
-                    <div className="career-position">{entry.position}</div>
-                    <div className="career-period">
-                      {formatDate(entry.startDate)} ~ {entry.endDate ? formatDate(entry.endDate) : "현재"}
-                    </div>
-                    {entry.description && (
-                      <div className="career-description">{entry.description}</div>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    className="remove-career-btn"
-                    onClick={() => removeCareerEntry(entry.id)}
-                  >
-                    삭제
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-          {errors.career && <div className="error-message">{errors.career}</div>}
-        </div> */}
-
-        {/* 경력 추가 모달 */}
-        {/* {showCareerModal && (
-          <div className="career-modal-overlay">
-            <div className="career-modal">
-              <div className="career-modal-header">
-                <h3>경력 추가</h3>
-                <button
-                  type="button"
-                  className="close-modal-btn"
-                  onClick={() => setShowCareerModal(false)}
-                >
-                  ×
-                </button>
-              </div>
-              <div className="career-modal-content">
-                <div className="career-input-group">
-                  <label>회사명 *</label>
-                  <input
-                    type="text"
-                    name="company"
-                    value={newCareerEntry.company}
-                    onChange={handleCareerEntryChange}
-                    placeholder="회사명을 입력하세요"
-                  />
-                </div>
-                <div className="career-input-group">
-                  <label>직책 *</label>
-                  <input
-                    type="text"
-                    name="position"
-                    value={newCareerEntry.position}
-                    onChange={handleCareerEntryChange}
-                    placeholder="직책을 입력하세요"
-                  />
-                </div>
-                <div className="career-date-group">
-                  <div className="career-input-group">
-                    <label>시작일 *</label>
-                    <input
-                      type="date"
-                      name="startDate"
-                      value={newCareerEntry.startDate}
-                      onChange={handleCareerEntryChange}
-                    />
-                  </div>
-                  <div className="career-input-group">
-                    <label>종료일</label>
-                    <input
-                      type="date"
-                      name="endDate"
-                      value={newCareerEntry.endDate}
-                      onChange={handleCareerEntryChange}
-                    />
-                  </div>
-                </div>
-                <div className="career-input-group">
-                  <label>업무 설명</label>
-                  <textarea
-                    name="description"
-                    value={newCareerEntry.description}
-                    onChange={handleCareerEntryChange}
-                    placeholder="담당 업무나 성과를 입력하세요"
-                    rows="3"
-                  />
-                </div>
-              </div>
-              <div className="career-modal-footer">
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowCareerModal(false)}
-                >
-                  취소
-                </button>
-                <button
-                  type="button"
-                  className="add-btn"
-                  onClick={addCareerEntry}
-                >
-                  추가
-                </button>
-              </div>
-            </div>
-          </div>
-        )} */}
 
         {/* 자기소개서 */}
         <div className="introduction-section">
@@ -456,7 +352,9 @@ export default function MemberJoin() {
             onChange={handleChange}
             rows="5"
           />
-          {errors.introduction && <div className="error-message">{errors.introduction}</div>}
+          {errors.introduction && (
+            <div className="error-message">{errors.introduction}</div>
+          )}
         </div>
 
         {/* 전문 분야 선택 */}
@@ -474,25 +372,29 @@ export default function MemberJoin() {
               </label>
             ))}
           </div>
-          {errors.specialties && <div className="error-message">{errors.specialties}</div>}
+          {errors.specialties && (
+            <div className="error-message">{errors.specialties}</div>
+          )}
         </div>
 
         {/* 성별 선택 */}
         <div className="specialties-section">
-        <label>성별 선택</label>
-          {sexForm.map(data => (
+          <label>성별 선택</label>
+          {sexForm.map((data) => (
             <label key={data} className="specialty-checkbox">
-               <input name="sex" type="checkbox" checked={form.sex === data.sex} onChange={(e) => handleSex(data.sex, e)} />
-               {/* <input name="sex" type="checkbox" checked={data.type} onChange={(e) => handleSex(data.sex, e)} /> */}
-               <span>{ data.name}</span>
-             </label>
-          )
-        )}
+              <input
+                name="sex"
+                type="checkbox"
+                checked={form.sex === data.sex}
+                onChange={(e) => handleSex(data.sex, e)}
+              />
+              {/* <input name="sex" type="checkbox" checked={data.type} onChange={(e) => handleSex(data.sex, e)} /> */}
+              <span>{data.name}</span>
+            </label>
+          ))}
         </div>
 
-
-
-      {/* 약관 동의 */}
+        {/* 약관 동의 */}
         <div className="terms-section">
           <label>
             <input type="checkbox" checked={agree} onChange={handleAgree} />
@@ -525,7 +427,7 @@ export default function MemberJoin() {
         <button type="submit">회원가입</button>
       </form>
       <div className="member-join-message">{message}</div>
-         <ToastContainer position="top-center" autoClose={2000} />
+      <ToastContainer position="top-center" autoClose={2000} />
     </div>
   );
 }

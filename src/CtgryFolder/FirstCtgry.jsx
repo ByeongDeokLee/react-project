@@ -14,11 +14,17 @@ export default function FirtstCtgry() {
 
   //렌더링 감지
   useEffect(() => {
-    const LoginInfo = localStorage.getItem("name");
-    console.log("\n\n 확인 \n\n", LoginInfo != null);
-    if (LoginInfo != null) {
-      setLoginInfo(LoginInfo);
-      setIsLoggedIn(true);
+    const userData = localStorage.getItem("user");
+    console.log("userData", userData);
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        const userName = user.name || user.nickname || "사용자";
+        setLoginInfo(userName);
+        setIsLoggedIn(true);
+      } catch (e) {
+        console.error("사용자 데이터 파싱 오류:", e);
+      }
     }
   }, []);
 
@@ -36,11 +42,8 @@ export default function FirtstCtgry() {
           : setLoginInfo(event.data.user.name);
 
         // 받은 user 객체를 통째로 로컬스토리지에 저장
-        // (user의 각 key를 로컬스토리지에 저장)
         if (event.data.user && typeof event.data.user === "object") {
-          Object.entries(event.data.user).forEach(([key, value]) => {
-            localStorage.setItem(key, value);
-          });
+          localStorage.setItem("user", JSON.stringify(event.data.user));
         }
 
         toast.success("로그인 되었습니다.");
@@ -85,13 +88,19 @@ export default function FirtstCtgry() {
   };
 
   const handleMyPage = () => {
-    // 로컬스토리지의 모든 데이터를 user 객체로 만들어 마이페이지로 넘김
-    const user = {};
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      user[key] = localStorage.getItem(key);
+    // 로컬스토리지에서 user 객체를 가져와서 마이페이지로 넘김
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        navigate("/mypage", { state: { user } });
+      } catch (e) {
+        console.error("사용자 데이터 파싱 오류:", e);
+        navigate("/mypage", { state: { user: {} } });
+      }
+    } else {
+      navigate("/mypage", { state: { user: {} } });
     }
-    navigate("/mypage", { state: { user } });
   };
 
   return (

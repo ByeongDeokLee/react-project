@@ -1,4 +1,5 @@
 const express = require("express");
+const axios = require("axios");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
 const multer = require("multer");
@@ -31,6 +32,9 @@ const {
   serviceList,
   memberList,
   getMemberInfo,
+  saveUserCareers,
+  getUserCareers,
+  deleteUserCareer,
 } = require("../db/queries");
 
 app.use(cors());
@@ -91,7 +95,7 @@ app.get("/api/serviceList", async (req, res) => {
     res.json(services);
     // return res.json(merged);
   } catch (error) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -112,7 +116,7 @@ app.get("/api/reviewsList", async (req, res) => {
     });
     res.json(reviews);
   } catch (error) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -490,6 +494,42 @@ app.get("/api/memberList/:id", async (req, res) => {
     res.json(response);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+// 사용자 경력 조회
+app.get("/api/users/:id/careers", async (req, res) => {
+  try {
+    const userId = Number(req.params.id);
+    const careers = await getUserCareers(userId);
+    res.json({ success: true, careers });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// 사용자 경력 저장(일괄)
+app.post("/api/users/:id/careers", async (req, res) => {
+  try {
+    console.log("사용자 경력 저장 요청 받음", req.body);
+    const userId = Number(req.params.id);
+    const { careers } = req.body;
+    const saved = await saveUserCareers(userId, careers || []);
+    res.json({ success: true, careers: saved });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// 사용자 경력 단건 삭제
+app.delete("/api/users/:id/careers/:careerId", async (req, res) => {
+  try {
+    const userId = Number(req.params.id);
+    const careerId = Number(req.params.careerId);
+    await deleteUserCareer(userId, careerId);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
   }
 });
 
