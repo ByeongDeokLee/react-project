@@ -32,9 +32,11 @@ const {
   serviceList,
   memberList,
   getMemberInfo,
-  saveUserCareers,
+  updateUserInfo,
+  addUserCareer,
   getUserCareers,
   deleteUserCareer,
+  updateUser,
 } = require("../db/queries");
 
 app.use(cors());
@@ -500,6 +502,7 @@ app.get("/api/memberList/:id", async (req, res) => {
 // 사용자 경력 조회
 app.get("/api/users/:id/careers", async (req, res) => {
   try {
+    console.log("사용자 경력 조회 요청 받음", req.params.id);
     const userId = Number(req.params.id);
     const careers = await getUserCareers(userId);
     res.json({ success: true, careers });
@@ -508,20 +511,33 @@ app.get("/api/users/:id/careers", async (req, res) => {
   }
 });
 
-// 사용자 경력 저장(일괄)
-app.post("/api/users/:id/careers", async (req, res) => {
+// 사용자 정보 업데이트
+app.put("/api/users/:id", async (req, res) => {
   try {
-    console.log("사용자 경력 저장 요청 받음", req.body);
+    console.log("사용자 정보 업데이트 요청 받음", req.body);
     const userId = Number(req.params.id);
-    const { careers } = req.body;
-    const saved = await saveUserCareers(userId, careers || []);
-    res.json({ success: true, careers: saved });
+    const updateData = req.body;
+    const updated = await updateUserInfo(userId, updateData);
+    res.json({ success: true, user: updated });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
 });
 
-// 사용자 경력 단건 삭제
+// 사용자 경력 추가
+app.post("/api/users/:id/careers", async (req, res) => {
+  try {
+    console.log("사용자 경력 추가 요청 받음", req.body);
+    const userId = Number(req.params.id);
+    const { career } = req.body;
+    const added = await addUserCareer(userId, career);
+    res.json({ success: true, career: added });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// 사용자 경력 삭제
 app.delete("/api/users/:id/careers/:careerId", async (req, res) => {
   try {
     const userId = Number(req.params.id);
@@ -533,6 +549,19 @@ app.delete("/api/users/:id/careers/:careerId", async (req, res) => {
   }
 });
 
+// 회원 정보 수정
+app.put("/api/users/:id", async (req, res) => {
+  try {
+    const { title, content } = req.body;
+    const user = await updateUser(req.params.id, title, content);
+    // if (!post) {
+    //   return res.status(404).json({ error: "게시글을 찾을 수 없습니다." });
+    // }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);

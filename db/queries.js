@@ -423,37 +423,53 @@ const getMemberInfo = async (id) => {
   }
 };
 
-// 사용자 경력 저장
-const saveUserCareers = async (userId, careers) => {
+// 사용자 정보 업데이트
+const updateUserInfo = async (userId, updateData) => {
   try {
-    console.log("사용자 경력 저장 쿼리 실행");
-    if (!Array.isArray(careers)) throw new Error("careers must be an array");
-    // 먼저 기존 경력 삭제 후, 새로 일괄 삽입
-    const { error: delError } = await supabase
-      .from("user_careers")
-      .delete()
-      .eq("user_id", userId);
-    if (delError) throw delError;
-
-    if (careers.length === 0) return [];
-
-    const payload = careers.map((c) => ({
-      user_id: userId,
-      company: c.company,
-      position: c.position,
-      start_date: c.startDate,
-      end_date: c.endDate || null,
-      description: c.description || null,
-    }));
+    console.log("사용자 정보 업데이트 쿼리 실행", { userId, updateData });
 
     const { data, error } = await supabase
-      .from("user_careers")
+      .from("users")
+      .update(updateData)
+      .eq("id", userId)
+      .select("*")
+      .single();
+
+    if (error) throw error;
+
+    console.log("✅ 업데이트된 사용자 데이터:", data);
+    return data;
+  } catch (error) {
+    console.error("Error updating user info:", error);
+    throw error;
+  }
+};
+
+// 사용자 경력 추가
+const addUserCareer = async (userId, career) => {
+  try {
+    console.log("사용자 경력 추가 쿼리 실행");
+    if (!career) throw new Error("career data is required");
+
+    const payload = {
+      user_id: userId,
+      company_name: career.company,
+      position: career.position,
+      start_date: career.startDate,
+      end_date: career.endDate || null,
+      description: career.description || null,
+      skills: career.skills || [],
+    };
+
+    console.log("payload", payload);
+    const { data, error } = await supabase
+      .from("career")
       .insert(payload)
       .select("*");
     if (error) throw error;
-    return data;
+    return data[0];
   } catch (error) {
-    console.error("Error saving user careers:", error);
+    console.error("Error adding user career:", error);
     throw error;
   }
 };
@@ -461,13 +477,13 @@ const saveUserCareers = async (userId, careers) => {
 // 사용자 경력 조회
 const getUserCareers = async (userId) => {
   try {
-    console.log("사용자 경력 조회 쿼리 실행");
     const { data, error } = await supabase
-      .from("user_careers")
+      .from("career")
       .select("*")
       .eq("user_id", userId)
       .order("start_date", { ascending: true });
     if (error) throw error;
+    console.log("사용자 경력 조회 쿼리 확인", data);
     return data;
   } catch (error) {
     console.error("Error getting user careers:", error);
@@ -479,7 +495,7 @@ const getUserCareers = async (userId) => {
 const deleteUserCareer = async (userId, careerId) => {
   try {
     const { error } = await supabase
-      .from("user_careers")
+      .from("career")
       .delete()
       .eq("user_id", userId)
       .eq("id", careerId);
@@ -487,6 +503,23 @@ const deleteUserCareer = async (userId, careerId) => {
     return true;
   } catch (error) {
     console.error("Error deleting user career:", error);
+    throw error;
+  }
+};
+
+//회원정보 수정
+const updateUser = async (id, title, content) => {
+  try {
+    const { data, error } = await supabase
+      .from("posts")
+      .update({ title, content, updated_at: new Date() })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error updating post:", error);
     throw error;
   }
 };
@@ -511,7 +544,9 @@ module.exports = {
   serviceList,
   memberList,
   getMemberInfo,
-  saveUserCareers,
+  updateUserInfo,
+  addUserCareer,
   getUserCareers,
   deleteUserCareer,
+  updateUser,
 };

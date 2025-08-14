@@ -25,6 +25,7 @@ const MyPage = ({ user }) => {
 
   // 로그인 사용자 식별자
   const [userId, setUserId] = useState(null);
+  const [specialties, setSpecialties] = useState([]);
 
   // 컴포넌트 마운트 시 로컬스토리지에서 사용자 정보 로드
   useEffect(() => {
@@ -71,8 +72,23 @@ const MyPage = ({ user }) => {
     startDate: "",
     endDate: "",
     description: "",
+    skills: [],
   });
   const [errors, setErrors] = useState({});
+
+  // 전문 분야 옵션
+  const specialtyOptions = [
+    "웹 개발",
+    "모바일 앱 개발",
+    "데이터 분석",
+    "AI/머신러닝",
+    "UI/UX 디자인",
+    "프로젝트 관리",
+    "마케팅",
+    "영업",
+    "고객 서비스",
+    "기타",
+  ];
 
   // 초기 경력 로드
   useEffect(() => {
@@ -85,17 +101,27 @@ const MyPage = ({ user }) => {
         });
         const fetched = (res?.careers || []).map((c) => ({
           id: c.id,
-          company: c.company,
+          company: c.company_name,
           position: c.position,
           startDate: c.start_date,
           endDate: c.end_date,
           description: c.description,
+          skills: c.skills || [],
           isPersisted: true,
         }));
         setCareerEntries(fetched);
       } catch (err) {
-        console.error(err);
-        toast.error("경력 정보를 불러오는데 실패했습니다.");
+        console.error("경력 조회 실패:", err);
+        if (
+          err.message?.includes("career") ||
+          err.message?.includes("does not exist")
+        ) {
+          toast.error(
+            "경력 테이블이 생성되지 않았습니다. 관리자에게 문의하세요."
+          );
+        } else {
+          toast.error("경력 정보를 불러오는데 실패했습니다.");
+        }
       }
     };
     fetchCareers();
@@ -134,6 +160,15 @@ const MyPage = ({ user }) => {
     }
   };
 
+  const handleSpecialtyChange = (specialty) => {
+    console.log("specialty === ", specialty);
+    setSpecialties((prev) =>
+      prev.includes(specialty)
+        ? prev.filter((s) => s !== specialty)
+        : [...prev, specialty]
+    );
+  };
+
   // 정보 수정 처리
   const handleEdit = (field) => {
     setEditField(field);
@@ -141,27 +176,48 @@ const MyPage = ({ user }) => {
   };
 
   // 수정 완료 처리
-  const handleSave = (field) => {
-    setIsEditing(false);
-    setEditField(null);
-
-    // 로컬스토리지에서 기존 사용자 데이터 가져오기
-    const userData = localStorage.getItem("user");
-    let currentUser = {};
-
-    if (userData) {
-      try {
-        currentUser = JSON.parse(userData);
-      } catch (e) {
-        console.error("사용자 데이터 파싱 오류:", e);
-      }
+  const handleSave = async (field) => {
+    if (!userId) {
+      toast.error("로그인이 필요합니다.");
+      return;
     }
 
-    // 수정된 필드 업데이트
-    currentUser[field] = userInfo[field];
+    try {
+      // 서버에 업데이트 요청
+      const updateData = { [field]: userInfo[field] };
 
-    // 업데이트된 사용자 데이터를 로컬스토리지에 저장
-    localStorage.setItem("user", JSON.stringify(currentUser));
+      const res = await request({
+        method: "PUT",
+        url: `http://localhost:4000/api/users/${userId}`,
+        data: updateData,
+      });
+
+      // 로컬스토리지에서 기존 사용자 데이터 가져오기
+      const userData = localStorage.getItem("user");
+      let currentUser = {};
+
+      if (userData) {
+        try {
+          currentUser = JSON.parse(userData);
+        } catch (e) {
+          console.error("사용자 데이터 파싱 오류:", e);
+        }
+      }
+
+      // 수정된 필드 업데이트
+      currentUser[field] = userInfo[field];
+
+      // 업데이트된 사용자 데이터를 로컬스토리지에 저장
+      localStorage.setItem("user", JSON.stringify(currentUser));
+
+      setIsEditing(false);
+      setEditField(null);
+      toast.success("정보가 업데이트되었습니다.");
+      console.log("업데이트된 사용자:", res.user);
+    } catch (err) {
+      console.error("사용자 정보 업데이트 실패:", err);
+      toast.error("정보 업데이트에 실패했습니다.");
+    }
   };
 
   // 입력값 변경 처리
@@ -180,7 +236,7 @@ const MyPage = ({ user }) => {
     }));
   };
 
-  const addCareerEntry = () => {
+  const addCareerEntry = async () => {
     if (
       !newCareerEntry.company ||
       !newCareerEntry.position ||
@@ -190,22 +246,55 @@ const MyPage = ({ user }) => {
       return;
     }
 
-    const entry = {
-      ...newCareerEntry,
-      id: Date.now(),
-      isPersisted: false,
-    };
+    if (!userId) {
+      toast.error("로그인이 필요합니다.");
+      return;
+    }
 
-    setCareerEntries((prev) => [...prev, entry]);
-    setNewCareerEntry({
-      company: "",
-      position: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-    });
-    setErrors({});
-    setShowCareerModal(false);
+    try {
+      // 경력 추가 API 호출
+      const res = await request({
+        method: "POST",
+        url: `http://localhost:4000/api/users/${userId}/careers`,
+        data: { career: newCareerEntry },
+      });
+
+      const addedCareer = {
+        id: res.career.id,
+        company: res.career.company_name,
+        position: res.career.position,
+        startDate: res.career.start_date,
+        endDate: res.career.end_date,
+        description: res.career.description,
+        skills: res.career.skills || [],
+        isPersisted: true,
+      };
+
+      setCareerEntries((prev) => [...prev, addedCareer]);
+      setNewCareerEntry({
+        company: "",
+        position: "",
+        startDate: "",
+        endDate: "",
+        description: "",
+        skills: [],
+      });
+      setErrors({});
+      setShowCareerModal(false);
+      toast.success("경력이 추가되었습니다.");
+    } catch (err) {
+      console.error("경력 추가 실패:", err);
+      if (
+        err.message?.includes("user_careers") ||
+        err.message?.includes("does not exist")
+      ) {
+        toast.error(
+          "경력 테이블이 생성되지 않았습니다. 관리자에게 문의하세요."
+        );
+      } else {
+        toast.error("경력 추가에 실패했습니다.");
+      }
+    }
   };
 
   const removeCareerEntry = async (id) => {
@@ -221,8 +310,17 @@ const MyPage = ({ user }) => {
         });
         toast.success("경력이 삭제되었습니다.");
       } catch (err) {
-        console.error(err);
-        toast.error("경력 삭제에 실패했습니다.");
+        console.error("경력 삭제 실패:", err);
+        if (
+          err.message?.includes("career") ||
+          err.message?.includes("does not exist")
+        ) {
+          toast.error(
+            "경력 테이블이 생성되지 않았습니다. 관리자에게 문의하세요."
+          );
+        } else {
+          toast.error("경력 삭제에 실패했습니다.");
+        }
         return; // 실패 시 로컬 상태 변경하지 않음
       }
     }
@@ -239,41 +337,8 @@ const MyPage = ({ user }) => {
     });
   };
 
-  // 경력 저장(일괄 반영)
-  const handleSaveCareers = async () => {
-    if (!userId) {
-      toast.error("로그인이 필요합니다.");
-      return;
-    }
-    try {
-      const payload = careerEntries.map((c) => ({
-        company: c.company,
-        position: c.position,
-        startDate: c.startDate,
-        endDate: c.endDate || null,
-        description: c.description || null,
-      }));
-      const res = await request({
-        method: "POST",
-        url: `http://localhost:4000/api/users/${userId}/careers`,
-        data: { careers: payload },
-      });
-      const saved = (res?.careers || []).map((c) => ({
-        id: c.id,
-        company: c.company,
-        position: c.position,
-        startDate: c.start_date,
-        endDate: c.end_date,
-        description: c.description,
-        isPersisted: true,
-      }));
-      setCareerEntries(saved);
-      toast.success("경력이 저장되었습니다.");
-    } catch (err) {
-      console.error(err);
-      toast.error("경력 저장에 실패했습니다.");
-    }
-  };
+  // 경력 저장 기능 제거 (더 이상 필요 없음)
+  // 경력은 추가할 때마다 자동으로 저장됨
 
   // 수정 취소 처리
   const handleCancel = () => {
@@ -345,16 +410,9 @@ const MyPage = ({ user }) => {
                 type="button"
                 className="add-career-btn"
                 onClick={() => setShowCareerModal(true)}
-              >
-                + 경력 추가
-              </button>
-              <button
-                type="button"
-                className="add-career-btn"
-                onClick={handleSaveCareers}
                 disabled={loading}
               >
-                {loading ? "저장중..." : "경력 저장"}
+                + 경력 추가
               </button>
             </div>
           </div>
@@ -377,6 +435,11 @@ const MyPage = ({ user }) => {
                         {entry.description}
                       </div>
                     )}
+                    {entry.skills && entry.skills.length > 0 && (
+                      <div className="career-skills">
+                        <strong>기술:</strong> {entry.skills.join(", ")}
+                      </div>
+                    )}
                   </div>
                   <button
                     type="button"
@@ -384,7 +447,7 @@ const MyPage = ({ user }) => {
                     onClick={() => removeCareerEntry(entry.id)}
                     disabled={loading}
                   >
-                    삭제
+                    {loading ? "삭제중..." : "삭제"}
                   </button>
                 </div>
               ))
@@ -460,12 +523,32 @@ const MyPage = ({ user }) => {
                     rows="3"
                   />
                 </div>
+                <div className="career-input-group">
+                  <label>관련 기술 (쉼표로 구분)</label>
+                  <input
+                    type="text"
+                    name="skills"
+                    value={newCareerEntry.skills.join(", ")}
+                    onChange={(e) => {
+                      const skillsArray = e.target.value
+                        .split(",")
+                        .map((skill) => skill.trim())
+                        .filter((skill) => skill.length > 0);
+                      setNewCareerEntry((prev) => ({
+                        ...prev,
+                        skills: skillsArray,
+                      }));
+                    }}
+                    placeholder="JavaScript, React, Node.js"
+                  />
+                </div>
               </div>
               <div className="career-modal-footer">
                 <button
                   type="button"
                   className="cancel-btn"
                   onClick={() => setShowCareerModal(false)}
+                  disabled={loading}
                 >
                   취소
                 </button>
@@ -473,8 +556,9 @@ const MyPage = ({ user }) => {
                   type="button"
                   className="add-btn"
                   onClick={addCareerEntry}
+                  disabled={loading}
                 >
-                  추가
+                  {loading ? "추가중..." : "추가"}
                 </button>
               </div>
             </div>
@@ -527,17 +611,24 @@ const MyPage = ({ user }) => {
           <div className="info-content">
             {isEditing && editField === "specialty" ? (
               <div className="edit-section">
-                <textarea
-                  value={userInfo.specialty}
-                  onChange={(e) =>
-                    handleInputChange("specialty", e.target.value)
-                  }
-                  className="edit-textarea"
-                  placeholder="전문분야를 입력해주세요"
-                />
+                <div className="specialties-grid">
+                  {specialtyOptions.map((specialty) => (
+                    <label key={specialty} className="specialty-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={specialties.includes(specialty)}
+                        onChange={() => handleSpecialtyChange(specialty)}
+                      />
+                      <span>{specialty}</span>
+                    </label>
+                  ))}
+                </div>
                 <div className="edit-buttons">
                   <button
-                    onClick={() => handleSave("specialty")}
+                    onClick={() => {
+                      handleInputChange("specialty", specialties.join(", "));
+                      handleSave("specialty");
+                    }}
                     className="save-btn"
                   >
                     저장
