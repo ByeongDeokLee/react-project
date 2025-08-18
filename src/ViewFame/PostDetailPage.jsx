@@ -3,6 +3,24 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import "../CssFolder/PostDetailPage.css";
 import useApi from "../js/useApi";
 
+// const pipe =
+//   (...fns) =>
+//   (arg) =>
+//     fns.reduce((acc, fn) => fn(acc), arg);
+// const go = (arg, ...fns) => pipe(...fns)(arg);
+const pipeAsync =
+  (...fns) =>
+  (arg) =>
+    fns.reduce(
+      (acc, fn) => (acc.then ? acc.then(fn) : Promise.resolve(fn(acc))),
+      arg
+    );
+
+const goAsync = (arg, ...fns) => pipeAsync(...fns)(arg);
+
+const commentData = (comment) => console.log("데이터 있나?", comment);
+// comment.trim() ? return :  comment
+
 const PostDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -24,6 +42,7 @@ const PostDetailPage = () => {
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
+    console.log("여기 들어옴?");
     if (!newComment.trim()) return;
 
     const comment = {
@@ -35,16 +54,50 @@ const PostDetailPage = () => {
       replies: [],
     };
 
-    const response = await request({
-      method: "post",
-      url: `http://localhost:4000/api/posts/${id}/comments-write`,
-      data: comment,
-    });
+    try {
+      goAsync(
+        comment,
+        async (comment) => {
+          // console.log("11111", id);
+          // console.log("2222", comment);
+          const response = await request({
+            method: "post",
+            url: `http://localhost:4000/api/posts/${id}/comments-write`,
+            data: comment,
+          });
+          return { response };
+        },
+        ({ response }) => {
+          setComments(response);
+          setReplyTo(null);
+          setNewComment("");
+        }
+      );
+    } catch (error) {
+      console.error("Error getting post:", error);
+      throw error;
+    }
+    // if (!newComment.trim()) return;
 
-    // 서버에서 최신 댓글 리스트를 받아왔으므로, setComments(response)만 하면 됨.
-    setComments(response);
-    setReplyTo(null);
-    setNewComment("");
+    // const comment = {
+    //   id: comments.length + 1,
+    //   author: "현재 사용자",
+    //   content: newComment,
+    //   date: new Date().toLocaleDateString(),
+    //   likes: 0,
+    //   replies: [],
+    // };
+
+    // const response = await request({
+    //   method: "post",
+    //   url: `http://localhost:4000/api/posts/${id}/comments-write`,
+    //   data: comment,
+    // });
+
+    // // 서버에서 최신 댓글 리스트를 받아왔으므로, setComments(response)만 하면 됨.
+    // setComments(response);
+    // setReplyTo(null);
+    // setNewComment("");
   };
 
   return (
@@ -69,9 +122,7 @@ const PostDetailPage = () => {
             onChange={(e) => setNewComment(e.target.value)}
             placeholder={replyTo ? "답글을 입력하세요" : "댓글을 입력하세요"}
           />
-          <button type="submit" >
-            {replyTo ? "답글 작성" : "댓글 작성"}
-          </button>
+          <button type="submit">{replyTo ? "답글 작성" : "댓글 작성"}</button>
           {replyTo && (
             <button type="button" onClick={() => setReplyTo(null)}>
               취소

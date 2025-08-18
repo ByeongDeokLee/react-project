@@ -3,6 +3,17 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styles from "../CssFolder/BoardPage.module.css";
 import useApi from "../js/useApi";
 
+//pipe처럼 비동기용 pipeAsync 만들어서 사용
+const pipeAsync =
+  (...fns) =>
+  (arg) =>
+    fns.reduce(
+      (acc, fn) => (acc.then ? acc.then(fn) : Promise.resolve(fn(acc))),
+      arg
+    );
+
+const goAsync = (arg, ...fns) => pipeAsync(...fns)(arg);
+
 const BoardPage = () => {
   const navigate = useNavigate();
   const { request } = useApi(); // useApi 훅에서 request 받아오기
@@ -15,17 +26,27 @@ const BoardPage = () => {
     e.preventDefault();
 
     try {
-      const [postResponse, commentsResponse] = await Promise.all([
-        request({
-          method: "GET",
-          url: `http://localhost:4000/api/posts/${id}`,
-        }),
-        request({
-          method: "GET",
-          url: `http://localhost:4000/api/posts/${id}/comments`,
-        }),
-      ]);
-      navigate(`/board/${id}`, { state: { post: postResponse, comments: commentsResponse } });
+      goAsync(
+        id,
+        async (postId) => {
+          const [postResponse, commentsResponse] = await Promise.all([
+            request({
+              method: "GET",
+              url: `http://localhost:4000/api/posts/${postId}`,
+            }),
+            request({
+              method: "GET",
+              url: `http://localhost:4000/api/posts/${postId}/comments`,
+            }),
+          ]);
+          return { postResponse, commentsResponse };
+        },
+        ({ postResponse, commentsResponse }) => {
+          navigate(`/board/${id}`, {
+            state: { post: postResponse, comments: commentsResponse },
+          });
+        }
+      );
     } catch (error) {
       console.error("Error getting post:", error);
       throw error;
@@ -33,9 +54,9 @@ const BoardPage = () => {
   };
 
   const BoardWrite = () => {
-    if(localStorage.getItem("name")){
+    if (localStorage.getItem("name")) {
       navigate("/board/write");
-    }else{
+    } else {
       alert("로그인 후 이용해주세요.");
     }
   };
@@ -47,10 +68,7 @@ const BoardPage = () => {
           <h1>게시판</h1>
         </div>
         <div className={styles.boardActions}>
-          <button
-            className={styles.writeBtn}
-            onClick={() => BoardWrite()}
-          >
+          <button className={styles.writeBtn} onClick={() => BoardWrite()}>
             글쓰기
           </button>
         </div>

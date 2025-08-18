@@ -7,25 +7,86 @@ import { kakaoLogout } from "../js/axios";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
+// 함수형 프로그래밍 유틸리티 함수들
+const pipe =
+  (...fns) =>
+  (arg) =>
+    fns.reduce((acc, fn) => fn(acc), arg);
+const go = (arg, ...fns) => pipe(...fns)(arg);
+
+const curry = (fn) => {
+  const arity = fn.length;
+  return function curried(...args) {
+    if (args.length >= arity) {
+      return fn.apply(this, args);
+    }
+    return function (...moreArgs) {
+      return curried.apply(this, args.concat(moreArgs));
+    };
+  };
+};
+
+// 커리된 유틸리티 함수들
+const getItem = curry((key, storage) => storage.getItem(key));
+const parseJSON = (str) => {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    console.error("JSON 파싱 오류:", e);
+    return null;
+  }
+};
+
+// const setItem = curry((key, value, storage) =>
+//   storage.setItem(key, JSON.stringify(value))
+// );
+// const removeItem = curry((key, storage) => storage.removeItem(key));
+
+// 사용자 데이터 처리 함수들
+const getUserName = (user) => user?.name || user?.nickname || "사용자";
+const setLoginState = curry((setLoginInfo, setIsLoggedIn) => (userName) => {
+  setLoginInfo(userName);
+  setIsLoggedIn(true);
+});
+
+// 로그인 성공 처리 함수들
+const extractUserName = (user) =>
+  user?.name === undefined ? user.nickname : user.name;
+
+const saveUserData = curry((storage) => (user) => {
+  if (user && typeof user === "object") {
+    storage.setItem("user", JSON.stringify(user));
+  }
+  return user;
+});
+
+// 로그아웃 처리 함수들
+const clearUserData = curry((storage) => () => {
+  console.log("clearUserData", storage);
+  storage.clear();
+  return null;
+});
+
+const clearKakaoToken = curry((storage) => () => {
+  storage.removeItem("kakaoAccessToken");
+  return null;
+});
+
 export default function FirtstCtgry() {
   const [LoginInfo, setLoginInfo] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  //렌더링 감지
+  //렌더링 감지 - 함수형으로 개선
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    console.log("userData", userData);
-    if (userData) {
-      try {
-        const user = JSON.parse(userData);
-        const userName = user.name || user.nickname || "사용자";
-        setLoginInfo(userName);
-        setIsLoggedIn(true);
-      } catch (e) {
-        console.error("사용자 데이터 파싱 오류:", e);
-      }
-    }
+    const initializeUser = () =>
+      go(localStorage, getItem("user"), parseJSON, (user) =>
+        user
+          ? go(user, getUserName, setLoginState(setLoginInfo, setIsLoggedIn))
+          : null
+      );
+
+    initializeUser();
   }, []);
 
   const openLoginPopup = (e) => {
@@ -36,41 +97,45 @@ export default function FirtstCtgry() {
       if (event.data?.type === "LOGIN_SUCCESS") {
         console.log("로그인 성공! 유저:", event.data.user);
 
-        // 이름/닉네임 표시
-        event.data?.user?.name === undefined
-          ? setLoginInfo(event.data.user.nickname)
-          : setLoginInfo(event.data.user.name);
-
-        // 받은 user 객체를 통째로 로컬스토리지에 저장
-        if (event.data.user && typeof event.data.user === "object") {
-          localStorage.setItem("user", JSON.stringify(event.data.user));
-        }
-
-        toast.success("로그인 되었습니다.");
-        setIsLoggedIn(true);
+        // 함수형으로 개선된 로그인 성공 처리
+        go(
+          event.data.user,
+          extractUserName,
+          (userName) => {
+            setLoginInfo(userName);
+            return event.data.user;
+          },
+          saveUserData(localStorage),
+          () => {
+            toast.success("로그인 되었습니다.");
+            setIsLoggedIn(true);
+          }
+        );
       }
     });
   };
 
   const openLogoutPopup = async () => {
-    const token = localStorage.getItem("kakaoAccessToken"); // 저장된 토큰 불러오기
+    const token = localStorage.getItem("kakaoAccessToken");
 
     if (!token) {
-      localStorage.clear();
-      setLoginInfo("");
-      setIsLoggedIn(false);
-      toast.success("로그아웃 되었습니다.");
-      console.log("로그아웃 되었습니다.", window.localStorage.length);
+      // 함수형으로 개선된 로그아웃 처리
+      go(null, clearUserData(localStorage), () => {
+        setLoginInfo("");
+        setIsLoggedIn(false);
+        toast.success("로그아웃 되었습니다.");
+        console.log("로그아웃 되었습니다.", window.localStorage.length);
+      });
     } else {
       try {
         const result = await kakaoLogout(token);
         console.log("로그아웃 결과:", result);
 
-        // 프론트 상태 초기화
-        localStorage.removeItem("kakaoAccessToken");
-        setIsLoggedIn(false);
-        toast.success("로그아웃 되었습니다.");
-        // alert("로그아웃 되었습니다.");
+        // 함수형으로 개선된 카카오 로그아웃 처리
+        go(null, clearKakaoToken(localStorage), () => {
+          setIsLoggedIn(false);
+          toast.success("로그아웃 되었습니다.");
+        });
       } catch (e) {
         alert("로그아웃 실패!");
       }
@@ -88,19 +153,10 @@ export default function FirtstCtgry() {
   };
 
   const handleMyPage = () => {
-    // 로컬스토리지에서 user 객체를 가져와서 마이페이지로 넘김
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      try {
-        const user = JSON.parse(userData);
-        navigate("/mypage", { state: { user } });
-      } catch (e) {
-        console.error("사용자 데이터 파싱 오류:", e);
-        navigate("/mypage", { state: { user: {} } });
-      }
-    } else {
-      navigate("/mypage", { state: { user: {} } });
-    }
+    // 함수형으로 개선된 마이페이지 처리
+    go(localStorage, getItem("user"), parseJSON, (user) =>
+      navigate("/mypage", { state: { user: user || {} } })
+    );
   };
 
   return (
