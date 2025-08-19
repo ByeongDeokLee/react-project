@@ -18,7 +18,7 @@ const pipeAsync =
 
 const goAsync = (arg, ...fns) => pipeAsync(...fns)(arg);
 
-const commentData = (comment) => console.log("데이터 있나?", comment);
+// const commentData = (comment) => console.log("데이터 있나?", comment);
 // comment.trim() ? return :  comment
 
 const PostDetailPage = () => {
@@ -47,6 +47,7 @@ const PostDetailPage = () => {
 
     const comment = {
       id: comments.length + 1,
+      post_id: post.id,
       author: "현재 사용자",
       content: newComment,
       date: new Date().toLocaleDateString(),
@@ -58,8 +59,6 @@ const PostDetailPage = () => {
       goAsync(
         comment,
         async (comment) => {
-          // console.log("11111", id);
-          // console.log("2222", comment);
           const response = await request({
             method: "post",
             url: `http://localhost:4000/api/posts/${id}/comments-write`,

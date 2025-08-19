@@ -12,7 +12,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-console.log(supabaseUrl, supabaseAnonKey);
-console.log(supabase);
+console.log("supabase 1111", supabaseUrl, supabaseAnonKey);
+console.log("supabase 2222", supabase);
 
 module.exports = supabase;

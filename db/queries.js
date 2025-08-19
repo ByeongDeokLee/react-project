@@ -15,6 +15,7 @@ const getPosts = async () => {
 //게시글 상세 조회
 const getPostById = async (id) => {
   try {
+    console.log("게시글 상세조회;", id);
     const { data, error } = await supabase
       .from("posts")
       .select("*")
@@ -127,13 +128,29 @@ const getCommentsByPostId = async (postId) => {
   }
 };
 
-const createComment = async (postId, content, author) => {
+const createComment = async (post_id, content, author) => {
   try {
+    // console.log("쿼리실행", postId, content, author);
+
+    const post = await getPostById(post_id);
+    console.log("쿼리 실행", post);
+    if (!post) {
+      return { error: "게시글을 찾을 수 없습니다." };
+    }
+
+    // console.log("데이터 조회", post_id, content, author);
+    // console.log("데이터 조회", typeof post_id);
+    // console.log("데이터 조회", typeof content);
+    // console.log("데이터 조회", typeof author);
     const { data, error } = await supabase
       .from("comments")
-      .insert([{ post_id: postId, content, author }])
+      .insert([
+        { post_id: Number(post_id), content, author, created_at: new Date() },
+      ])
       .select()
       .single();
+
+    // console.log("여기네", error);
     if (error) throw error;
     return data;
   } catch (error) {

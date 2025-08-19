@@ -320,9 +320,9 @@ app.get("/api/posts/:id/comments", async (req, res) => {
 app.post("/api/posts/:id/comments-write", async (req, res) => {
   try {
     console.log("댓글 작성 요청 받음", req.body);
-    const { content, author } = req.body;
+    const { content, author, post_id } = req.body;
     try {
-      await createComment(req.params.id, content, author);
+      await createComment(post_id, content, author);
     } catch (error) {
       // 만약 unique constraint 에러(중복 PK)라면, 클라이언트에 명확히 안내
       if (

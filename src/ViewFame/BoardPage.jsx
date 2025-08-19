@@ -54,11 +54,11 @@ const BoardPage = () => {
   };
 
   const BoardWrite = () => {
-    if (localStorage.getItem("name")) {
-      navigate("/board/write");
-    } else {
-      alert("로그인 후 이용해주세요.");
-    }
+    // if (localStorage.getItem("name")) {
+    navigate("/board/write");
+    // } else {
+    //   alert("로그인 후 이용해주세요.");
+    // }
   };
 
   return (
