@@ -95,15 +95,15 @@ export default function FirtstCtgry() {
 
     window.addEventListener("message", (event) => {
       if (event.data?.type === "LOGIN_SUCCESS") {
-        console.log("로그인 성공! 유저:", event.data.user);
+        console.log("로그인 성공! 유저:", event.data.user.user);
 
         // 함수형으로 개선된 로그인 성공 처리
         go(
-          event.data.user,
+          event.data.user.user,
           extractUserName,
           (userName) => {
             setLoginInfo(userName);
-            return event.data.user;
+            return event.data.user.user;
           },
           saveUserData(localStorage),
           () => {
@@ -154,8 +154,13 @@ export default function FirtstCtgry() {
 
   const handleMyPage = () => {
     // 함수형으로 개선된 마이페이지 처리
-    go(localStorage, getItem("user"), parseJSON, (user) =>
-      navigate("/mypage", { state: { user: user || {} } })
+    go(
+      localStorage,
+      getItem("user"),
+      parseJSON,
+      // (user) => console.log(user.user)
+      (user) => navigate("/mypage", { state: { user: user || {} } })
+      // console.log(user)
     );
   };
 

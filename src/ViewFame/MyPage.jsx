@@ -14,50 +14,20 @@ const MyPage = ({ user }) => {
 
   // 사용자 정보 상태 관리
   const [userInfo, setUserInfo] = useState({
-    name: user?.name || user?.nickname || "",
-    birthDate: user?.birthDate || "",
+    name: user?.name || user?.nickname || localStorage.getItem("name"),
+    birthDate: user?.birthDate || localStorage.getItem("birthdate"),
     career: user?.career || "",
-    introduction: user?.introduction || "",
-    specialty: user?.specialty || "",
+    introduction: user?.introduction || localStorage.getItem("introduction"),
+    specialty: user?.specialty || localStorage.getItem("specialty"),
     image: user?.image || "",
-    sex: user?.sex || "male",
+    sex: user?.sex || localStorage.getItem("sex"),
   });
+
+  // console.log(userInfo);
 
   // 로그인 사용자 식별자
   const [userId, setUserId] = useState(null);
   const [specialties, setSpecialties] = useState([]);
-
-  // 컴포넌트 마운트 시 로컬스토리지에서 사용자 정보 로드
-  useEffect(() => {
-    const loadUserInfoFromStorage = () => {
-      const userData = localStorage.getItem("user");
-      if (userData) {
-        try {
-          const storedUser = JSON.parse(userData);
-          setUserInfo((prev) => ({
-            ...prev,
-            ...storedUser,
-          }));
-
-          // 다양한 형태의 user 객체에서 id 추출 시도
-          const derivedId =
-            storedUser?.id ||
-            storedUser?.user?.id ||
-            user?.id ||
-            user?.user?.id ||
-            null;
-          if (derivedId) setUserId(derivedId);
-        } catch (e) {
-          console.error("사용자 데이터 파싱 오류:", e);
-        }
-      } else {
-        const derivedId = user?.id || user?.user?.id || null;
-        if (derivedId) setUserId(derivedId);
-      }
-    };
-
-    loadUserInfoFromStorage();
-  }, [user]);
 
   // 수정 모드 상태
   const [isEditing, setIsEditing] = useState(false);
@@ -90,9 +60,49 @@ const MyPage = ({ user }) => {
     "기타",
   ];
 
-  // 초기 경력 로드
+  // console.log("전문분야", specialties);
+
+  // 컴포넌트 마운트 시 로컬스토리지에서 사용자 정보 로드
   useEffect(() => {
+    const loadUserInfoFromStorage = () => {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        try {
+          const storedUser = JSON.parse(userData);
+          setUserInfo(() => ({
+            name: storedUser.user.name,
+            birthDate: storedUser.user.birthdate,
+            career: storedUser.user.career,
+            introduction: storedUser.user.introduction,
+            specialty: storedUser.user.specialty.split(","),
+            image: storedUser.user.image || "",
+            sex: storedUser.user.sex,
+          }));
+
+          // // 다양한 형태의 user 객체에서 id 추출 시도
+          // const derivedId =
+          //   storedUser?.id ||
+          //   storedUser?.user?.id ||
+          //   user?.id ||
+          //   user?.user?.id ||
+          //   null;
+          // console.log("derivedId,", derivedId);
+          // if (derivedId)
+
+          setUserId(storedUser.id);
+
+          // setSpecialties(() => {});
+        } catch (e) {
+          console.error("사용자 데이터 파싱 오류:", e);
+        }
+      } else {
+        const derivedId = user?.id || user?.user?.id || null;
+        if (derivedId) setUserId(derivedId);
+      }
+    };
+
     const fetchCareers = async () => {
+      console.log("여기는 들어옴?", userId);
       if (!userId) return;
       try {
         const res = await request({
@@ -109,7 +119,16 @@ const MyPage = ({ user }) => {
           skills: c.skills || [],
           isPersisted: true,
         }));
-        setCareerEntries(fetched);
+
+        console.log("여기 언제탐?", fetched);
+        // setCareerEntries(fetched);
+
+        setUserInfo((prev) => ({
+          ...prev,
+          career: fetched,
+        }));
+
+        // console.log(setCareerEntries);
       } catch (err) {
         console.error("경력 조회 실패:", err);
         if (
@@ -124,8 +143,12 @@ const MyPage = ({ user }) => {
         }
       }
     };
+
+    loadUserInfoFromStorage();
     fetchCareers();
-  }, [userId]);
+  }, [user]);
+
+  console.log("확인 필요", userInfo.career);
 
   // 이미지 업로드 처리
   const handleImageUpload = (e) => {
@@ -416,6 +439,61 @@ const MyPage = ({ user }) => {
               </button>
             </div>
           </div>
+          console.log("경력 확이느" ,userInfo.career )
+          <div className="career-list">
+            {userInfo.career.length === 0 ? (
+              <div className="no-career">등록된 경력이 없습니다.</div>
+            ) : (
+              userInfo.career.map((entry) => (
+                <div key={entry.id} className="career-item">
+                  <div className="career-info">
+                    <div className="career-company">{entry.company}</div>
+                    <div className="career-position">{entry.position}</div>
+                    <div className="career-period">
+                      {formatDate(entry.startDate)} ~{" "}
+                      {entry.endDate ? formatDate(entry.endDate) : "현재"}
+                    </div>
+                    {entry.description && (
+                      <div className="career-description">
+                        {entry.description}
+                      </div>
+                    )}
+                    {entry.skills && entry.skills.length > 0 && (
+                      <div className="career-skills">
+                        <strong>기술:</strong> {entry.skills.join(", ")}
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className="remove-career-btn"
+                    onClick={() => removeCareerEntry(entry.id)}
+                    disabled={loading}
+                  >
+                    {loading ? "삭제중..." : "삭제"}
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+          {errors.career && (
+            <div className="error-message">{errors.career}</div>
+          )}
+        </div>
+        {/* <div className="career-section">
+          <div className="career-header">
+            <label>경력</label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                type="button"
+                className="add-career-btn"
+                onClick={() => setShowCareerModal(true)}
+                disabled={loading}
+              >
+                + 경력 추가
+              </button>
+            </div>
+          </div>
 
           <div className="career-list">
             {careerEntries.length === 0 ? (
@@ -456,7 +534,7 @@ const MyPage = ({ user }) => {
           {errors.career && (
             <div className="error-message">{errors.career}</div>
           )}
-        </div>
+        </div> */}
 
         {/* 경력 추가 모달 */}
         {showCareerModal && (
