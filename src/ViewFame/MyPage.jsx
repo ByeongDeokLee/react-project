@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 const MyPage = ({ user }) => {
   const navigate = useNavigate();
   const { loading, request } = useApi();
+  const [isLoading, setIsLoading] = useState(false);
 
   // 사용자 정보 상태 관리
   const [userInfo, setUserInfo] = useState({
@@ -63,6 +64,94 @@ const MyPage = ({ user }) => {
   // console.log("전문분야", specialties);
 
   // 컴포넌트 마운트 시 로컬스토리지에서 사용자 정보 로드
+  // useEffect(() => {
+  //   const loadUserInfoFromStorage = () => {
+  //     const userData = localStorage.getItem("user");
+  //     if (userData) {
+  //       try {
+  //         const storedUser = JSON.parse(userData);
+  //         setUserInfo(() => ({
+  //           name: storedUser.user.name,
+  //           birthDate: storedUser.user.birthdate,
+  //           career: storedUser.user.career,
+  //           introduction: storedUser.user.introduction,
+  //           specialty: storedUser.user.specialty.split(","),
+  //           image: storedUser.user.image || "",
+  //           sex: storedUser.user.sex,
+  //         }));
+
+  //         // // 다양한 형태의 user 객체에서 id 추출 시도
+  //         // const derivedId =
+  //         //   storedUser?.id ||
+  //         //   storedUser?.user?.id ||
+  //         //   user?.id ||
+  //         //   user?.user?.id ||
+  //         //   null;
+  //         // if (derivedId)
+  //         // console.log("derivedId,", derivedId);
+  //         console.log("dsadasds", storedUser.user.id);
+  //         setUserId(storedUser.user.id);
+
+  //         console.log("dasdasdas", userId);
+
+  //         // setSpecialties(() => {});
+  //       } catch (e) {
+  //         console.error("사용자 데이터 파싱 오류:", e);
+  //       }
+  //     } else {
+  //       const derivedId = user?.id || user?.user?.id || null;
+  //       if (derivedId) setUserId(derivedId);
+  //     }
+  //   };
+
+  //   const fetchCareers = async () => {
+  //     console.log("여기는 들어옴?", userId);
+
+  //     if (!userId) return;
+  //     try {
+  //       const res = await request({
+  //         method: "GET",
+  //         url: `http://localhost:4000/api/users/${userId}/careers`,
+  //       });
+  //       const fetched = (res?.careers || []).map((c) => ({
+  //         id: c.id,
+  //         company: c.company_name,
+  //         position: c.position,
+  //         startDate: c.start_date,
+  //         endDate: c.end_date,
+  //         description: c.description,
+  //         skills: c.skills || [],
+  //         isPersisted: true,
+  //       }));
+
+  //       console.log("여기 언제탐?", fetched);
+  //       // setCareerEntries(fetched);
+
+  //       setUserInfo((prev) => ({
+  //         ...prev,
+  //         career: fetched,
+  //       }));
+
+  //       // console.log(setCareerEntries);
+  //     } catch (err) {
+  //       console.error("경력 조회 실패:", err);
+  //       if (
+  //         err.message?.includes("career") ||
+  //         err.message?.includes("does not exist")
+  //       ) {
+  //         toast.error(
+  //           "경력 테이블이 생성되지 않았습니다. 관리자에게 문의하세요."
+  //         );
+  //       } else {
+  //         toast.error("경력 정보를 불러오는데 실패했습니다.");
+  //       }
+  //     }
+  //   };
+
+  //   loadUserInfoFromStorage();
+
+  // }, [userId]);
+
   useEffect(() => {
     const loadUserInfoFromStorage = () => {
       const userData = localStorage.getItem("user");
@@ -79,19 +168,11 @@ const MyPage = ({ user }) => {
             sex: storedUser.user.sex,
           }));
 
-          // // 다양한 형태의 user 객체에서 id 추출 시도
-          // const derivedId =
-          //   storedUser?.id ||
-          //   storedUser?.user?.id ||
-          //   user?.id ||
-          //   user?.user?.id ||
-          //   null;
-          // if (derivedId)
-          // console.log("derivedId,", derivedId);
+          console.log("dsadasds", storedUser.user.id);
+          setUserId(storedUser.user.id); // 여기서 userId 업데이트 예약됨
+          console.log(":dsdasdas", userId);
 
-          setUserId(storedUser.id);
-          con;
-          // setSpecialties(() => {});
+          fetchCareers(storedUser.user.id);
         } catch (e) {
           console.error("사용자 데이터 파싱 오류:", e);
         }
@@ -101,52 +182,55 @@ const MyPage = ({ user }) => {
       }
     };
 
-    const fetchCareers = async () => {
-      console.log("여기는 들어옴?", userId);
-      if (!userId) return;
-      try {
-        const res = await request({
-          method: "GET",
-          url: `http://localhost:4000/api/users/${userId}/careers`,
-        });
-        const fetched = (res?.careers || []).map((c) => ({
-          id: c.id,
-          company: c.company_name,
-          position: c.position,
-          startDate: c.start_date,
-          endDate: c.end_date,
-          description: c.description,
-          skills: c.skills || [],
-          isPersisted: true,
-        }));
-
-        console.log("여기 언제탐?", fetched);
-        // setCareerEntries(fetched);
-
-        setUserInfo((prev) => ({
-          ...prev,
-          career: fetched,
-        }));
-
-        // console.log(setCareerEntries);
-      } catch (err) {
-        console.error("경력 조회 실패:", err);
-        if (
-          err.message?.includes("career") ||
-          err.message?.includes("does not exist")
-        ) {
-          toast.error(
-            "경력 테이블이 생성되지 않았습니다. 관리자에게 문의하세요."
-          );
-        } else {
-          toast.error("경력 정보를 불러오는데 실패했습니다.");
-        }
-      }
-    };
-
     loadUserInfoFromStorage();
-    fetchCareers();
-  }, [user]);
+  }, []); // 최초 1번만 실행 (스토리지에서 꺼내오기)
+
+  // useEffect(() => {
+  const fetchCareers = async (userId) => {
+    console.log("여기는 들어옴?", userId);
+
+    if (!userId) return;
+    try {
+      const res = await request({
+        method: "GET",
+        url: `http://localhost:4000/api/users/${userId}/careers`,
+      });
+      const fetched = (res?.careers || []).map((c) => ({
+        id: c.id,
+        company: c.company_name,
+        position: c.position,
+        startDate: c.start_date,
+        endDate: c.end_date,
+        description: c.description,
+        skills: c.skills || [],
+        isPersisted: true,
+      }));
+
+      console.log("여기 언제탐?", fetched);
+
+      setUserInfo((prev) => ({
+        ...prev,
+        career: fetched,
+      }));
+    } catch (err) {
+      console.error("경력 조회 실패:", err);
+      if (
+        err.message?.includes("career") ||
+        err.message?.includes("does not exist")
+      ) {
+        toast.error(
+          "경력 테이블이 생성되지 않았습니다. 관리자에게 문의하세요."
+        );
+      } else {
+        toast.error("경력 정보를 불러오는데 실패했습니다.");
+      }
+    }
+  };
+
+  //   if (userId) {
+  //     fetchCareers();
+  //   }
+  // }, [userId]); // userId 변경될 때 실행
 
   console.log("확인 필요", userInfo.career);
 
@@ -425,6 +509,7 @@ const MyPage = ({ user }) => {
         </div>
 
         {/* 경력 */}
+        {/* 경력 */}
         <div className="career-section">
           <div className="career-header">
             <label>경력</label>
@@ -433,17 +518,22 @@ const MyPage = ({ user }) => {
                 type="button"
                 className="add-career-btn"
                 onClick={() => setShowCareerModal(true)}
-                disabled={loading}
+                disabled={loading} // 로딩 중이면 추가 버튼 비활성화
               >
                 + 경력 추가
               </button>
             </div>
           </div>
-          console.log("경력 확이느" ,userInfo.career )
+
           <div className="career-list">
-            {userInfo.career.length === 0 ? (
+            {loading ? (
+              // ✅ 로딩 상태
+              <div className="loading-career">경력을 불러오는 중...</div>
+            ) : userInfo.career.length === 0 ? (
+              // ✅ 로딩 끝 + 데이터 없음
               <div className="no-career">등록된 경력이 없습니다.</div>
             ) : (
+              // ✅ 로딩 끝 + 데이터 있음
               userInfo.career.map((entry) => (
                 <div key={entry.id} className="career-item">
                   <div className="career-info">
@@ -476,65 +566,11 @@ const MyPage = ({ user }) => {
               ))
             )}
           </div>
+
           {errors.career && (
             <div className="error-message">{errors.career}</div>
           )}
         </div>
-        {/* <div className="career-section">
-          <div className="career-header">
-            <label>경력</label>
-            <div style={{ display: "flex", gap: 8 }}>
-              <button
-                type="button"
-                className="add-career-btn"
-                onClick={() => setShowCareerModal(true)}
-                disabled={loading}
-              >
-                + 경력 추가
-              </button>
-            </div>
-          </div>
-
-          <div className="career-list">
-            {careerEntries.length === 0 ? (
-              <div className="no-career">등록된 경력이 없습니다.</div>
-            ) : (
-              careerEntries.map((entry) => (
-                <div key={entry.id} className="career-item">
-                  <div className="career-info">
-                    <div className="career-company">{entry.company}</div>
-                    <div className="career-position">{entry.position}</div>
-                    <div className="career-period">
-                      {formatDate(entry.startDate)} ~{" "}
-                      {entry.endDate ? formatDate(entry.endDate) : "현재"}
-                    </div>
-                    {entry.description && (
-                      <div className="career-description">
-                        {entry.description}
-                      </div>
-                    )}
-                    {entry.skills && entry.skills.length > 0 && (
-                      <div className="career-skills">
-                        <strong>기술:</strong> {entry.skills.join(", ")}
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    className="remove-career-btn"
-                    onClick={() => removeCareerEntry(entry.id)}
-                    disabled={loading}
-                  >
-                    {loading ? "삭제중..." : "삭제"}
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-          {errors.career && (
-            <div className="error-message">{errors.career}</div>
-          )}
-        </div> */}
 
         {/* 경력 추가 모달 */}
         {showCareerModal && (
