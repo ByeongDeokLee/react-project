@@ -86,11 +86,11 @@ const MyPage = ({ user }) => {
           //   user?.id ||
           //   user?.user?.id ||
           //   null;
-          // console.log("derivedId,", derivedId);
           // if (derivedId)
+          // console.log("derivedId,", derivedId);
 
           setUserId(storedUser.id);
-
+          con;
           // setSpecialties(() => {});
         } catch (e) {
           console.error("사용자 데이터 파싱 오류:", e);
