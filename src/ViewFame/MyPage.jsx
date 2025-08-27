@@ -11,7 +11,6 @@ import "react-toastify/dist/ReactToastify.css";
 const MyPage = ({ user }) => {
   const navigate = useNavigate();
   const { loading, request } = useApi();
-  const [isLoading, setIsLoading] = useState(false);
 
   // 사용자 정보 상태 관리
   const [userInfo, setUserInfo] = useState({
@@ -28,7 +27,7 @@ const MyPage = ({ user }) => {
 
   // 로그인 사용자 식별자
   const [userId, setUserId] = useState(null);
-  const [specialties, setSpecialties] = useState([]);
+  // const [specialties, setSpecialties] = useState([]);
 
   // 수정 모드 상태
   const [isEditing, setIsEditing] = useState(false);
@@ -61,97 +60,6 @@ const MyPage = ({ user }) => {
     "기타",
   ];
 
-  // console.log("전문분야", specialties);
-
-  // 컴포넌트 마운트 시 로컬스토리지에서 사용자 정보 로드
-  // useEffect(() => {
-  //   const loadUserInfoFromStorage = () => {
-  //     const userData = localStorage.getItem("user");
-  //     if (userData) {
-  //       try {
-  //         const storedUser = JSON.parse(userData);
-  //         setUserInfo(() => ({
-  //           name: storedUser.user.name,
-  //           birthDate: storedUser.user.birthdate,
-  //           career: storedUser.user.career,
-  //           introduction: storedUser.user.introduction,
-  //           specialty: storedUser.user.specialty.split(","),
-  //           image: storedUser.user.image || "",
-  //           sex: storedUser.user.sex,
-  //         }));
-
-  //         // // 다양한 형태의 user 객체에서 id 추출 시도
-  //         // const derivedId =
-  //         //   storedUser?.id ||
-  //         //   storedUser?.user?.id ||
-  //         //   user?.id ||
-  //         //   user?.user?.id ||
-  //         //   null;
-  //         // if (derivedId)
-  //         // console.log("derivedId,", derivedId);
-  //         console.log("dsadasds", storedUser.user.id);
-  //         setUserId(storedUser.user.id);
-
-  //         console.log("dasdasdas", userId);
-
-  //         // setSpecialties(() => {});
-  //       } catch (e) {
-  //         console.error("사용자 데이터 파싱 오류:", e);
-  //       }
-  //     } else {
-  //       const derivedId = user?.id || user?.user?.id || null;
-  //       if (derivedId) setUserId(derivedId);
-  //     }
-  //   };
-
-  //   const fetchCareers = async () => {
-  //     console.log("여기는 들어옴?", userId);
-
-  //     if (!userId) return;
-  //     try {
-  //       const res = await request({
-  //         method: "GET",
-  //         url: `http://localhost:4000/api/users/${userId}/careers`,
-  //       });
-  //       const fetched = (res?.careers || []).map((c) => ({
-  //         id: c.id,
-  //         company: c.company_name,
-  //         position: c.position,
-  //         startDate: c.start_date,
-  //         endDate: c.end_date,
-  //         description: c.description,
-  //         skills: c.skills || [],
-  //         isPersisted: true,
-  //       }));
-
-  //       console.log("여기 언제탐?", fetched);
-  //       // setCareerEntries(fetched);
-
-  //       setUserInfo((prev) => ({
-  //         ...prev,
-  //         career: fetched,
-  //       }));
-
-  //       // console.log(setCareerEntries);
-  //     } catch (err) {
-  //       console.error("경력 조회 실패:", err);
-  //       if (
-  //         err.message?.includes("career") ||
-  //         err.message?.includes("does not exist")
-  //       ) {
-  //         toast.error(
-  //           "경력 테이블이 생성되지 않았습니다. 관리자에게 문의하세요."
-  //         );
-  //       } else {
-  //         toast.error("경력 정보를 불러오는데 실패했습니다.");
-  //       }
-  //     }
-  //   };
-
-  //   loadUserInfoFromStorage();
-
-  // }, [userId]);
-
   useEffect(() => {
     const loadUserInfoFromStorage = () => {
       const userData = localStorage.getItem("user");
@@ -163,14 +71,13 @@ const MyPage = ({ user }) => {
             birthDate: storedUser.user.birthdate,
             career: storedUser.user.career,
             introduction: storedUser.user.introduction,
-            specialty: storedUser.user.specialty.split(","),
+            specialty: storedUser.user.specialty,
+            // specialty: storedUser.user.specialty.split(","),
             image: storedUser.user.image || "",
             sex: storedUser.user.sex,
           }));
 
-          console.log("dsadasds", storedUser.user.id);
           setUserId(storedUser.user.id); // 여기서 userId 업데이트 예약됨
-          console.log(":dsdasdas", userId);
 
           fetchCareers(storedUser.user.id);
         } catch (e) {
@@ -187,8 +94,6 @@ const MyPage = ({ user }) => {
 
   // useEffect(() => {
   const fetchCareers = async (userId) => {
-    console.log("여기는 들어옴?", userId);
-
     if (!userId) return;
     try {
       const res = await request({
@@ -205,8 +110,6 @@ const MyPage = ({ user }) => {
         skills: c.skills || [],
         isPersisted: true,
       }));
-
-      console.log("여기 언제탐?", fetched);
 
       setUserInfo((prev) => ({
         ...prev,
@@ -232,7 +135,7 @@ const MyPage = ({ user }) => {
   //   }
   // }, [userId]); // userId 변경될 때 실행
 
-  console.log("확인 필요", userInfo.career);
+  console.log("확인 필요", userInfo);
 
   // 이미지 업로드 처리
   const handleImageUpload = (e) => {
@@ -268,8 +171,8 @@ const MyPage = ({ user }) => {
   };
 
   const handleSpecialtyChange = (specialty) => {
-    console.log("specialty === ", specialty);
-    setSpecialties((prev) =>
+    console.log("specialty === ", userInfo.specialty);
+    userInfo.specialty((prev) =>
       prev.includes(specialty)
         ? prev.filter((s) => s !== specialty)
         : [...prev, specialty]
@@ -453,13 +356,13 @@ const MyPage = ({ user }) => {
     setEditField(null);
     // 원래 값으로 복원
     setUserInfo({
-      name: user?.name || user?.nickname || "",
-      birthDate: user?.birthDate || "",
-      career: user?.career || "",
-      introduction: user?.introduction || "",
-      specialty: user?.specialty || "",
-      image: user?.image || "",
-      sex: user?.sex || "male",
+      name: user.user.name || user.user.nickname || "",
+      birthDate: user.user.birthDate || "",
+      career: user.user.career || "",
+      introduction: user.user.introduction || "",
+      specialty: user.user.specialty || "",
+      image: user.user.image || "",
+      sex: user.user.sex || "male",
     });
   };
 
@@ -508,7 +411,6 @@ const MyPage = ({ user }) => {
           </div>
         </div>
 
-        {/* 경력 */}
         {/* 경력 */}
         <div className="career-section">
           <div className="career-header">
@@ -730,7 +632,7 @@ const MyPage = ({ user }) => {
                     <label key={specialty} className="specialty-checkbox">
                       <input
                         type="checkbox"
-                        checked={specialties.includes(specialty)}
+                        checked={userInfo.specialty.includes(specialty)}
                         onChange={() => handleSpecialtyChange(specialty)}
                       />
                       <span>{specialty}</span>
@@ -740,7 +642,10 @@ const MyPage = ({ user }) => {
                 <div className="edit-buttons">
                   <button
                     onClick={() => {
-                      handleInputChange("specialty", specialties.join(", "));
+                      handleInputChange(
+                        "specialty",
+                        userInfo.specialty.join(", ")
+                      );
                       handleSave("specialty");
                     }}
                     className="save-btn"

@@ -43,7 +43,7 @@ const parseJSON = (str) => {
 // const removeItem = curry((key, storage) => storage.removeItem(key));
 
 // 사용자 데이터 처리 함수들
-const getUserName = (user) => user?.name || user?.nickname || "사용자";
+const getUserName = (user) => user.user.name || "사용자";
 const setLoginState = curry((setLoginInfo, setIsLoggedIn) => (userName) => {
   setLoginInfo(userName);
   setIsLoggedIn(true);
