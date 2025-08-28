@@ -46,6 +46,94 @@ const MyPage = ({ user }) => {
   });
   const [errors, setErrors] = useState({});
 
+  // old password edit UI states removed
+
+  // UI 패널 상태 및 입력값
+  const [activePanel, setActivePanel] = useState(null); // 'password' | 'name' | 'phone'
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
+  const [nameInput, setNameInput] = useState("");
+  const [phoneInput, setPhoneInput] = useState("");
+
+  const resetPanelInputs = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setNewPasswordConfirm("");
+    setNameInput("");
+    setPhoneInput("");
+  };
+
+  const openPanel = (panel) => {
+    setActivePanel(panel);
+    // 초기값 세팅
+    if (panel === "name") setNameInput(userInfo.name || "");
+    if (panel === "phone") setPhoneInput(userInfo.phone || "");
+  };
+
+  const closePanel = () => {
+    setActivePanel(null);
+    resetPanelInputs();
+  };
+
+  const handlePasswordSave = async () => {
+    if (!userId) {
+      toast.error("로그인이 필요합니다.");
+      return;
+    }
+    if (!currentPassword || !newPassword) {
+      toast.error("현재/새 비밀번호를 입력하세요.");
+      return;
+    }
+    if (newPassword !== newPasswordConfirm) {
+      toast.error("새 비밀번호가 일치하지 않습니다.");
+      return;
+    }
+    try {
+      await request({
+        method: "PUT",
+        url: `http://localhost:4000/api/users/${userId}/password`,
+        data: { currentPassword, newPassword },
+      });
+      toast.success("비밀번호가 변경되었습니다.");
+      closePanel();
+    } catch (e) {
+      console.error(e);
+      toast.error("비밀번호 변경에 실패했습니다.");
+    }
+  };
+
+  const handleNameSave = async () => {
+    if (!nameInput) {
+      toast.error("이름을 입력하세요.");
+      return;
+    }
+    handleInputChange("name", nameInput);
+    await handleSave("name");
+    closePanel();
+  };
+
+  const handlePhoneSave = async () => {
+    if (!phoneInput) {
+      toast.error("휴대폰번호를 입력하세요.");
+      return;
+    }
+    try {
+      await request({
+        method: "PUT",
+        url: `http://localhost:4000/api/users/${userId}`,
+        data: { phone: phoneInput },
+      });
+      toast.success("휴대폰번호가 변경되었습니다.");
+      // 로컬 반영 (userInfo에 phone 필드 유지)
+      setUserInfo((prev) => ({ ...prev, phone: phoneInput }));
+      closePanel();
+    } catch (e) {
+      console.error(e);
+      toast.error("휴대폰번호 변경에 실패했습니다.");
+    }
+  };
+
   // 전문 분야 옵션
   const specialtyOptions = [
     "웹 개발",
@@ -60,6 +148,7 @@ const MyPage = ({ user }) => {
     "기타",
   ];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const loadUserInfoFromStorage = () => {
       const userData = localStorage.getItem("user");
@@ -407,7 +496,7 @@ const MyPage = ({ user }) => {
         <div className="info-row">
           <label className="info-label">생년월일:</label>
           <div className="info-content">
-            {userInfo.birthdate || "정보 없음"}
+            {userInfo.birthDate || "정보 없음"}
           </div>
         </div>
 
@@ -673,10 +762,100 @@ const MyPage = ({ user }) => {
       </div>
 
       <div className="mypage-btn-group">
-        <button className="mypage-btn">비밀번호 변경</button>
-        <button className="mypage-btn">이름 변경</button>
-        <button className="mypage-btn">휴대폰번호 변경</button>
+        <button className="mypage-btn" onClick={() => openPanel("password")}>
+          비밀번호 변경
+        </button>
+        <button className="mypage-btn" onClick={() => openPanel("name")}>
+          이름 변경
+        </button>
+        <button className="mypage-btn" onClick={() => openPanel("phone")}>
+          휴대폰번호 변경
+        </button>
       </div>
+
+      {activePanel === "password" && (
+        <div className="mypage-panel">
+          <div className="panel-title">비밀번호 변경</div>
+          <div className="panel-body">
+            <div className="password-input-container">
+              <input
+                type="password"
+                placeholder="현재 비밀번호"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+            </div>
+            <div className="password-input-container">
+              <input
+                type="password"
+                placeholder="새 비밀번호"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </div>
+            <div className="password-input-container">
+              <input
+                type="password"
+                placeholder="새 비밀번호 확인"
+                value={newPasswordConfirm}
+                onChange={(e) => setNewPasswordConfirm(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="edit-buttons">
+            <button className="save-btn" onClick={handlePasswordSave}>
+              저장
+            </button>
+            <button className="cancel-btn" onClick={closePanel}>
+              취소
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activePanel === "name" && (
+        <div className="mypage-panel">
+          <div className="panel-title">이름 변경</div>
+          <div className="panel-body">
+            <input
+              type="text"
+              placeholder="새 이름"
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
+            />
+          </div>
+          <div className="edit-buttons">
+            <button className="save-btn" onClick={handleNameSave}>
+              저장
+            </button>
+            <button className="cancel-btn" onClick={closePanel}>
+              취소
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activePanel === "phone" && (
+        <div className="mypage-panel">
+          <div className="panel-title">휴대폰번호 변경</div>
+          <div className="panel-body">
+            <input
+              type="tel"
+              placeholder="숫자만 입력"
+              value={phoneInput}
+              onChange={(e) => setPhoneInput(e.target.value)}
+            />
+          </div>
+          <div className="edit-buttons">
+            <button className="save-btn" onClick={handlePhoneSave}>
+              저장
+            </button>
+            <button className="cancel-btn" onClick={closePanel}>
+              취소
+            </button>
+          </div>
+        </div>
+      )}
 
       <button className="mypage-main-btn" onClick={() => navigate("/")}>
         메인으로
