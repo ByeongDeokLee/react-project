@@ -36,9 +36,10 @@ export default function MainHome() {
 
   const searchSubmit = () => {
     if (searchID.trim()) {
-      // 검색 결과 페이지로 이동하거나 필터링 로직 구현
-      console.log("검색어:", searchID);
-      // navigate(`/search?q=${encodeURIComponent(searchID)}`)
+      const qs = `?keyword=${encodeURIComponent(searchID.trim())}&sort=latest`;
+      navigate(`/services${qs}`);
+    } else {
+      navigate(`/services`);
     }
   };
 
@@ -67,7 +68,7 @@ export default function MainHome() {
           </p>
           <button
             className="hero-cta-button"
-            onClick={() => navigate("/service-selection")}
+            onClick={() => navigate("/services")}
           >
             지금 시작하기
           </button>
@@ -194,7 +195,12 @@ export default function MainHome() {
             >
               견적 받기
             </button>
-            <button className="cta-secondary">포트폴리오 보기</button>
+            <button
+              className="cta-secondary"
+              onClick={() => navigate("/services")}
+            >
+              포트폴리오 보기
+            </button>
           </div>
         </div>
       </section>

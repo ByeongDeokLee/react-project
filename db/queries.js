@@ -218,25 +218,12 @@ const UserLogin = async (email, password) => {
       .select("*")
       .eq("email", email)
       .eq("password", password)
-      .maybeSingle(); // 없으면 null 반환
+      .single();
 
-    if (error) {
-      console.error("Supabase 쿼리 에러:", error);
-      throw error;
-    }
-
-    if (!data) {
-      // ❌ 이메일/비밀번호 불일치
-      return {
-        success: false,
-        message: "이메일 또는 비밀번호가 올바르지 않습니다.",
-      };
-    }
-
-    // ✅ 로그인 성공
-    return { success: true, user: data };
+    if (error) throw error;
+    return data;
   } catch (error) {
-    console.error("로그인 중 오류:", error);
+    console.error("Error getting posts:", error);
     throw error;
   }
 };
@@ -350,42 +337,74 @@ const reviewsList = async () => {
 };
 
 //서비스 종류
-const serviceList = async () => {
+const serviceList = async (params = {}) => {
   try {
-    console.log("serviceList 쿼리 실행");
-    // const { data, error } = await supabase.from("service_items").select("*");
-    // if (error) throw error;
-    // Step 1. service_items 전체 조회
-    const { data: services, error: serviceError } = await supabase
-      .from("service_items")
-      .select("*");
+    console.log("serviceList 쿼리 실행", params);
 
+    const {
+      keyword = "",
+      category = "",
+      minPrice = "",
+      maxPrice = "",
+      sort = "",
+    } = params;
+
+    // Step 1. service_items 조건 조회
+    let query = supabase.from("service_items").select("*");
+
+    if (keyword) {
+      // 제목 기준 부분 검색
+      query = query.ilike("title", `%${keyword}%`);
+    }
+
+    if (category) {
+      query = query.eq("service_type", category);
+    }
+
+    if (minPrice !== "") {
+      const min = Number(minPrice);
+      if (!Number.isNaN(min)) query = query.gte("price", min);
+    }
+
+    if (maxPrice !== "") {
+      const max = Number(maxPrice);
+      if (!Number.isNaN(max)) query = query.lte("price", max);
+    }
+
+    if (sort === "price_asc") {
+      query = query.order("price", { ascending: true });
+    } else if (sort === "price_desc") {
+      query = query.order("price", { ascending: false });
+    } else if (sort === "latest") {
+      query = query.order("created_at", { ascending: false });
+    } else if (sort === "oldest") {
+      query = query.order("created_at", { ascending: true });
+    }
+
+    const { data: services, error: serviceError } = await query;
     if (serviceError) throw serviceError;
 
-    // Step 2. service_items.id 목록 추출
-    const serviceIds = services.map((item) => item.id);
+    if (!services || services.length === 0) return [];
 
+    // Step 2. 필요한 id 목록 추출
+    const serviceIds = services.map((item) => item.id);
     const serviceUserIds = services.map((item) => item.user_id);
 
-    console.log("\n\n\n serviceUserIds \n\n\n", serviceUserIds);
-
-    // Step 3. 해당 id 목록에 맞는 images 조회
+    // Step 3. 관련 이미지 조회
     const { data: images, error: imageError } = await supabase
       .from("service_images")
       .select("*")
       .in("service_id", serviceIds);
-
     if (imageError) throw imageError;
 
-    // Step 3_1. 해당 id 목록에 맞는 user 조회
+    // Step 4. 관련 사용자 조회
     const { data: users, error: usersError } = await supabase
       .from("users")
       .select("*")
       .in("id", serviceUserIds);
-
     if (usersError) throw usersError;
 
-    // Step 4. 이미지 매칭해서 병합
+    // Step 5. 병합
     const merged = services.map((item) => {
       const matchedImages = images.filter((img) => img.service_id === item.id);
       const matchedUsers = users.find((user) => user.id === item.user_id);

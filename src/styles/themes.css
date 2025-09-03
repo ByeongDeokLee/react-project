@@ -1,0 +1,11 @@
+/* Default light theme is defined in :root variables */
+
+/* Dark theme */
+[data-theme="dark"] {
+  --color-text: #e5e7eb; /* gray-200 */
+  --color-text-muted: #9ca3af; /* gray-400 */
+  --color-bg: #0b1220; /* near-black with blue tint */
+  --color-surface: #111827; /* gray-900 */
+  --color-border: #1f2937; /* gray-800 */
+  --color-primary: #60a5fa; /* blue-400 */
+}

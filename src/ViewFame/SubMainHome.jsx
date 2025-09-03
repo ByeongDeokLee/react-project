@@ -219,7 +219,7 @@ export default function SubMainHome() {
                   <span className={styles.inquiryTitle}>
                     쇼핑몰 제작 비용 문의
                   </span>
-                  <span className={styles.inquiryDate}>2024.03.14</span>
+                  <span className={styles.inquiryDate}>2024.03.15</span>
                 </div>
               </div>
               <button
@@ -543,11 +543,13 @@ const ProjectSection = ({ title, description, data, bgColor = "white" }) => {
 
   const handleViewMoreClick = () => {
     if (data && data.length > 0) {
-      // 첫 번째 서비스의 상세 페이지로 이동
-      navigate("/service-detail", { state: { service: data[0] } });
+      // 섹션의 카테고리로 services 목록 페이지 이동
+      const category = data[0].service_type || "";
+      const qs = category ? `?category=${encodeURIComponent(category)}` : "";
+      navigate(`/services${qs}`);
     } else {
-      // 데이터가 없으면 서비스 선택 페이지로 이동
-      navigate("/service-selection");
+      // 데이터가 없으면 전체 목록으로 이동
+      navigate("/services");
     }
   };
 

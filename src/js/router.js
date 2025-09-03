@@ -30,6 +30,7 @@ import ReviewWritePage from "../ViewFame/ReviewWritePage";
 import MyPage from "../ViewFame/MyPage";
 import ServiceDetail from "../ViewFame/ServiceDetail";
 import TeamMemberDetail from "../ViewFame/TeamMemberDetail";
+import ServiceCatalog from "../ViewFame/ServiceCatalog";
 
 const Router = () => {
   return (
@@ -59,6 +60,7 @@ const Router = () => {
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/service-detail" element={<ServiceDetail />} />
         <Route path="/team-member/:memberId" element={<TeamMemberDetail />} />
+        <Route path="/services" element={<ServiceCatalog />} />
       </Routes>
     </BrowserRouter>
   );

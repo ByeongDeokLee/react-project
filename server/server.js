@@ -83,8 +83,22 @@ const upload = multer({ storage: storage });
 app.get("/api/serviceList", async (req, res) => {
   try {
     console.log("서비스 API 들어옴");
-    const services = await serviceList();
-    // console.log("쿼리응답 받음", services)
+    const {
+      keyword = "",
+      category = "",
+      minPrice = "",
+      maxPrice = "",
+      sort = "",
+    } = req.query || {};
+
+    const services = await serviceList({
+      keyword,
+      category,
+      minPrice,
+      maxPrice,
+      sort,
+    });
+
     services.map((service) => {
       service.date = new Date(service.created_at)
         .toLocaleDateString("ko-KR", {
@@ -95,7 +109,6 @@ app.get("/api/serviceList", async (req, res) => {
         .replace(/\.$/, "");
     });
     res.json(services);
-    // return res.json(merged);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -218,16 +231,10 @@ app.post("/api/send-inquiry", async (req, res) => {
     console.log("이메일 전송 성공");
     res.json({ success: true, message: "이메일이 성공적으로 전송되었습니다." });
   } catch (error) {
-    console.error("이메일 전송 실패 - 상세 에러:", {
-      message: error.message,
-      stack: error.stack,
-      code: error.code,
-    });
-    res.status(500).json({
-      success: false,
-      message: "이메일 전송에 실패했습니다.",
-      error: error.message,
-    });
+    console.error("이메일 전송 실패:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "이메일 전송 중 오류가 발생했습니다." });
   }
 });
 
@@ -571,3 +578,5 @@ app.listen(PORT, () => {
     password: process.env.NAVER_PASSWORD ? "설정됨" : "설정안됨",
   });
 });
+
+module.exports = app;

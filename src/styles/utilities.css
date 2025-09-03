@@ -1,0 +1,62 @@
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+.rounded-sm {
+  border-radius: var(--radius-sm);
+}
+.rounded {
+  border-radius: var(--radius-md);
+}
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.m-0 {
+  margin: 0;
+}
+.mt-4 {
+  margin-top: var(--space-4);
+}
+.mb-4 {
+  margin-bottom: var(--space-4);
+}
+.p-4 {
+  padding: var(--space-4);
+}
+.px-4 {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+.py-4 {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+}
+
+.border {
+  border: 1px solid var(--color-border);
+}
+.text-muted {
+  color: var(--color-text-muted);
+}
+.bg-surface {
+  background: var(--color-surface);
+}
+.bg-primary {
+  background: var(--color-primary);
+  color: white;
+}
