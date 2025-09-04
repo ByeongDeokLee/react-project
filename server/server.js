@@ -37,6 +37,10 @@ const {
   getUserCareers,
   deleteUserCareer,
   updateUser,
+  addUserPortfolio,
+  getUserPortfolios,
+  updateUserPortfolio,
+  deleteUserPortfolio,
 } = require("../db/queries");
 
 app.use(cors());
@@ -550,6 +554,54 @@ app.delete("/api/users/:id/careers/:careerId", async (req, res) => {
     const userId = Number(req.params.id);
     const careerId = Number(req.params.careerId);
     await deleteUserCareer(userId, careerId);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// 사용자 포트폴리오 조회
+app.get("/api/users/:id/portfolios", async (req, res) => {
+  try {
+    const userId = Number(req.params.id);
+    const items = await getUserPortfolios(userId);
+    res.json({ success: true, portfolios: items });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// 사용자 포트폴리오 추가
+app.post("/api/users/:id/portfolios", async (req, res) => {
+  try {
+    const userId = Number(req.params.id);
+    const { portfolio } = req.body;
+    const created = await addUserPortfolio(userId, portfolio);
+    res.json({ success: true, portfolio: created });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// 사용자 포트폴리오 수정
+app.put("/api/users/:id/portfolios/:portfolioId", async (req, res) => {
+  try {
+    const userId = Number(req.params.id);
+    const portfolioId = Number(req.params.portfolioId);
+    const updates = req.body;
+    const updated = await updateUserPortfolio(userId, portfolioId, updates);
+    res.json({ success: true, portfolio: updated });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// 사용자 포트폴리오 삭제
+app.delete("/api/users/:id/portfolios/:portfolioId", async (req, res) => {
+  try {
+    const userId = Number(req.params.id);
+    const portfolioId = Number(req.params.portfolioId);
+    await deleteUserPortfolio(userId, portfolioId);
     res.json({ success: true });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });

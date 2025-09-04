@@ -260,12 +260,18 @@ const MyPage = ({ user }) => {
   };
 
   const handleSpecialtyChange = (specialty) => {
-    console.log("specialty === ", userInfo.specialty);
-    userInfo.specialty((prev) =>
-      prev.includes(specialty)
-        ? prev.filter((s) => s !== specialty)
-        : [...prev, specialty]
-    );
+    setUserInfo((prev) => {
+      const current = Array.isArray(prev.specialty)
+        ? prev.specialty
+        : (prev.specialty || "")
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+      const next = current.includes(specialty)
+        ? current.filter((s) => s !== specialty)
+        : [...current, specialty];
+      return { ...prev, specialty: next };
+    });
   };
 
   // 정보 수정 처리
@@ -456,6 +462,73 @@ const MyPage = ({ user }) => {
   };
 
   // 중복 선언 제거됨
+
+  const [portfolios, setPortfolios] = useState([]);
+  const [showPortfolioModal, setShowPortfolioModal] = useState(false);
+  const [newPortfolio, setNewPortfolio] = useState({
+    title: "",
+    description: "",
+    url: "",
+    images: [],
+  });
+
+  const fetchPortfolios = async (uid) => {
+    if (!uid) return;
+    try {
+      const res = await request({
+        method: "GET",
+        url: `http://localhost:4000/api/users/${uid}/portfolios`,
+      });
+      setPortfolios(res?.portfolios || []);
+    } catch (e) {
+      console.error("포트폴리오 조회 실패:", e);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchPortfolios(userId);
+    }
+  }, [userId]);
+
+  const addPortfolio = async () => {
+    if (!newPortfolio.title) {
+      toast.error("포트폴리오 제목을 입력하세요.");
+      return;
+    }
+    if (!userId) {
+      toast.error("로그인이 필요합니다.");
+      return;
+    }
+    try {
+      const res = await request({
+        method: "POST",
+        url: `http://localhost:4000/api/users/${userId}/portfolios`,
+        data: { portfolio: newPortfolio },
+      });
+      setPortfolios((prev) => [res.portfolio, ...prev]);
+      setNewPortfolio({ title: "", description: "", url: "", images: [] });
+      setShowPortfolioModal(false);
+      toast.success("포트폴리오가 추가되었습니다.");
+    } catch (e) {
+      console.error("포트폴리오 추가 실패:", e);
+      toast.error("포트폴리오 추가에 실패했습니다.");
+    }
+  };
+
+  const deletePortfolio = async (id) => {
+    try {
+      await request({
+        method: "DELETE",
+        url: `http://localhost:4000/api/users/${userId}/portfolios/${id}`,
+      });
+      setPortfolios((prev) => prev.filter((p) => p.id !== id));
+      toast.success("포트폴리오가 삭제되었습니다.");
+    } catch (e) {
+      console.error("포트폴리오 삭제 실패:", e);
+      toast.error("포트폴리오 삭제에 실패했습니다.");
+    }
+  };
 
   return (
     <div className="mypage-container">
@@ -759,6 +832,139 @@ const MyPage = ({ user }) => {
             )}
           </div>
         </div>
+
+        {/* 포트폴리오 */}
+        <div className="portfolio-section">
+          <div className="career-header">
+            <label>포트폴리오</label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                type="button"
+                className="add-career-btn"
+                onClick={() => setShowPortfolioModal(true)}
+                disabled={loading}
+              >
+                + 포트폴리오 추가
+              </button>
+            </div>
+          </div>
+
+          <div className="portfolio-list">
+            {loading ? (
+              <div className="loading-career">포트폴리오를 불러오는 중...</div>
+            ) : portfolios.length === 0 ? (
+              <div className="no-career">등록된 포트폴리오가 없습니다.</div>
+            ) : (
+              portfolios.map((item) => (
+                <div key={item.id} className="career-item">
+                  <div className="career-info">
+                    <div className="career-company">{item.title}</div>
+                    {item.description && (
+                      <div className="career-description">
+                        {item.description}
+                      </div>
+                    )}
+                    {item.url && (
+                      <div className="career-skills">
+                        <strong>URL:</strong>{" "}
+                        <a href={item.url} target="_blank" rel="noreferrer">
+                          {item.url}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className="remove-career-btn"
+                    onClick={() => deletePortfolio(item.id)}
+                    disabled={loading}
+                  >
+                    {loading ? "삭제중..." : "삭제"}
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {showPortfolioModal && (
+          <div className="career-modal-overlay">
+            <div className="career-modal">
+              <div className="career-modal-header">
+                <h3>포트폴리오 추가</h3>
+                <button
+                  type="button"
+                  className="close-modal-btn"
+                  onClick={() => setShowPortfolioModal(false)}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="career-modal-content">
+                <div className="career-input-group">
+                  <label>제목 *</label>
+                  <input
+                    type="text"
+                    value={newPortfolio.title}
+                    onChange={(e) =>
+                      setNewPortfolio((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
+                    placeholder="프로젝트 제목"
+                  />
+                </div>
+                <div className="career-input-group">
+                  <label>설명</label>
+                  <textarea
+                    rows="3"
+                    value={newPortfolio.description}
+                    onChange={(e) =>
+                      setNewPortfolio((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
+                    }
+                    placeholder="프로젝트 설명"
+                  />
+                </div>
+                <div className="career-input-group">
+                  <label>URL</label>
+                  <input
+                    type="url"
+                    value={newPortfolio.url}
+                    onChange={(e) =>
+                      setNewPortfolio((prev) => ({
+                        ...prev,
+                        url: e.target.value,
+                      }))
+                    }
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+              <div className="career-modal-footer">
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setShowPortfolioModal(false)}
+                  disabled={loading}
+                >
+                  취소
+                </button>
+                <button
+                  type="button"
+                  className="add-btn"
+                  onClick={addPortfolio}
+                  disabled={loading}
+                >
+                  {loading ? "추가중..." : "추가"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="mypage-btn-group">

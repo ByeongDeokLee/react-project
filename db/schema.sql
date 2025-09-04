@@ -84,3 +84,14 @@ CREATE TABLE user_careers (
 CREATE INDEX idx_posts_created_at ON posts(created_at);
 CREATE INDEX idx_comments_post_id ON comments(post_id);
 CREATE INDEX idx_replies_comment_id ON replies(comment_id);
+
+-- 사용자 포트폴리오 테이블
+CREATE TABLE IF NOT EXISTS portfolio (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    description TEXT,
+    url TEXT,
+    images JSONB DEFAULT '[]'::jsonb,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

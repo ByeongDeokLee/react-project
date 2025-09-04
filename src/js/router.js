@@ -31,6 +31,7 @@ import MyPage from "../ViewFame/MyPage";
 import ServiceDetail from "../ViewFame/ServiceDetail";
 import TeamMemberDetail from "../ViewFame/TeamMemberDetail";
 import ServiceCatalog from "../ViewFame/ServiceCatalog";
+import PortfolioPage from "../ViewFame/PortfolioPage";
 
 const Router = () => {
   return (
@@ -61,6 +62,7 @@ const Router = () => {
         <Route path="/service-detail" element={<ServiceDetail />} />
         <Route path="/team-member/:memberId" element={<TeamMemberDetail />} />
         <Route path="/services" element={<ServiceCatalog />} />
+        <Route path="/portfolio/:memberId" element={<PortfolioPage />} />
       </Routes>
     </BrowserRouter>
   );

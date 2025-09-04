@@ -543,6 +543,84 @@ const deleteUserCareer = async (userId, careerId) => {
   }
 };
 
+// 사용자 포트폴리오 추가
+const addUserPortfolio = async (userId, portfolio) => {
+  try {
+    if (!portfolio) throw new Error("portfolio data is required");
+
+    const payload = {
+      user_id: userId,
+      title: portfolio.title,
+      description: portfolio.description || null,
+      url: portfolio.url || null,
+      images: portfolio.images || [],
+      created_at: new Date(),
+    };
+
+    const { data, error } = await supabase
+      .from("portfolio")
+      .insert(payload)
+      .select("*")
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error adding user portfolio:", error);
+    throw error;
+  }
+};
+
+// 사용자 포트폴리오 조회
+const getUserPortfolios = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from("portfolio")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("Error getting user portfolios:", error);
+    throw error;
+  }
+};
+
+// 사용자 포트폴리오 수정
+const updateUserPortfolio = async (userId, portfolioId, updates) => {
+  try {
+    const { data, error } = await supabase
+      .from("portfolio")
+      .update(updates)
+      .eq("user_id", userId)
+      .eq("id", portfolioId)
+      .select("*")
+      .single();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error updating user portfolio:", error);
+    throw error;
+  }
+};
+
+// 사용자 포트폴리오 삭제
+const deleteUserPortfolio = async (userId, portfolioId) => {
+  try {
+    const { error } = await supabase
+      .from("portfolio")
+      .delete()
+      .eq("user_id", userId)
+      .eq("id", portfolioId);
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error("Error deleting user portfolio:", error);
+    throw error;
+  }
+};
+
 //회원정보 수정
 const updateUser = async (id, title, content) => {
   try {
@@ -585,4 +663,8 @@ module.exports = {
   getUserCareers,
   deleteUserCareer,
   updateUser,
+  addUserPortfolio,
+  getUserPortfolios,
+  updateUserPortfolio,
+  deleteUserPortfolio,
 };
