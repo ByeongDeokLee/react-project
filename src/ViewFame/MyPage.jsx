@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../CssFolder/MyPage.css";
 
@@ -148,8 +148,12 @@ const MyPage = ({ user }) => {
     "기타",
   ];
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const effectRan = useRef(false);
+
   useEffect(() => {
+    if (effectRan.current) return; // 이미 실행했으면 무시
+    effectRan.current = true;
+
     const loadUserInfoFromStorage = () => {
       const userData = localStorage.getItem("user");
       if (userData) {
@@ -161,13 +165,11 @@ const MyPage = ({ user }) => {
             career: storedUser.user.career,
             introduction: storedUser.user.introduction,
             specialty: storedUser.user.specialty,
-            // specialty: storedUser.user.specialty.split(","),
             image: storedUser.user.image || "",
             sex: storedUser.user.sex,
           }));
 
-          setUserId(storedUser.user.id); // 여기서 userId 업데이트 예약됨
-
+          setUserId(storedUser.user.id);
           fetchCareers(storedUser.user.id);
         } catch (e) {
           console.error("사용자 데이터 파싱 오류:", e);
@@ -179,9 +181,8 @@ const MyPage = ({ user }) => {
     };
 
     loadUserInfoFromStorage();
-  }, []); // 최초 1번만 실행 (스토리지에서 꺼내오기)
+  }, []);
 
-  // useEffect(() => {
   const fetchCareers = async (userId) => {
     if (!userId) return;
     try {
@@ -204,6 +205,10 @@ const MyPage = ({ user }) => {
         ...prev,
         career: fetched,
       }));
+
+      setCareerEntries((prev) => [...prev, ...fetched]);
+
+      console.log("커ㅗ리어", userInfo);
     } catch (err) {
       console.error("경력 조회 실패:", err);
       if (
@@ -218,13 +223,6 @@ const MyPage = ({ user }) => {
       }
     }
   };
-
-  //   if (userId) {
-  //     fetchCareers();
-  //   }
-  // }, [userId]); // userId 변경될 때 실행
-
-  console.log("확인 필요", userInfo);
 
   // 이미지 업로드 처리
   const handleImageUpload = (e) => {
@@ -364,18 +362,23 @@ const MyPage = ({ user }) => {
         data: { career: newCareerEntry },
       });
 
-      const addedCareer = {
-        id: res.career.id,
-        company: res.career.company_name,
-        position: res.career.position,
-        startDate: res.career.start_date,
-        endDate: res.career.end_date,
-        description: res.career.description,
-        skills: res.career.skills || [],
+      const fetched = (res?.careers || []).map((c) => ({
+        id: c.id,
+        company: c.company_name,
+        position: c.position,
+        startDate: c.start_date,
+        endDate: c.end_date,
+        description: c.description,
+        skills: c.skills || [],
         isPersisted: true,
-      };
+      }));
 
-      setCareerEntries((prev) => [...prev, addedCareer]);
+      setUserInfo((prev) => ({
+        ...prev,
+        career: fetched,
+      }));
+
+      setCareerEntries((prev) => [...prev, ...fetched]);
       setNewCareerEntry({
         company: "",
         position: "",
@@ -403,16 +406,36 @@ const MyPage = ({ user }) => {
   };
 
   const removeCareerEntry = async (id) => {
+    // const target = careerEntries.find((e) => console.log(e));
     const target = careerEntries.find((e) => e.id === id);
     if (!target) return;
 
     // 서버에 이미 저장된 항목이면 즉시 삭제 API 호출
     if (target.isPersisted && userId) {
       try {
-        await request({
+        const res = await request({
           method: "DELETE",
           url: `http://localhost:4000/api/users/${userId}/careers/${id}`,
         });
+
+        const fetched = (res?.careers || []).map((c) => ({
+          id: c.id,
+          company: c.company_name,
+          position: c.position,
+          startDate: c.start_date,
+          endDate: c.end_date,
+          description: c.description,
+          skills: c.skills || [],
+          isPersisted: true,
+        }));
+
+        setUserInfo((prev) => ({
+          ...prev,
+          career: fetched,
+        }));
+
+        setCareerEntries((prev) => [...prev, ...fetched]);
+
         toast.success("경력이 삭제되었습니다.");
       } catch (err) {
         console.error("경력 삭제 실패:", err);
@@ -460,8 +483,6 @@ const MyPage = ({ user }) => {
       sex: user.user.sex || "male",
     });
   };
-
-  // 중복 선언 제거됨
 
   const [portfolios, setPortfolios] = useState([]);
   const [showPortfolioModal, setShowPortfolioModal] = useState(false);

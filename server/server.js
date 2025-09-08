@@ -541,8 +541,11 @@ app.post("/api/users/:id/careers", async (req, res) => {
     console.log("사용자 경력 추가 요청 받음", req.body);
     const userId = Number(req.params.id);
     const { career } = req.body;
-    const added = await addUserCareer(userId, career);
-    res.json({ success: true, career: added });
+    const careers = await addUserCareer(userId, career);
+
+    // const careers = await getUserCareers(userId);
+
+    res.json({ success: true, career: careers });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
@@ -553,8 +556,11 @@ app.delete("/api/users/:id/careers/:careerId", async (req, res) => {
   try {
     const userId = Number(req.params.id);
     const careerId = Number(req.params.careerId);
-    await deleteUserCareer(userId, careerId);
-    res.json({ success: true });
+    // const careers = await deleteUserCareer(userId, careerId);
+    const careers = await deleteUserCareer(userId, careerId);
+
+    //const careers = await getUserCareers(userId);
+    res.json({ success: true, careers: careers });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }

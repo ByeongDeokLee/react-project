@@ -497,13 +497,21 @@ const addUserCareer = async (userId, career) => {
       skills: career.skills || [],
     };
 
-    console.log("payload", payload);
-    const { data, error } = await supabase
+    // 1. 새 경력 추가
+    const { error: insertError } = await supabase
       .from("career")
-      .insert(payload)
-      .select("*");
-    if (error) throw error;
-    return data[0];
+      .insert(payload);
+    if (insertError) throw insertError;
+
+    // 2. 전체 경력 리스트 조회
+    const { data: careers, error: selectError } = await supabase
+      .from("career")
+      .select("*")
+      .eq("user_id", userId)
+      .order("start_date", { ascending: false }); // 원하면 정렬
+    if (selectError) throw selectError;
+
+    return careers; // 전체 리스트 반환
   } catch (error) {
     console.error("Error adding user career:", error);
     throw error;
@@ -528,15 +536,27 @@ const getUserCareers = async (userId) => {
 };
 
 // 사용자 경력 단건 삭제
+// 사용자 경력 단건 삭제 + 나머지 리스트 반환
 const deleteUserCareer = async (userId, careerId) => {
   try {
-    const { error } = await supabase
+    // 삭제 실행
+    const { error: deleteError } = await supabase
       .from("career")
       .delete()
       .eq("user_id", userId)
       .eq("id", careerId);
-    if (error) throw error;
-    return true;
+
+    if (deleteError) throw deleteError;
+
+    // 삭제 후 남은 리스트 조회
+    const { data: remainingCareers, error: selectError } = await supabase
+      .from("career")
+      .select("*")
+      .eq("user_id", userId);
+
+    if (selectError) throw selectError;
+
+    return remainingCareers; // 나머지 전체 리스트 반환
   } catch (error) {
     console.error("Error deleting user career:", error);
     throw error;
