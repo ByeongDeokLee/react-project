@@ -206,7 +206,7 @@ const MyPage = ({ user }) => {
         career: fetched,
       }));
 
-      setCareerEntries((prev) => [...prev, ...fetched]);
+      setCareerEntries(fetched);
 
       console.log("커ㅗ리어", userInfo);
     } catch (err) {
@@ -378,7 +378,13 @@ const MyPage = ({ user }) => {
         career: fetched,
       }));
 
-      setCareerEntries((prev) => [...prev, ...fetched]);
+      setCareerEntries(fetched);
+
+      console.log("커리어 엔트리111", fetched);
+      console.log("커리어 엔트리1212", careerEntries);
+      console.log("커리어 엔트리222", userInfo.career);
+      console.log("커리어 엔트리333", res);
+
       setNewCareerEntry({
         company: "",
         position: "",
@@ -387,6 +393,7 @@ const MyPage = ({ user }) => {
         description: "",
         skills: [],
       });
+
       setErrors({});
       setShowCareerModal(false);
       toast.success("경력이 추가되었습니다.");
@@ -434,7 +441,12 @@ const MyPage = ({ user }) => {
           career: fetched,
         }));
 
-        setCareerEntries((prev) => [...prev, ...fetched]);
+        setCareerEntries(fetched);
+
+        console.log("커리어 엔트리111", fetched);
+        console.log("커리어 엔트리1212", careerEntries);
+        console.log("커리어 엔트리222", userInfo.career);
+        console.log("커리어 엔트리333", res);
 
         toast.success("경력이 삭제되었습니다.");
       } catch (err) {

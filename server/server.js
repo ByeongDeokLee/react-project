@@ -545,7 +545,7 @@ app.post("/api/users/:id/careers", async (req, res) => {
 
     // const careers = await getUserCareers(userId);
 
-    res.json({ success: true, career: careers });
+    res.json({ success: true, careers: careers });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
